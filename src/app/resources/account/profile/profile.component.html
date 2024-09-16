@@ -1,0 +1,56 @@
+<section class="section">
+    <div class="container" @fadeInCustom>
+
+        <!-- Header  -->
+        <div class="shared-header-section">
+
+            <!-- Breadcrumb -->
+            <div class="flex flex-1 items-center font-medium">
+                <div class="flex items-center">
+                    <mat-icon class="icon-size-6" svgIcon="mdi:home-outline" />
+                </div>
+                <div class="flex items-center ml-2">
+                    <span class="text-lg text-gray-600">គណនី</span>
+                </div>
+            </div>
+
+            <!-- Action -->
+            <button class="helpers-mat-button-sm px-2" mat-icon-button (click)="openUpdateProfileDialog()" >
+                <mat-icon svgIcon="feather:edit"></mat-icon>
+            </button>
+
+        </div>
+
+        <!-- Body  -->
+        <div class="body pt-8">
+            <div class="flex flex-col items-center gap-6">
+
+                <div class="max-w-32 h-32 flex justify-center">
+                    <img class="border-2 border-blue-500 object-cover rounded-full" [src]="fileUrl + user?.avatar" alt="Profile Image">
+                </div>
+
+
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+
+                    <div class="flex flex-row justify-center gap-2 max-w-50">
+                        <mat-icon svgIcon="mdi:cellphone"></mat-icon>
+                        <span class="text-gray-500">{{user?.phone}}</span>
+                    </div>
+
+                    <div class="flex flex-row justify-center gap-2">
+                        <mat-icon svgIcon="mdi:email-outline"></mat-icon>
+                        <span class="text-gray-500">{{user?.email}}</span>
+                    </div>
+
+                    <div  class="flex flex-row justify-center gap-2 max-w-50">
+                        <mat-icon svgIcon="mdi:calendar-blank-outline"></mat-icon>
+                        <span class="text-gray-500">Jan 14, 2024</span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>

@@ -1,0 +1,123 @@
+<div class="pos-section">
+    <div class="min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pl-5 pr-2.5">
+        <div class="flex flex-1 items-center font-medium">
+            <div class="flex items-center">
+                <mat-icon class="text-gray-600 dark:text-white icon-size-5" matPrefix
+                    [svgIcon]="'heroicons_outline:home'"></mat-icon>
+            </div>
+            <div class="flex items-center ml-1.5">
+                <span class="text-lg text-gray-600 dark:text-white -mb-0.5">ការបញ្ជាទិញ</span>
+            </div>
+        </div>
+    </div>
+    <div class="pos-body">
+        @if(data.length == 0 && !isLoading) {
+        <div class="no-data">
+            <div class="flex flex-col justify-center items-center mb-4">
+                <mat-icon class="icon-size-24" svgIcon="toc"></mat-icon>
+                <span class="text-2xl"><span>គ្មានទិន្នន័យ</span></span>
+            </div>
+        </div>
+        }
+        @else {
+        <div class="pos-content px-4">
+            <div class="list-pos-left">
+                <mat-tab-group class="use-border-tab-b">
+                    @for (item of data; track item.id) {
+                    <mat-tab [label]="item?.name">
+                        <div class="container-tab-content py-4 pr-3">
+                            <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+                                @for (product of item.products; track product.name) {
+                                <product-item [data]="product" (result)="addToCart($event, 1)"></product-item>
+                                } @empty {
+                                <span>គ្មានផលិតផល!!!</span>
+                                }
+                            </div>
+                        </div>
+                    </mat-tab>
+                    }
+                </mat-tab-group>
+            </div>
+            <div class="list-pos-right">
+                <div class="h-14 flex justify-between items-center px-3 border-b">
+                    <span class="text-lg">អ្នកគិតបញ្ជី៖ <b>{{user?.name}}</b></span>
+                </div>
+                <div class="list-pos-right-body pl-4 py-4">
+                    @if (carts.length > 0) {
+                    <table class="proposal-value-table border">
+                        <thead>
+                            <tr>
+                                <th class="flex justify-start p-3 border-b"
+                                    style="min-width: 10.8rem; max-width: 10.8rem;">
+                                    ផលិតផល
+                                </th>
+                                <th class="title border-b" style="min-width: 7rem; max-width: 7rem;">
+                                    ចំនួន
+                                </th>
+                                <th class="flex justify-end p-3 border-b" style="min-width: 8rem; max-width: 8rem;">
+                                    តម្លៃ
+                                </th>
+                                <th class=" border-b" style="width: 3rem; min-width: 3rem; max-width: 3rem;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @for (item of carts; track item.id; let i = $index) {
+                            <tr>
+                                <td class="px-3.5 py-2 border-b">
+                                    <p class="truncate">{{ item?.name }}</p>
+                                    <span style="font-style: italic; font-size: 12px;">
+                                        {{ item?.unit_price | number}} រៀល
+                                    </span>
+                                </td>
+
+                                <td class="text-center px-3.5 py-2 border-b">
+                                    <input class="text-right border max-w-15" type="number" [(ngModel)]="item.temp_qty"
+                                        (keyup)="blur($event, i)" min="0" oninput="this.value = Math.abs(this.value)"
+                                        max="1000">
+                                </td>
+
+                                <td class="text-right px-3.5 py-2 border-b">
+                                    {{ item?.unit_price*item?.qty | number }} រៀល
+                                </td>
+                                <td class="border-b">
+                                    <button color="warn" class="remove" mat-icon-button
+                                        (click)="remove(item.temp_qty,i)">
+                                        <mat-icon class="icon-size-5 text-red-400"
+                                            svgIcon="mat_solid:delete_outline"></mat-icon>
+                                    </button>
+                                </td>
+                            </tr>
+                            }
+                            <tr>
+                                <td class="text-right px-3.5 py-4" colspan=2>តំលៃ​​សរុប៖ </td>
+                                <td class="text-right px-3.5 py-4"><b>{{ totalPrice | number }} រៀល</b></td>
+                                <td class="text-right px-3.5 py-4"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="custom-botton-flat p-2 flex justify-end border-l border-r border-b">
+                        <button class="min-w-8 max-w-8 rounded-md bg-blue-400" [disabled]="!canSubmit" mat-flat-button
+                            (click)="checkOut()">
+                            @if (isOrderBeingMade) {
+                            <mat-progress-spinner [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+                            }
+                            @else {
+                            <mat-icon class="icon-size-7" svgIcon="mat_solid:save"></mat-icon>
+                            }
+                        </button>
+                    </div>
+                    }
+                    @else {
+                    <div class="flex flex-col justify-center items-center mt-10">
+                        <mat-icon class="icon-size-24" svgIcon="toc"></mat-icon>
+                        <span class="text-2xl"><span>គ្មានទិន្នន័យ</span></span>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+        }
+    </div>
+
+</div>

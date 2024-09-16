@@ -1,0 +1,92 @@
+<!-- Header -->
+<div mat-dialog-title class="w-full flex justify-between">
+    <span class="text-2xl font-semibold text-slate-900 w-full">កែប្រែគណនី</span>
+    <button class="helpers-mat-button-sm" (click)="close()" mat-icon-button>
+        <mat-icon class="icon-size-6" svgIcon="heroicons_outline:x-mark" />
+    </button>
+</div>
+
+
+<mat-dialog-content class="border-t rounded-none">
+    <form class="grid grid-cols-1 gap-4" [formGroup]="form">
+
+        <div class="rounded-none h-fit lg:h-auto">
+            <div class="p-5">
+                <div class="w-full md:min-w-64 flex justify-center">
+                    <div class="pr-0 md:pr-5 w-full max-w-40 min-h-40 overflow-hidden relative">
+                        <!-- Image Display -->
+                        <img 
+                            [src]="src" 
+                            (click)="fileInput.click()" 
+                            class="cursor-pointer rounded-full border w-full h-auto object-cover"
+                            alt="Profile Picture"
+                        />
+                        
+                        <!-- Hidden File Input -->
+                        <input 
+                            type="file" 
+                            #fileInput 
+                            style="display: none;" 
+                            (change)="onFileChange($event)"
+                            accept="image/*"
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="rounded-none">
+            <div class="md-form-field-appearance-outline">
+
+                <div class="grid gap-0 lg:gap-4">
+                    <mat-form-field appearance="outline">
+                        <mat-label>ឈ្មោះ</mat-label>
+                        <input matInput [formControlName]="'name'" placeholder="បញ្ចូលឈ្មោះ">
+                        <mat-error> ឈ្មោះត្រូវបានទាមទារ </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <!-- Sex -->
+                <mat-radio-group class="grid grid-cols-2 md:grid-cols-4 pb-8" formControlName="sex_id">
+                    <mat-radio-button [value]="1" style="margin: 0 0;">ប្រុស</mat-radio-button>
+                    <mat-radio-button [value]="2" style="margin: 0 15px;">ស្រី</mat-radio-button>
+                </mat-radio-group>
+
+                <div class="grid gap-0 lg:gap-4">
+                    <mat-form-field appearance="outline">
+                        <mat-label>លេខទូរស័ព្ទ</mat-label>
+                        <input matInput [formControlName]="'phone'" placeholder="បញ្ចូលលេខទូរស័ព្ទ">
+                        <mat-error> ទូរស័ព្ទត្រូវបានទាមទារ </mat-error>
+                    </mat-form-field>
+                </div>
+
+                <div class="grid gap-0 lg:gap-5">
+                    <mat-form-field appearance="outline">
+                        <mat-label>អ៊ីមែល</mat-label>
+                        <input matInput [formControlName]="'email'" placeholder="បញ្ចូលអ៊ីម៉ែល">
+
+                        <mat-error *ngIf = " form.get('email').hasError('required') "  > អ៊ីមែលត្រូវបានទាមទារ </mat-error>
+                        <mat-error *ngIf = " form.get('email').hasError('pattern') " > សូមបញ្ជូលE-mail អោយបានត្រឹមត្រូវ </mat-error>
+                    </mat-form-field>
+                </div>
+                
+
+            </div>
+        </div>
+
+    </form>
+    <mat-dialog-actions class="flex items-center justify-end gap-2">
+        <button class="w-full md:w-fit min-w-15 helpers-mat-button-md bg-blue-900" mat-flat-button
+            (click)="submit()" [disabled]="form.invalid || form.disabled">
+            <span *ngIf="!loading" class="text-white">រក្សាទុក</span>
+            <mat-progress-spinner *ngIf="loading" [diameter]="24" [mode]="'indeterminate'"></mat-progress-spinner>
+        </button>
+
+    </mat-dialog-actions>
+    
+    
+</mat-dialog-content>
+
+<mat-dialog-actions class="flex items-center justify-end gap-2">
+</mat-dialog-actions>

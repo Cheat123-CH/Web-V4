@@ -1,0 +1,96 @@
+/* Placeholder Styling */
+::placeholder {
+    color: rgb(100, 116, 139) !important;
+}
+.dialog-title-container {
+    display: flex;
+    align-items: center; /* Vertically align items */
+    justify-content: space-between; /* Pushes the close icon to the far right */
+   
+}
+
+.dialog-title-text {
+    flex-grow: 1; /* Allows the title to take up remaining space */
+    text-align: left; /* Aligns text to the left */
+}
+
+.close-icon {
+    cursor: pointer; /* Adds a pointer cursor to indicate it's clickable */
+}
+
+::-ms-input-placeholder {
+    color: rgb(100, 116, 139) !important;
+}
+
+/* Dialog Content Styling */
+.mat-mdc-dialog-content.mdc-dialog__content {
+    width: 90vw; /* Responsive width */
+    max-width: 600px; /* Maximum width */
+    min-height: 85vh !important;
+    padding: 16px; /* Add padding */
+    border-radius: 0 !important;
+}
+
+/* Hide Error Messages */
+::ng-deep .noError .mat-mdc-form-field-subscript-wrapper {
+    height: 0px !important;
+}
+
+/* Center Dialog */
+::ng-deep .mat-mdc-dialog-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0; /* Ensure no extra margin */
+    border-radius: 0 !important;
+}
+
+.clickable-image-container {
+    cursor: pointer; /* Indicate that this element is clickable */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+::ng-deep .mat-radio-button {
+    margin: 0 20px; /* Adjust the value as needed */
+}
+
+/* Adjust the styling to fit your theme */
+.blue-button {
+    background-color: #007bff; /* Blue color */
+    color: white; /* Text color */
+    border: none; /* Remove default border */
+    box-shadow: none; /* Remove default shadow */
+}
+
+.blue-button:hover {
+    background-color: #0056b3; /* Darker blue for hover effect */
+    color: white; /* Ensure text remains white on hover */
+}
+
+.blue-button:disabled {
+    background-color: #339fff; /* Gray color for disabled state */
+    color: #6c757d; /* Text color for disabled state */
+    cursor: not-allowed; /* Change cursor to indicate disabled */
+}
+::ng-deep .mat-dialog-container {
+    background-color: #fff;
+    padding: 0;
+    border-radius: 12px !important; /* Ensure rounded corners */
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2); /* Optional shadow */
+}
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+.mat-dialog-container {
+    border-radius: 0 !important; /* Remove rounded corners */
+    animation: slideIn 400ms cubic-bezier(0.25, 0.8, 0.25, 1); /* Slide-in animation */
+}
