@@ -19,9 +19,10 @@ import { env } from 'envs/env';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-import { ProductDialogComponent } from './dialog/dialog.component'; // Assuming this is a custom dialog component related to products
+import { ProductsDialogComponent } from './dialog/component';
 import { ProductService } from './product.service';
 import { Data, List } from './product.types';
+import { ViewDetailProductComponent } from './view/view.component';
 
 
 @Component({
@@ -127,10 +128,8 @@ export class ProductComponent implements OnInit {
 
     create(): void {
 
-        // Create a new MatDialogConfig for configuring the dialog
         const dialogConfig = new MatDialogConfig();
 
-        // Set data that will be passed to the dialog component
         dialogConfig.data = {
 
             title: 'បង្កើតផលិតផល',
@@ -138,24 +137,35 @@ export class ProductComponent implements OnInit {
             setup: this.setup
         };
 
-        // Configure dialog appearance
-        dialogConfig.width = "850px";
-        dialogConfig.minHeight = "200px";
         dialogConfig.autoFocus = false;
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
 
-        // Open the dialog with the specified configuration and the ProductDialogComponent
-        const dialogRef = this.matDialog.open(ProductDialogComponent, dialogConfig);
-
-        // Subscribe to the ResponseData event emitted by the dialog component
+        const dialogRef = this.matDialog.open(ProductsDialogComponent, dialogConfig);
         dialogRef.componentInstance.ResponseData.subscribe((product: Data) => {
-
-            // When the dialog emits ResponseData, update the data source with the new product
             const data = this.dataSource.data;
-            data.unshift(product);                              // Add the new product at the beginning of the array
-            this.dataSource.data = data;                     // Update the data source with the modified array
+            data.unshift(product);
+            this.list();
+            this.dataSource.data = data;
         });
     }
 
+    view(element: Data) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.autoFocus = false;
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
+        dialogConfig.data = element
+        const dialogRef = this.matDialog.open(ViewDetailProductComponent, dialogConfig);
+    }
     // Updating a product using a dialog
     update(row: Data): void {
 
@@ -167,16 +177,21 @@ export class ProductComponent implements OnInit {
             setup: this.setup
         };
 
-        dialogConfig.width = "850px";
-        dialogConfig.minHeight = "200px";
         dialogConfig.autoFocus = false;
-        const dialogRef = this.matDialog.open(ProductDialogComponent, dialogConfig);
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
+        const dialogRef = this.matDialog.open(ProductsDialogComponent, dialogConfig);
 
         dialogRef.componentInstance.ResponseData.subscribe((product: Data) => {
 
             const index = this.dataSource.data.indexOf(row);
             const data = this.dataSource.data;
             data[index] = product;
+            this.list()
             this.dataSource.data = data;
         });
     }
@@ -231,7 +246,7 @@ export class ProductComponent implements OnInit {
 
                         // Update the data source by filtering out the deleted product
                         this.dataSource.data = this.dataSource.data.filter((v: Data) => v.id != product.id);
-
+                        this.list()
                         // Show a success message using the SnackbarService
                         this.snackBarService.openSnackBar(response.message, GlobalConstants.success);
                     },

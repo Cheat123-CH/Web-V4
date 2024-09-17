@@ -1,45 +1,66 @@
-// ================================================================>> Core Library (Angular)
-import { Component, EventEmitter, Inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+
+// ================================================================================>> Core Library
+import { AsyncPipe, CommonModule } from '@angular/common';
+import { Component, EventEmitter, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+
+
+// ================================================================================>> Thrid Party Library
+// Material
 import { HttpErrorResponse } from '@angular/common/http';
-
-// ================================================================>> Third-Party Libraries (Angular Material)
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatOptionModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
-
-// ================================================================>> Custom Libraries (Application-specific)
-import { Data } from '../product.types';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { env } from 'envs/env';
-import { ProductService } from '../product.service';
+
 import { PortraitComponent } from 'helper/components/portrait/portrait.component';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-
-
+import { Subject } from 'rxjs';
+import { ProductService } from '../product.service';
+import { Data } from '../product.types';
 @Component({
-
-    selector: 'product-dialog',
+    selector: 'car-product-dialog-create-and-update',
+    templateUrl: './template.html',
+    styleUrls: ['./style.scss'],
     standalone: true,
-    templateUrl: './dialog.component.html',
     imports: [
+        RouterModule,
+        FormsModule,
+        MatIconModule,
         CommonModule,
+        MatTooltipModule,
+        AsyncPipe,
+        MatProgressSpinnerModule,
         ReactiveFormsModule,
         MatFormFieldModule,
         MatInputModule,
-        MatIconModule,
         MatSelectModule,
+        MatOptionModule,
+        MatAutocompleteModule,
+        MatDatepickerModule,
         MatButtonModule,
+        MatMenuModule,
+        MatDividerModule,
+        MatRadioModule,
         MatDialogModule,
         PortraitComponent
     ]
 })
-
-export class ProductDialogComponent implements OnInit {
+export class ProductsDialogComponent implements OnInit, OnDestroy {
+    private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     // EventEmitter to emit response data after create or update operations
     ResponseData = new EventEmitter<Data>();
@@ -51,13 +72,13 @@ export class ProductDialogComponent implements OnInit {
     saving: boolean = false;
 
     // Default image source for the product (assuming a default image is used)
-    src: string = 'assets/images/avatars/image-icon.jpg';
+    src: string = 'icons/photo.svg';
 
     // Constructor with dependency injection
     constructor(
 
         @Inject(MAT_DIALOG_DATA) public data: { title: string, product: Data, setup: { id: number, name: string }[] },
-        private dialogRef: MatDialogRef<ProductDialogComponent>,
+        private dialogRef: MatDialogRef<ProductsDialogComponent>,
         private formBuilder: UntypedFormBuilder,
         private snackBarService: SnackbarService,
         private productService: ProductService
@@ -79,7 +100,19 @@ export class ProductDialogComponent implements OnInit {
         // Set the 'image' form control value with the provided base64 image data
         this.productForm.get('image').setValue(base64);
     }
-
+    onFileChange(event: any): void {
+        const file = event.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                this.src = e.target.result; // Preview image
+                this.productForm.get('image')?.setValue(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            this.snackBarService.openSnackBar('Please select an image file.', GlobalConstants.error);
+        }
+    }
     // ngBuilderForm method
     ngBuilderForm(): void {
 
@@ -111,6 +144,7 @@ export class ProductDialogComponent implements OnInit {
         // Set saving to true to indicate that the create operation is in progress
         this.saving = true;
 
+        console.log(this.productForm.value)
         // Call the productService.create method to create a new product
         this.productService.create(this.productForm.value).subscribe({
 
@@ -132,6 +166,7 @@ export class ProductDialogComponent implements OnInit {
                         name: this.data.setup.find(v => v.id === response.data.type_id)?.name || ''
                     }
                 };
+
 
                 // Emit the created product data to the parent component
                 this.ResponseData.emit(product);
@@ -179,6 +214,7 @@ export class ProductDialogComponent implements OnInit {
         // Set saving to true to indicate that the update operation is in progress
         this.saving = true;
 
+        console.log(this.productForm.value)
         // Call the productService.update method to update an existing product
         this.productService.update(this.data.product.id, this.productForm.value).subscribe({
 
@@ -193,12 +229,12 @@ export class ProductDialogComponent implements OnInit {
                     image: response.data.image,
                     unit_price: response.data.unit_price,
                     created_at: response.data.created_at,
-
                     type: {
                         id: response.data.type_id,
                         name: this.data.setup.find(v => v.id === response.data.type_id)?.name || ''
                     }
                 };
+
 
                 // Emit the updated product data to the parent component
                 this.ResponseData.emit(product);
@@ -236,5 +272,12 @@ export class ProductDialogComponent implements OnInit {
         });
     }
 
+    ngOnDestroy(): void {
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
+    }
 
+    closeDialog() {
+        this.dialogRef.close();
+    }
 }

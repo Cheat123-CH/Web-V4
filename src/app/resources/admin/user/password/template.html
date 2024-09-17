@@ -1,0 +1,62 @@
+<div mat-dialog-title class="min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pl-5 pr-2.5 border-b">
+    <div class="flex flex-1 items-center text-slate-500">
+        <h1 class="text-3xl pl-4">ផ្លាស់ប្តូរលេខសម្ងាត់</h1>
+    </div>
+    <div class="flex items-center cursor-pointer"><mat-icon class="-mb-0.5" [svgIcon]="'heroicons_outline:x-mark'" (click)="closeDialog()"></mat-icon>
+    </div>
+</div>
+<div class="p-9">
+    <form [formGroup]="changePasswordForm" (ngSubmit)="onSubmit()">
+
+        <div class="grid grid-cols-1 md-form-field-appearance-outline">
+          <div class="md-form-field-appearance-outline">
+            <div class="grid">
+              <mat-form-field appearance="outline">
+                <mat-label>លេខសម្ងាត់ថ្មី</mat-label>
+                <input matInput formControlName="new_password" type="password">
+                <mat-error *ngIf="changePasswordForm.get('new_password')?.hasError('required')">
+                  ទាមទារលេខសម្ងាត់ថ្មី
+                </mat-error>
+                <mat-error *ngIf="changePasswordForm.get('new_password')?.hasError('minlength')">
+                  លេខសម្ងាត់ថ្មីត្រូវមានយ៉ាងតិច 6 តួអក្សរ
+                </mat-error>
+                <mat-error *ngIf="changePasswordForm.get('new_password')?.hasError('maxlength')">
+                  លេខសម្ងាត់ថ្មីអតិបរមា 20 តួអក្សរ
+                </mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="grid">
+              <mat-form-field appearance="outline">
+                <mat-label>បញ្ជាក់លេខសម្ងាត់ថ្មី</mat-label>
+                <input matInput formControlName="confirm_password" type="password">
+                <mat-error *ngIf="changePasswordForm.get('confirm_password')?.hasError('required')">
+                  ទាមទារបញ្ជាក់លេខសម្ងាត់ថ្មី
+                </mat-error>
+                <mat-error *ngIf="changePasswordForm.get('confirm_password')?.hasError('minlength')">
+                  បញ្ជាក់លេខសម្ងាត់ថ្មីត្រូវមានយ៉ាងតិច 6 តួអក្សរ
+                </mat-error>
+                <mat-error *ngIf="changePasswordForm.get('confirm_password')?.hasError('maxlength')">
+                  បញ្ជាក់លេខសម្ងាត់ថ្មីអតិបរមា 20 តួអក្សរ
+                </mat-error>
+                <mat-error *ngIf="changePasswordForm.hasError('passwordMismatch')">
+                  លេខសម្ងាត់ថ្មីនិងការបញ្ជាក់មិនស្របគ្នា
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit button -->
+        <div class="flex justify-end gap-5">
+          <button
+            [disabled]="changePasswordForm.invalid"
+            class="w-full md:w-fit min-w-15 helpers-mat-button-md"
+            mat-flat-button>
+            <span>រក្សាទុក</span>
+          </button>
+        </div>
+
+      </form>
+
+</div>

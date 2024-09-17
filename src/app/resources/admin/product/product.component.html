@@ -107,6 +107,10 @@
                                 <mat-icon class="icon-size-6" svgIcon="mat_outline:more_vert"></mat-icon>
                             </button>
                             <mat-menu #menu="matMenu">
+                                <button mat-menu-item (click)="view(element)">
+                                    <mat-icon class="icon-size-6 " svgIcon="heroicons_outline:eye"></mat-icon>
+                                    <span class="text-lg ">មើល</span>
+                                </button>
                                 <button mat-menu-item (click)="update(element)">
                                     <mat-icon class="icon-size-6 " svgIcon="mdi:square-edit-outline"></mat-icon>
                                     <span class="text-lg ">កែប្រែ</span>

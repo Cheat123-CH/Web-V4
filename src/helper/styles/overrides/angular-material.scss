@@ -406,20 +406,25 @@
         height: 20px;
         border-radius: 7px;
         // margin: -3px 0 0 -3px;
-        background-color: transparent; /* Default background */
+        background-color: transparent;
+        /* Default background */
     }
 
     .mdc-checkbox__native-control:enabled:not(:checked)~.mdc-checkbox__background {
-        border: 1px solid rgba(100, 116, 139, 0.7) !important; /* Default border color */
+        border: 1px solid rgba(100, 116, 139, 0.7) !important;
+        /* Default border color */
     }
 
     .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__background {
-        background-color: rgb(65, 65, 253) !important; /* Background color when checked */
-        border: 1px solid rgb(65, 65, 253) !important; /* Border color when checked */
+        background-color: rgb(65, 65, 253) !important;
+        /* Background color when checked */
+        border: 1px solid rgb(65, 65, 253) !important;
+        /* Border color when checked */
     }
 
     .mdc-checkbox__native-control:enabled:checked~.mdc-checkbox__checkmark {
-        stroke: white !important; /* Color of the checkmark */
+        stroke: white !important;
+        /* Color of the checkmark */
     }
 
     // .mdc-form-field {
@@ -1275,6 +1280,7 @@
 
         .mat-mdc-form-field-flex {
             height: 3rem;
+
             .mdc-notched-outline {
                 .mdc-notched-outline__leading {
                     border-radius: 0.55rem 0 0 0.55rem !important;
@@ -1931,9 +1937,9 @@
                     @apply text-[#7A7A7A] dark:text-white font-semibold #{'!important'};
                 }
 
-                .mdc-tab-indicator{
-                    .mdc-tab-indicator__content--underline{
-                        @apply border-2 border-[#102D71] #{'!important'};
+                .mdc-tab-indicator {
+                    .mdc-tab-indicator__content--underline {
+                        @apply border border-[#102D71] #{'!important'};
 
                     }
                 }
