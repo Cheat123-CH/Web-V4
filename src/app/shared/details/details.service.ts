@@ -11,7 +11,7 @@ export class DetailsService {
     constructor(private httpClient: HttpClient) { }
 
     download(id: number): Observable<{ statsu_code: number, data: string }> {
-        return this.httpClient.get<{ statsu_code: number, data: string }>(`${env.API_BASE_URL}/print/order-invoice/${id}`, {
+        return this.httpClient.get<{ statsu_code: number, data: string }>(`${env.API_BASE_URL}/share/print/order-invoice/${id}`, {
             headers: new HttpHeaders().set('Content-Type', 'application/json')
         });
     }

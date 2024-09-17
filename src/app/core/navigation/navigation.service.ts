@@ -13,7 +13,7 @@ export class NavigationService {
     set navigations(role: Role) {
         switch (role.name) {
             case RoleEnum.ADMIN: this._navigation.next(navigationData.admin); break;
-            case RoleEnum.USER: this._navigation.next(navigationData.user); break;
+            case RoleEnum.CASHIER: this._navigation.next(navigationData.user); break;
             default: this._navigation.next([]); break;
         }
     }

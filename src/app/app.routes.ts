@@ -15,7 +15,7 @@ export class RedirectGuard implements CanActivate {
 
     canActivate(): boolean {
 
-        this.router.navigate(['/user/dashboard']);
+        this.router.navigate(['/admin/dashboard']);
 
         return false;
     }
@@ -63,7 +63,7 @@ export const appRoutes: Route[] = [
             {
                 path: 'cashier',
                 resolve: {
-                    role: roleResolver([RoleEnum.USER])
+                    role: roleResolver([RoleEnum.CASHIER])
                 },
                 loadChildren: () => import('app/resources/cashier/cashier.routes')
             },

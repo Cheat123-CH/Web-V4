@@ -1,5 +1,5 @@
 // ================================================================>> Core Library
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, NgForOf, NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -16,14 +16,14 @@ import { Subject, takeUntil } from 'rxjs';
 // ================================================================>> Custom Library
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
+import { SharedDetailsComponent } from 'app/shared/details/details.component';
+import { env } from 'envs/env';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants from 'helper/shared/constants';
+import { ProductType } from '../sale/sale.types';
 import { ItemComponent } from './item/item.component';
 import { OrderService } from './order.service';
-import GlobalConstants from 'helper/shared/constants';
-import { SharedDetailsComponent } from 'app/shared/details/details.component';
-import {Product } from './order.types';
-import { Data } from '../sale/sale.types';
-
+import { Data, Product } from './order.types';
 interface CartItem {
 
     id: number;
@@ -31,7 +31,11 @@ interface CartItem {
     qty: number;
     temp_qty: number;
     unit_price: number;
+    image: string,
+    code: string,
+    type: ProductType,
 }
+
 
 @Component({
 
@@ -46,25 +50,25 @@ interface CartItem {
         MatTabsModule,
         ItemComponent,
         FormsModule,
+        NgIf,
+        NgForOf,
         MatButtonModule,
         MatProgressSpinnerModule
     ]
 })
 
 export class OrderComponent implements OnInit, OnDestroy {
-
-    private orderService: OrderService;
-    private snackBarService: SnackbarService;
     private _unsubscribeAll: Subject<User> = new Subject<User>();
-
+    fileUrl: string = env.FILE_BASE_URL;
     data: Data[] = [];
+    allProducts: Product[] = [];
     isLoading: boolean = false;
     carts: CartItem[] = [];
     user: User;
     isOrderBeingMade: boolean = false;
     canSubmit: boolean = false;
     totalPrice: number = 0;
-
+    selectedTab: any;
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _userService: UserService,
@@ -87,26 +91,38 @@ export class OrderComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         // Subscribe to the list method of the orderService
-        this.orderService.list().subscribe({
-
-            // This block is executed when there is a successful response
-            next: response => {
-
-                // Set the data property to the received data
+        this._service.list().subscribe({
+            next: (response) => {
                 this.data = response.data;
-                // Set isLoading to false to indicate that data loading is complete
-                this.isLoading = false;
+
+                // Create the "ALL" category
+                this.allProducts = this.data.reduce((all, item) => {
+                    return all.concat(item.products);
+                }, []);
+
+                // Add the "ALL" category to the data array
+                this.data.unshift({
+                    id: 0, // Use a unique id for the "ALL" category
+                    name: 'All Categories',
+                    products: this.allProducts
+                });
+                if (this.data && this.data.length > 0) {
+                    this.selectedTab = this.data[0]; // Automatically select the first tab
+                    this._changeDetectorRef.detectChanges(); // Manually trigger change detection
+                }
             },
-
-            // This block is executed when there is an error in the response
-            error: (err: HttpErrorResponse) => {
-
-                // Set isLoading to false to indicate that data loading is complete (even if there's an error)
+            error: (err) => {
                 this.isLoading = false;
-                // Show a snackbar with an error message. If there's no specific error message, show a generic one.
-                this.snackBarService.openSnackBar(err?.error?.message || GlobalConstants.genericError, GlobalConstants.error);
-            }
+                this._snackBarService.openSnackBar(err?.error?.message || GlobalConstants.genericError, GlobalConstants.error);
+            },
         });
+
+    }
+    // Function to handle tab selection
+    selectTab(item: any): void {
+        console.log("click", item)
+        this.selectedTab = item;
+        this._changeDetectorRef.detectChanges(); // Trigger change detection manually
     }
 
     ngOnDestroy(): void {
@@ -116,8 +132,31 @@ export class OrderComponent implements OnInit, OnDestroy {
         // Complete the subject to release resources
         this._unsubscribeAll.complete();
     }
+    clearCartAll(): void {
+        this.carts = [];
+        this.totalPrice = 0;
+        this.canSubmit = false;
+        this._snackBarService.openSnackBar('Cancel order successfully', GlobalConstants.success);
+    }
+    // Function to increment the quantity of an item
+    incrementQty(index: number): void {
+        const item = this.carts[index];
+        if (item.temp_qty < 1000) {
+            item.temp_qty += 1;
+            item.qty = item.temp_qty;
+            this.getTotalPrice();
+        }
+    }
 
-
+    // Function to decrement the quantity of an item
+    decrementQty(index: number): void {
+        const item = this.carts[index];
+        if (item.temp_qty > 1) {
+            item.temp_qty -= 1;
+            item.qty = item.temp_qty;
+            this.getTotalPrice();
+        }
+    }
     addToCart(incomingItem: Product, qty = 0): void {
 
         // Find an existing item in the cart with the same id as the incoming item
@@ -139,7 +178,11 @@ export class OrderComponent implements OnInit, OnDestroy {
                 qty: qty,
                 temp_qty: qty,
                 unit_price: incomingItem.unit_price,
+                image: incomingItem.image,
+                code: incomingItem.code,
+                type: incomingItem.type,
             };
+            console.log(newItem)
 
             this.carts.push(newItem);
             // Set canSubmit to true, indicating that there is at least one item in the cart
@@ -231,7 +274,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         this.isOrderBeingMade = true;
 
         // Make the API call to create an order using the order service
-        this.orderService.create(body).subscribe({
+        this._service.create(body).subscribe({
 
             next: response => {
 
@@ -242,7 +285,7 @@ export class OrderComponent implements OnInit, OnDestroy {
                 this.carts = [];
 
                 // Display a success message
-                this.snackBarService.openSnackBar(response.message, GlobalConstants.success);
+                this._snackBarService.openSnackBar(response.message, GlobalConstants.success);
 
                 // Open a dialog to display order details
                 const dialogConfig = new MatDialogConfig();
@@ -259,7 +302,7 @@ export class OrderComponent implements OnInit, OnDestroy {
                 this.isOrderBeingMade = false;
 
                 // Display an error message
-                this.snackBarService.openSnackBar(err?.error?.message || GlobalConstants.genericError, GlobalConstants.error);
+                this._snackBarService.openSnackBar(err?.error?.message || GlobalConstants.genericError, GlobalConstants.error);
             }
         });
     }

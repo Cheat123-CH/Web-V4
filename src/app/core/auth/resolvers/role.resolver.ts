@@ -2,9 +2,9 @@ import { inject } from "@angular/core";
 import { Router } from "@angular/router";
 import { RoleEnum } from "helper/enums/role.enum";
 import { UserPayload } from 'helper/interfaces/payload.interface';
-import { AuthService } from "../auth.service";
-import { of } from "rxjs";
 import jwt_decode from 'jwt-decode';
+import { of } from "rxjs";
+import { AuthService } from "../auth.service";
 
 export const roleResolver = (allowedRoles: string[]) => {
     return () => {
@@ -17,8 +17,7 @@ export const roleResolver = (allowedRoles: string[]) => {
         if (!isValidRole) {
             switch (role.name) {
                 case RoleEnum.ADMIN:    router.navigateByUrl('/admin/dashboard'); break;
-                case RoleEnum.EDITOR:   router.navigateByUrl('/editor/dashboard'); break;
-                case RoleEnum.USER:     router.navigateByUrl('/user/dashboard'); break;
+                case RoleEnum.CASHIER:     router.navigateByUrl('/cashier/order'); break;
             }
             // Show unauthorized access message
             return of(false);

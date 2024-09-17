@@ -1,5 +1,5 @@
 // ================================================================>> Custom Library
-import { Data as DataSale } from "../sale/sale.types"
+import { Data as DataSale } from "../sale/sale.types";
 
 // Interface for the list of sales orders
 export interface List {
@@ -20,9 +20,14 @@ export interface Product {
     id      : number,
     name    : string,
     image   : string,
-    unit_price: number
+    unit_price: number;
+    code: string,
+    type: ProductType
 }
 
+interface ProductType{
+    name: string;
+}
 // Interface for the response of creating or updating a sales order
 export interface ResponseOrder {
 

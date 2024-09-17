@@ -1,0 +1,57 @@
+<div mat-dialog-title>
+    <span class="text-xl">{{data.title}}</span>
+</div>
+<mat-dialog-content class="border-t">
+    <form [formGroup]="productForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3">
+        <div class="p-5 border border-dashed rounded-xl mb-4">
+            <div class="w-full md:min-w-64 flex flex-col items-center">
+                <!-- <div class="pr-0 md:pr-5 w-full max-w-64 min-h-64 overflow-hidden relative">
+                    <app-portrait [disabled]="saving" [mode]="'UPLOAD'" [title]="'បញ្ចូលរូបភាព'" [src]="src"
+                        [index]="'profile'" (srcChange)='srcChange($event)'></app-portrait>
+                </div> -->
+            </div>
+        </div>
+        <div class="md-form-field-appearance-outline">
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>លេខកូដ</mat-label>
+                <input matInput formControlName="code" placeholder="បញ្ចូលលេខកូដ">
+                <mat-error>សូមបញ្ចូលលេខកូដផលិតផល</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>ឈ្មោះ</mat-label>
+                <input matInput formControlName="name" placeholder="បញ្ចូលឈ្មោះ">
+                <mat-error>សូមបញ្ចូលឈ្មោះផលិតផល</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>ប្រភេទផលិតផល</mat-label>
+                <mat-select formControlName="type_id">
+                    @for (item of data.setup; track item.id) {
+                    <mat-option [value]="item.id">
+                        <span>{{item.name}}</span>
+                    </mat-option>
+                    }
+                    @empty {
+                    <span>គ្មានទិន្នន័យ</span>
+                    }
+                </mat-select>
+                <mat-error>សូមជ្រើសរើសប្រភេទផលិតផល</mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>តម្លៃ(៛)</mat-label>
+                <input matInput type="number" formControlName="unit_price" placeholder="បញ្ចូលតម្លៃ(៛)">
+                <mat-error>សូមបញ្ចូលតម្លៃជាប្រាក់រៀល</mat-error>
+            </mat-form-field>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions class="flex items-center justify-end gap-2">
+    <button class="helpers-mat-button-md" mat-flat-button (click)="submit()" [disabled]="productForm.invalid || saving">
+        <span *ngIf="!productForm.disabled">រក្សាទុក</span>
+        <mat-progress-spinner *ngIf="productForm.disabled" [diameter]="24"
+            [mode]="'indeterminate'"></mat-progress-spinner>
+    </button>
+    <button class="helpers-mat-button-md helpers-mat-button-red" [disabled]="saving" mat-flat-button
+        [mat-dialog-close]="false">
+        <span>បោះបង់</span>
+    </button>
+</mat-dialog-actions>

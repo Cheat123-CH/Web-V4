@@ -15,11 +15,10 @@ import { Subject, takeUntil } from 'rxjs';
 import { env } from 'envs/env';
 
 // Core
-import { User } from 'app/core/user/user.types';
+import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
 import { UserService } from 'app/core/user/user.service';
+import { User } from 'app/core/user/user.types';
 import { UpdateProfileDialogComponent } from './update-dialog';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-profile',
@@ -61,20 +60,19 @@ export class ProfileComponent implements OnInit {
 
     openUpdateProfileDialog(): void {
         const dialogConfig = new MatDialogConfig();
-        dialogConfig.autoFocus = false;
         dialogConfig.data = this.user;
-        dialogConfig.width = '600px'; // Adjust the width as needed
-        dialogConfig.position = { right: '0px', top: '0px' }; // Align dialog to the top-right
-        dialogConfig.height = '100vh'; // Full height
-        dialogConfig.panelClass = 'side-dialog'; // Add a custom CSS class if needed
-
+        dialogConfig.autoFocus = false;
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
         const dialogRef = this._dialog.open(UpdateProfileDialogComponent, dialogConfig);
 
         dialogRef.afterClosed().subscribe(result => {
             if (result) {
-                // Update the local user data if needed
                 this.user = result;
-                // Optionally refresh data or perform other actions
             }
         });
     }

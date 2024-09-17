@@ -1,26 +1,26 @@
 import { animate, AnimationBuilder, AnimationPlayer, style } from '@angular/animations';
 import { coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Component, ElementRef, HostBinding, inject, Input, OnChanges, OnDestroy, Renderer2, SimpleChanges, ViewEncapsulation } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { Component, ElementRef, HostBinding, inject, Input, OnChanges, OnDestroy, Renderer2, SimpleChanges, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
-import { Role } from 'app/core/user/user.types';
-import { ResponseLogin } from 'app/core/auth/auth.types';
-import { env } from 'envs/env';
-import GlobalConstants from 'helper/shared/constants';
-import { AuthService } from 'app/core/auth/auth.service';
-import { UserService } from 'app/core/user/user.service';
-import { UserPayload } from 'helper/interfaces/payload.interface';
-import jwt_decode from 'jwt-decode';
-import { RoleEnum } from 'helper/enums/role.enum';
 import { Router } from '@angular/router';
+import { AuthService } from 'app/core/auth/auth.service';
+import { ResponseLogin } from 'app/core/auth/auth.types';
 import { NavigationService } from 'app/core/navigation/navigation.service';
-import { NotificationsService } from '../../notifications/notifications.service';
+import { UserService } from 'app/core/user/user.service';
+import { Role } from 'app/core/user/user.types';
+import { env } from 'envs/env';
+import { RoleEnum } from 'helper/enums/role.enum';
+import { UserPayload } from 'helper/interfaces/payload.interface';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants from 'helper/shared/constants';
+import jwt_decode from 'jwt-decode';
+import { NotificationsService } from '../../notifications/notifications.service';
 
 @Component({
     selector: 'user-switch-role',
@@ -81,12 +81,10 @@ export class SwitchRoleComponent implements OnChanges, OnDestroy {
                 this.notificationsService.getAll();
                 if (role.name === RoleEnum.ADMIN) {
                     this._router.navigateByUrl('/admin/dashboard')
-                } else if (role.name === RoleEnum.EDITOR) {
-                    this._router.navigateByUrl('/editor/dashboard')
-                } else if (role.name === RoleEnum.USER) {
-                    this._router.navigateByUrl('/user/dashboard')
+                } else if (role.name === RoleEnum.CASHIER) {
+                    this._router.navigateByUrl('/cashier/order')
                 }
-                 else {
+                else {
                     this._router.navigateByUrl('');
                 }
                 this.close();
