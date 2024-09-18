@@ -198,7 +198,7 @@
 
     <div class="grid grid-cols-1 md:grid-cols-10 gap-4">
         <!-- First Section -->
-        <div class="col-span-4 h-auto md:h-[300px] bg-white dark:bg-gray-900 rounded-xl ">
+        <div class="col-span-4 h-auto md:h-[340px] bg-white dark:bg-gray-900 rounded-xl ">
             <div class="w-full h-full rounded-xl px-8">
                 <form [formGroup]="form">
                     <div class="flex items-center justify-between h-16 ">
@@ -223,14 +223,16 @@
                     </div>
                 </form>
                 <div>
-
+                    <div class="w-full bg-transparent dark:bg-opacity-5 pb-1 mt-10">
+                        <cicle-chart ></cicle-chart>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-span-6 h-auto md:h-[300px] bg-white dark:bg-gray-900 rounded-xl ">
+        <div class="col-span-6 h-auto md:h-[340px] bg-white dark:bg-gray-900 rounded-xl">
             <div class="w-full h-full rounded-xl px-8">
                 <form [formGroup]="form">
-                    <div class="flex items-center justify-between h-16 ">
+                    <div class="flex items-center justify-between h-16">
                         <span class="text-gray-700 dark:text-slate-300 sm:text-lg md:text-xl text-sm font-semibold">
                             ស្ថិតិការលក់
                         </span>
@@ -252,11 +254,13 @@
                     </div>
                 </form>
                 <div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-4 ">
-
+                    <div class="w-full bg-transparent dark:bg-opacity-5 -mt-4 pb-1">
+                        <!-- Ensure the chart container has a fixed or dynamic height -->
+                        <sup-bar-chart class="h-[200px]"></sup-bar-chart>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
 </div>
