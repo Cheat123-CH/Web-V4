@@ -10,7 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSelectModule } from '@angular/material/select';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
 import { UserService } from 'app/core/user/user.service';
@@ -23,8 +23,7 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { DashbordService } from './dashboards.service';
-import { DocumentData } from './documents.interface';
-import { DashboardResponse, StataticData } from './interface';
+import { CashierData, DashboardResponse, DataCashierResponse, StataticData } from './interface';
 
 @Component({
     selector: 'admin-dashboard',
@@ -76,11 +75,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ];
     private cache: any = {};
     activeTab: string = 'all';
-
-    dataSource_all_document: MatTableDataSource<DocumentData> = new MatTableDataSource<DocumentData>([]);
-    dataSource_draff_document: MatTableDataSource<DocumentData> = new MatTableDataSource<DocumentData>([]);
-    dataSource_competed_document: MatTableDataSource<DocumentData> = new MatTableDataSource<DocumentData>([]);
-    dataSource_copies_document: MatTableDataSource<DocumentData> = new MatTableDataSource<DocumentData>([]);
     displayedColumns: string[] = ['number_doc', 'title_doc', 'ministry_doc', 'action_doc'];
 
     constructor(
@@ -105,24 +99,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
             .pipe(debounceTime(0), distinctUntilChanged(), takeUntil(this._unsubscribeAll))
             .subscribe(() => this.dateTypeHandler());
 
-        this.getStaticDataDucument();
-        this.listDocumentsAll();
-        this.listDocumentsDraff();
-        this.listDocumentsCompeted();
-        this.listDocumentsCopy();
-        this._setupOnInit();
-    }
-    public docCategory: { id: number, name: string, is_license: boolean }[] | undefined
-    public newDocNumber: { doc_number: string }
-    private _setupOnInit(): void {
-        this._service.setup().subscribe({
-            next: res => {
-                this.docCategory = res.docCategory
-                this.newDocNumber = res.newDocNumber
-                console.log(this.newDocNumber)
-            },
-            error: err => this._snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error)
-        });
+        this.getStaticData();
+        this.getCahsierData()
     }
     dateTypeHandler(): void {
         const selectedDateType = this.dateTypeControl.value;
@@ -154,11 +132,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 this.today = this.yesterday = this.thisWeek = this.thisMonth = undefined;
                 break;
         }
-
-        this.getStaticDataDucument();
+        this.getStaticData();
     }
 
-    getStaticDataDucument(): void {
+    getStaticData(): void {
         const cacheKey = this.today || this.yesterday || this.thisWeek || this.thisMonth;
 
         if (this.cache[cacheKey]) {
@@ -167,13 +144,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
         }
 
         this.isLoading = true;
-        this._service.getStaticDataDucument(this.today, this.yesterday, this.thisWeek, this.thisMonth)
+        this._service.getStaticData(this.today, this.yesterday, this.thisWeek, this.thisMonth)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
                 next: (response: DashboardResponse) => {
                     if (response) {
-                        this.stataticData = response.statatic;
-                        this.cache[cacheKey] = response.statatic;
+                        this.stataticData = response.statatics;
+                        this.cache[cacheKey] = response.statatics;
                     }
                     this.isLoading = false;
                     this._changeDetectorRef.markForCheck(); // Trigger UI update
@@ -184,60 +161,34 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 }
             });
     }
-    listDocumentsAll(): void {
-        this.isLoading = true;
-        this._service.listDocumentsAll().subscribe({
-            next: res => {
-                this.dataSource_all_document.data = res.data ?? [];
-                this.isLoading = false;
-            },
-            error: err => {
-                this.isLoading = false;
-                this._snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
-            }
-        });
-    }
+    cashierData: CashierData[]
+    getCahsierData(): void {
+        const cacheKey = this.today || this.yesterday || this.thisWeek || this.thisMonth;
 
-    listDocumentsDraff(): void {
-        this.isLoading = true;
-        this._service.listDocumentsDraff().subscribe({
-            next: res => {
-                this.dataSource_draff_document.data = res.data ?? [];
-                this.isLoading = false;
-            },
-            error: err => {
-                this.isLoading = false;
-                this._snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
-            }
-        });
-    }
+        if (this.cache[cacheKey]) {
+            this.stataticData = this.cache[cacheKey];
+            return;
+        }
 
-    listDocumentsCompeted(): void {
         this.isLoading = true;
-        this._service.listDocumentsCompeted().subscribe({
-            next: res => {
-                this.dataSource_competed_document.data = res.data ?? [];
-                this.isLoading = false;
-            },
-            error: err => {
-                this.isLoading = false;
-                this._snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
-            }
-        });
-    }
-
-    listDocumentsCopy(): void {
-        this.isLoading = true;
-        this._service.listDocumentsCopy().subscribe({
-            next: res => {
-                this.dataSource_copies_document.data = res.data ?? [];
-                this.isLoading = false;
-            },
-            error: err => {
-                this.isLoading = false;
-                this._snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
-            }
-        });
+        this._service.getCashier(this.today, this.yesterday, this.thisWeek, this.thisMonth)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe({
+                next: (response: DataCashierResponse) => {
+                    if (response && response.data) {
+                        this.cashierData = response.data;
+                        console.log(this.cashierData)
+                        this.cache[cacheKey] = response.data;
+                    }
+                    this.isLoading = false;
+                    this._changeDetectorRef.markForCheck(); // Trigger UI update
+                },
+                error: (err) => {
+                    const errorMessage = err.error?.message ?? GlobalConstants.genericError;
+                    this._snackBarService.openSnackBar(errorMessage, GlobalConstants.error);
+                    this.isLoading = false;
+                }
+            });
     }
 
 

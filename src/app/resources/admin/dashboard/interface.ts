@@ -1,11 +1,34 @@
 export interface DashboardResponse {
-    statatic: StataticData;
+    statatics: StataticData;
     message: string;
 }
 export interface StataticData {
-    totalDocuments: number;
-    totalDocumentsToday: number;
-    totalDocumentsStatusDraft: number;
-    totalDocumentsStatusCompleted: number;
-    totalDocumentsStatusCopy: number;
+    totalProduct: number;
+    totalProductType: number;
+    totalUser: number;
+    totalOrder: number;
+}
+
+interface RoleDetails {
+    id: number;
+    name: string;
+}
+
+interface UserRole {
+    id: number;
+    role_id: number;
+    role: RoleDetails;
+}
+
+export interface CashierData {
+    id: number;
+    name: string;
+    avatar: string;
+    totalAmount: number;
+    percentageChange: number;
+    role: UserRole[];
+}
+
+export interface DataCashierResponse {
+    data: CashierData[];
 }
