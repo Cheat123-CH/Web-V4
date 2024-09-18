@@ -1,0 +1,48 @@
+<div class="list-profile-section bg-white dark:bg-gray-800 mt-4 mx-4 rounded-tl-lg rounded-tr-lg">
+    <div class="bg-white min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pl-5 pr-2.5 dark:bg-gray-800 ">
+        <div class="flex flex-1 items-center font-medium">
+            <mat-icon class="icon-size-5 -mt-0.5" matPrefix [svgIcon]="'heroicons_outline:home'"></mat-icon>
+            <span class="ml-1.5 text-lg text-gray-600 -mb-0.5">គណនី</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <!-- Action -->
+            <button class="helpers-mat-button-sm px-2" mat-icon-button (click)="updatePassword()">
+                <mat-icon svgIcon="mdi:key-outline"></mat-icon>
+            </button>
+            <button class="helpers-mat-button-sm px-2" mat-icon-button (click)="openUpdateProfileDialog()">
+                <mat-icon svgIcon="feather:edit"></mat-icon>
+            </button>
+        </div>
+    </div>
+
+    <div class="list-profile-body pt-6 md:pt-20 bg-white dark:bg-gray-800 border-t">
+        <div class="flex flex-col items-center gap-6">
+
+            <div class="max-w-32 w-32 h-32 flex justify-center">
+                <img class="border-2 w-32 h-32 border-blue-500 object-cover rounded-full" [src]="fileUrl + user?.avatar"
+                    alt="Profile Image">
+            </div>
+
+
+            <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
+
+                <div class="flex flex-row justify-center gap-2 max-w-50">
+                    <mat-icon svgIcon="mdi:cellphone"></mat-icon>
+                    <span class="text-gray-500">{{user?.phone}}</span>
+                </div>
+
+                <div class="flex flex-row justify-center gap-2">
+                    <mat-icon svgIcon="mdi:email-outline"></mat-icon>
+                    <span class="text-gray-500">{{user?.email}}</span>
+                </div>
+
+                <div class="flex flex-row justify-center gap-2 max-w-50">
+                    <mat-icon svgIcon="mdi:calendar-blank-outline"></mat-icon>
+                    <span class="text-gray-500">Jan 14, 2024</span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

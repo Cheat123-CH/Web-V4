@@ -1,0 +1,262 @@
+<div class="container-dashboard-section p-4 dark:bg-gray-800">
+    <!-- User Greeting Section -->
+    <div class="flex flex-col md:flex-row justify-between items-center mb-4">
+        <div class="p-2 flex w-full md:w-auto cursor-pointer">
+            <img class="border-2 border-blue-500 w-16 h-16 object-cover rounded-full mr-2"
+                [src]="fileUrl + user?.avatar" alt="avatar" />
+            <div class="flex flex-col">
+                <p class="text-xl md:text-xl">សូមស្វាគមន៍, {{user?.name}}</p>
+                <p class="text-gray-500 text-sm md:text-base">
+                    {{user?.roles[0].name}}
+                </p>
+            </div>
+        </div>
+        <div class="flex gap-3 mt-4 md:mt-0">
+            <!-- First Button -->
+            <div class="flex items-center justify-center border-2 bg-blue-500 rounded-xl w-full md:w-[220px] h-[45px]
+                cursor-pointer transform transition-transform duration-50 ease-in-out dark:bg-gray-800
+                dark:hover:bg-gray-700">
+                <p class="text-sm md:text-xl text-white dark:text-blue-300 text-center w-full ">ទាញយករបាយការណ៍</p>
+            </div>
+        </div>
+    </div>
+    <!-- Data Statistic Dashboard -->
+    <div class="grid grid-cols-1 md:grid-cols-10 gap-4">
+        <!-- First Section -->
+        <div class="col-span-4 h-auto md:h-[330px] bg-white dark:bg-gray-900 rounded-xl ">
+            <div class="w-full h-full rounded-xl px-8">
+                <form [formGroup]="form">
+                    <div class="flex items-center justify-between h-16 ">
+                        <span class="text-gray-700 dark:text-slate-300 sm:text-lg md:text-xl text-sm font-semibold">
+                            ស្ថិតិប​ឋម
+                        </span>
+                        <div class="sm-form-field-appearance-outline height-header">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>ជ្រើសរើសកាលបរិច្ឆេទ</mat-label>
+                                <mat-select formControlName="date_type" (selectionChange)="dateTypeHandler()">
+                                    <mat-option *ngFor="let item of dateType" [value]="item.id">
+                                        <span>{{item.name}}</span>
+                                    </mat-option>
+                                    <mat-option *ngIf="dateType.length === 0" disabled>
+                                        <span>គ្មានទិន្នន័យ</span>
+                                    </mat-option>
+                                </mat-select>
+                                <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
+                                <mat-error>សូមជ្រើសរើសជ្រើសរើសកាលបរិច្ឆេទ</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </form>
+                <div>
+                    <div class="grid grid-cols-2 md:grid-cols-2 gap-4 mt-4 mb-4 ">
+                        <div
+                            class="flex items-center bg-gray-50 cursor-pointer h-auto dark:bg-gray-800 rounded-lg shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] dark:shadow-none">
+                            <div class="flex flex-col ml-5">
+                                <div class="flex gap-4 items-start">
+                                    <div class="p-3 flex items-center rounded-full bg-blue-200 dark:bg-gray-600">
+                                        <mat-icon class="icon-size-6 text-blue-500 dark:text-white"
+                                            svgIcon="mdi:package-variant-closed"></mat-icon>
+                                    </div>
+                                    <div class="flex flex-col gap-1 items-start">
+                                        <div class="flex gap-1 items-center">
+                                            <span
+                                                class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{stataticData?.totalProduct}}</span>
+                                        </div>
+                                        <span class="dark:text-gray-400 text-sm sm:text-lg md:text-xl">ផលិតផល</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center bg-gray-50 cursor-pointer h-auto dark:bg-gray-800 rounded-lg shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] dark:shadow-none min-h-26">
+                            <div class="flex flex-col ml-5">
+                                <div class="flex gap-4 items-start">
+                                    <div class="p-3 flex items-center rounded-full bg-[#80CBC4]">
+                                        <mat-icon class="icon-size-6 text-[#00897B] dark:text-white"
+                                            svgIcon="mdi:package-variant-closed"></mat-icon>
+                                    </div>
+                                    <div class="flex flex-col gap-1 items-start">
+                                        <div class="flex gap-1">
+                                            <span
+                                                class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{stataticData?.totalProductType}}</span>
+                                        </div>
+                                        <span class="dark:text-gray-400 text-sm sm:text-lg md:text-xl">ប្រភេទ</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center bg-gray-50 cursor-pointer h-auto dark:bg-gray-800 rounded-lg shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] dark:shadow-none min-h-26">
+                            <div class="flex flex-col ml-5">
+                                <div class="flex gap-4 items-start">
+                                    <div class="p-3 flex items-center rounded-full bg-gray-200 dark:bg-blue-600">
+                                        <mat-icon class="icon-size-6 text-gray-600 dark:text-white"
+                                            svgIcon="mdi:account-group-outline"></mat-icon>
+                                    </div>
+                                    <div class="flex flex-col gap-1 items-start">
+                                        <div class="flex gap-1">
+                                            <span
+                                                class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{stataticData?.totalUser}}</span>
+                                        </div>
+                                        <span
+                                            class="dark:text-gray-400 text-sm sm:text-lg md:text-xl">អ្នកប្រើប្រាស់</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="flex items-center bg-gray-50 cursor-pointer h-auto dark:bg-gray-800 rounded-lg shadow-[0px_2px_3px_-1px_rgba(0,0,0,0.1),0px_1px_0px_0px_rgba(25,28,33,0.02),0px_0px_0px_1px_rgba(25,28,33,0.08)] dark:shadow-none min-h-26">
+                            <div class="flex flex-col ml-5">
+                                <div class="flex gap-4 items-start">
+                                    <div class="p-3 flex items-center rounded-full bg-[#B2EBF2]">
+                                        <mat-icon class="icon-size-6 text-[#26C6DA] dark:text-white"
+                                            svgIcon="mdi:account-group-outline"></mat-icon>
+                                    </div>
+                                    <div class="flex flex-col gap-1 items-start">
+                                        <div class="flex gap-1">
+                                            <span
+                                                class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{stataticData?.totalOrder}}</span>
+                                        </div>
+                                        <span class="dark:text-gray-400 text-sm sm:text-lg md:text-xl">ការលក់</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-span-6 h-auto md:h-[330px] bg-white dark:bg-gray-900 rounded-xl ">
+            <div class="w-full h-full rounded-xl px-8">
+                <form [formGroup]="form">
+                    <div class="flex items-center justify-between h-16 ">
+                        <span class="text-gray-700 dark:text-slate-300 sm:text-lg md:text-xl text-sm font-semibold">
+                            អ្នកគិតប្រាក់
+                        </span>
+                        <div class="sm-form-field-appearance-outline height-header">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>ជ្រើសរើសកាលបរិច្ឆេទ</mat-label>
+                                <mat-select formControlName="date_type" (selectionChange)="dateTypeHandler()">
+                                    <mat-option *ngFor="let item of dateType" [value]="item.id">
+                                        <span>{{item.name}}</span>
+                                    </mat-option>
+                                    <mat-option *ngIf="dateType.length === 0" disabled>
+                                        <span>គ្មានទិន្នន័យ</span>
+                                    </mat-option>
+                                </mat-select>
+                                <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
+                                <mat-error>សូមជ្រើសរើសជ្រើសរើសកាលបរិច្ឆេទ</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </form>
+                <div>
+                    <ng-container *ngIf="cashierData.length; else noDataTemplate">
+                        <div class="w-full ">
+                            <table class="w-full">
+                                <tbody>
+                                    <!-- Use *ngFor with the slice pipe to display only 3 users -->
+                                    <tr *ngFor="let user of cashierData | slice:0:3; let i = index"
+                                        [ngClass]="{'bg-[#f1f5f9]': i % 2 === 0}">
+                                        <!-- Name Column -->
+                                        <td class="p-2">
+                                            <div class="flex items-center">
+                                                <div class="p-2 pl-0">
+                                                    <img class="rounded-full border border-blue-600 w-[45px] h-[45px] object-cover"
+                                                        [src]="fileUrl + user.avatar" alt="">
+                                                </div>
+                                                <div class="flex flex-col justify-center pl-2">
+                                                    <p class="text-lg text-slate-600">{{ user?.name }}</p>
+                                                    <p class="text-sm text-slate-500">{{ user?.role[0]?.role.name }}</p>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <!-- Action Column -->
+                                        <td class="text-right pr-4">
+                                            <div class="flex justify-end items-end gap-1">
+                                                <span> {{ user.totalAmount }} ៛</span>
+                                                <span class="text-green-600"> ({{ user.percentageChange }}%)</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </ng-container>
+                    <ng-template #noDataTemplate>
+                        <div class="flex flex-col justify-center items-center h-full">
+                            <mat-icon class="text-gray-400" svgIcon="toc"></mat-icon>
+                            <span class="text-2xl text-gray-500 mt-2">គ្មានទិន្នន័យ</span>
+                        </div>
+                    </ng-template>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <div class="grid grid-cols-1 md:grid-cols-10 gap-4">
+        <!-- First Section -->
+        <div class="col-span-4 h-auto md:h-[300px] bg-white dark:bg-gray-900 rounded-xl ">
+            <div class="w-full h-full rounded-xl px-8">
+                <form [formGroup]="form">
+                    <div class="flex items-center justify-between h-16 ">
+                        <span class="text-gray-700 dark:text-slate-300 sm:text-lg md:text-xl text-sm font-semibold">
+                            ប្រភេទផលិតផល
+                        </span>
+                        <div class="sm-form-field-appearance-outline height-header">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>ជ្រើសរើសកាលបរិច្ឆេទ</mat-label>
+                                <mat-select formControlName="date_type" (selectionChange)="dateTypeHandler()">
+                                    <mat-option *ngFor="let item of dateType" [value]="item.id">
+                                        <span>{{item.name}}</span>
+                                    </mat-option>
+                                    <mat-option *ngIf="dateType.length === 0" disabled>
+                                        <span>គ្មានទិន្នន័យ</span>
+                                    </mat-option>
+                                </mat-select>
+                                <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
+                                <mat-error>សូមជ្រើសរើសជ្រើសរើសកាលបរិច្ឆេទ</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </form>
+                <div>
+
+                </div>
+            </div>
+        </div>
+        <div class="col-span-6 h-auto md:h-[300px] bg-white dark:bg-gray-900 rounded-xl ">
+            <div class="w-full h-full rounded-xl px-8">
+                <form [formGroup]="form">
+                    <div class="flex items-center justify-between h-16 ">
+                        <span class="text-gray-700 dark:text-slate-300 sm:text-lg md:text-xl text-sm font-semibold">
+                            ស្ថិតិការលក់
+                        </span>
+                        <div class="sm-form-field-appearance-outline height-header">
+                            <mat-form-field appearance="outline" class="w-full">
+                                <mat-label>ជ្រើសរើសកាលបរិច្ឆេទ</mat-label>
+                                <mat-select formControlName="date_type" (selectionChange)="dateTypeHandler()">
+                                    <mat-option *ngFor="let item of dateType" [value]="item.id">
+                                        <span>{{item.name}}</span>
+                                    </mat-option>
+                                    <mat-option *ngIf="dateType.length === 0" disabled>
+                                        <span>គ្មានទិន្នន័យ</span>
+                                    </mat-option>
+                                </mat-select>
+                                <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
+                                <mat-error>សូមជ្រើសរើសជ្រើសរើសកាលបរិច្ឆេទ</mat-error>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </form>
+                <div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 mb-4 ">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-# Web V4
+# Web
 
 
 
@@ -15,14 +15,14 @@ Already a pro? Just edit this README.md and make it your own. Want to make it ea
 
 ```
 cd existing_repo
-git remote add origin https://gitlab.camcyber.com/pos/v2/web-v4.git
+git remote add origin https://gitlab.camcyber.com/system/mme-dws/loms/web.git
 git branch -M master
 git push -uf origin master
 ```
 
 ## Integrate with your tools
 
-- [ ] [Set up project integrations](https://gitlab.camcyber.com/pos/v2/web-v4/-/settings/integrations)
+- [ ] [Set up project integrations](https://gitlab.camcyber.com/system/mme-dws/loms/web/-/settings/integrations)
 
 ## Collaborate with your team
 

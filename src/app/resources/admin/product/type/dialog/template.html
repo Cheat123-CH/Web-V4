@@ -1,0 +1,30 @@
+<div class="out-create-section md-form-field-appearance-outline">
+    <div mat-dialog-title class="min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pr-2.5">
+        <div class="flex flex-1 items-center text-slate-500">
+            <h1 class="text-3xl">{{data.title}}</h1>
+        </div>
+        <div class="flex items-center cursor-pointer"><mat-icon class="-mb-0.5" [svgIcon]="'heroicons_outline:x-mark'"
+                (click)="closeDialog()"></mat-icon>
+        </div>
+    </div>
+    <div class="out-create-body px-4 pb-2">
+        <form [formGroup]="typeForm" class="out-create-content border-t pt-4">
+            <mat-form-field appearance="outline" class="w-full mt-4">
+                <mat-label>ឈ្មោះប្រភេទ</mat-label>
+                <input matInput formControlName="name" placeholder="បញ្ចូលឈ្មោះប្រភេទ">
+                <mat-error>សូមបញ្ចូលឈ្មោះប្រភេទ</mat-error>
+            </mat-form-field>
+        </form>
+    </div>
+    <mat-dialog-actions>
+        <div class="w-full flex justify-end px-1">
+            <button class="helpers-mat-button-md​ text-white bg-[#102d71]" mat-flat-button (click)="submit()"
+                [disabled]="typeForm.invalid || saving">
+                <span *ngIf="!typeForm.disabled">រួចរាល់</span>
+                <mat-progress-spinner *ngIf="typeForm.disabled" [diameter]="24"
+                    [mode]="'indeterminate'"></mat-progress-spinner>
+            </button>
+        </div>
+    </mat-dialog-actions>
+
+</div>

@@ -1,0 +1,40 @@
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { env } from 'envs/env';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { PasswordReq, ProfileUpdate, ResponseProfile } from './profile.type';
+
+@Injectable({
+    providedIn: 'root',
+})
+export class ProfileService {
+
+    private readonly baseUrl: string = env.API_BASE_URL; // Base URL from environment
+    private readonly httpOptions = {
+        headers: new HttpHeaders().set('Content-Type', 'application/json'),
+    };
+
+    constructor(private http: HttpClient) { }
+
+    // Update profile endpoint
+    profile(body: ProfileUpdate): Observable<ResponseProfile> {
+        return this.http.put<ResponseProfile>(`${this.baseUrl}/account/profile/update`, body, this.httpOptions);
+    }
+
+    // Update password endpoint
+    updatePassword(body: PasswordReq): Observable<{ message: string }> {
+        return this.http.put<{ message: string }>(`${this.baseUrl}/account/profile/update-password`, body, this.httpOptions);
+    }
+
+    // Share variable
+    private _sharedVariable = new BehaviorSubject<string>('profile');
+
+    // Observable for the BehaviorSubject which components can subscribe to
+    sharedVariable$ = this._sharedVariable.asObservable();
+
+    // Method to update the variable's value
+    updateSharedVariable(newValue: string): void {
+        console.log('Updating shared variable with:', newValue);
+        this._sharedVariable.next(newValue);
+    }
+}
