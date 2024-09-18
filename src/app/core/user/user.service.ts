@@ -15,4 +15,8 @@ export class UserService {
         return this._user.asObservable();
     }
 
+    refreshUserData(): Observable<User> {
+        return this._user.asObservable();
+    }
+
 }

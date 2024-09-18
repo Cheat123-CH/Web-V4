@@ -28,9 +28,9 @@
                 <!-- Tab Headers Custom Styling with Tailwind CSS -->
                 <div class="flex flex-wrap gap-4 mb-4">
                     <div *ngFor="let item of data; trackBy: trackById" (click)="selectTab(item)"
-                        [class.bg-blue-500]="selectedTab?.id === item?.id"
+                        [class.bg-blue-600]="selectedTab?.id === item?.id"
                         [class.text-white]="selectedTab?.id === item?.id"
-                        [class.border-blue-500]="selectedTab?.id === item?.id"
+                        [class.border-blue-600]="selectedTab?.id === item?.id"
                         [class.bg-gray-100]="selectedTab?.id !== item?.id"
                         [class.text-gray-600]="selectedTab?.id !== item?.id"
                         [class.border-gray-200]="selectedTab?.id !== item?.id"

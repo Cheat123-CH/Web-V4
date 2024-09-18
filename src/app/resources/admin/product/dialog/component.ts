@@ -72,7 +72,7 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
     saving: boolean = false;
 
     // Default image source for the product (assuming a default image is used)
-    src: string = 'icons/photo.svg';
+    src: string = 'icons/image.jpg';
 
     // Constructor with dependency injection
     constructor(

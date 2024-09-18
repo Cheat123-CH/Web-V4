@@ -2,7 +2,7 @@
     width: 100%;
     height: calc(100dvh - 4.25rem) !important;
     overflow: hidden;
-
+    z-index: 1;
     .list-user-body,
     .no-data {
         width: 100%;
@@ -41,27 +41,32 @@ table {
     width: 2rem;
     margin-right: -2px !important;
 }
-:host ::ng-deep .customswitch .switch.checked{
+
+:host ::ng-deep .customswitch .switch.checked {
     background: #3b82f6 !important;
     border: #3b82f6 !important;
     height: 1.5rem !important;
+
     small {
         margin: 3px !important;
     }
 }
 
-:host ::ng-deep .customswitch .switch{
+:host ::ng-deep .customswitch .switch {
     height: 1.5rem !important;
+
     small {
         margin-left: 4px !important;
         margin-top: 2px !important;
     }
 }
+
 //dialog no border
 ::ng-deep .custom-dialog-container .mdc-dialog__surface {
     border-radius: 0 !important;
     box-shadow: none !important;
 }
+
 .flex-custom {
     display: flex !important;
 }
@@ -73,8 +78,9 @@ table {
 ::-ms-input-placeholder {
     color: #94a3b8 !important;
 }
-::ng-deep .mat-mdc-paginator-container{
-    .mdc-icon-button{
+
+::ng-deep .mat-mdc-paginator-container {
+    .mdc-icon-button {
         @apply dark:bg-gray-700 #{'!important'}
     }
 }

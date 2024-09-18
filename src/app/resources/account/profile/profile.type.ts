@@ -1,15 +1,5 @@
 export interface ResponseProfile {
-    statusCode: number;
-    data: {
-        token: string;
-        user: {
-            id: number;
-            name: string;
-            phone: string;
-            email: string;
-            avatar?: string;
-        };
-    };
+    token: string;
     message: string;
 }
 
@@ -21,8 +11,7 @@ export interface ProfileUpdate {
     avatar?: string
 }
 
-export interface PasswordUpdate {
-    current_password: string
-    new_passwrod: string
-    confirm_password: string
+export interface PasswordReq {
+    password: string;
+    confirm_password: string;
 }

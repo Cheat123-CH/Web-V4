@@ -17,7 +17,8 @@
             <div class="flex items-center gap-2">
                 <div
                     class="flex items-center min-w-[26ch] max-w-[26ch] h-10 border border-slate-300  dark:bg-gray-800 rounded-[0.65rem] overflow-hidden">
-                    <button class="min-w-10 max-w-10 h-full pt-1.5 hover:opacity-[0.96] transition-all" (click)="list()">
+                    <button class="min-w-10 max-w-10 h-full pt-1.5 hover:opacity-[0.96] transition-all"
+                        (click)="list()">
                         <mat-icon class="icon-size-6 text-slate-500"
                             svgIcon="heroicons_outline:magnifying-glass"></mat-icon>
                     </button>
@@ -61,25 +62,27 @@
                         <ng-container matColumnDef="profile">
                             <th mat-header-cell *matHeaderCellDef class="w-[55%] text-gray-500"> គោត្តនាម និង នាម </th>
                             <td mat-cell *matCellDef="let element">
-                                <div class="flex" >
+                                <div class="flex">
                                     <div class="p-2 pl-0">
                                         <img class="rounded-full border border-blue-600 min-w-[45px] max-w-[45px] min-h-[45px] max-h-[45px] object-cover"
                                             [src]="fileUrl+element.avatar" alt="avatar">
                                     </div>
                                     <div class="flex flex-col min-h-12 max-h-12 justify-center pl-1 pt-2.5">
-                                        <strong class="text-lg font-medium text-slate-800">{{ element?.name |
-                                            capitalize}}</strong>
+                                        <div class="flex flex-col">
+                                            <strong class="text-lg font-medium text-slate-800">{{ element?.name |
+                                                capitalize}}</strong>
+                                            <span class="text-gray-500">{{ element?.role?.[0]?.role?.name }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
                         </ng-container>
-
                         <ng-container matColumnDef="number">
-                            <th mat-header-cell *matHeaderCellDef class="text-gray-500 w-[200px]" > ទំនាក់ទំនង </th>
-                            <td mat-cell *matCellDef="let element" >
+                            <th mat-header-cell *matHeaderCellDef class="text-gray-500 w-[200px]"> ទំនាក់ទំនង </th>
+                            <td mat-cell *matCellDef="let element">
                                 <div class="flex flex-col text-gray-500">
-                                    <span >{{ element?.phone }} </span>
-                                    <span >{{ element?.email }} </span>
+                                    <span>{{ element?.phone }} </span>
+                                    <span>{{ element?.email }} </span>
                                 </div>
                             </td>
                         </ng-container>
@@ -106,18 +109,17 @@
                                     <mat-icon class="icon-size-6" svgIcon="mat_outline:more_vert"></mat-icon>
                                 </button>
                                 <mat-menu #menu="matMenu">
-                                    <button mat-menu-item (click)="view(element.id)">
-                                        <mat-icon class="icon-size-5" svgIcon="heroicons_outline:eye"></mat-icon>
+                                    <button mat-menu-item (click)="view(element)">
+                                        <mat-icon class="icon-size-6" svgIcon="heroicons_outline:eye"></mat-icon>
                                         <span class="text-lg">មើល</span>
                                     </button>
                                     <button mat-menu-item (click)="changPassword(element.id)">
-                                        <mat-icon class="icon-size-5" style="rotate: 220deg;"
-                                            svgIcon="heroicons_outline:key"></mat-icon>
+                                        <mat-icon class="icon-size-6" svgIcon="mdi:key-outline"></mat-icon>
                                         <span class="text-lg">ផ្លាស់ប្តូរពាក្យសំងាត់</span>
                                     </button>
                                     <button mat-menu-item (click)="onDelete(element)">
-                                        <mat-icon class="icon-size-5 text-red-400"
-                                            svgIcon="mat_solid:delete_outline"></mat-icon>
+                                        <mat-icon class="icon-size-6 text-red-400"
+                                            svgIcon="mdi:trash-can-outline"></mat-icon>
                                         <span class="text-lg text-red-400">លុប</span>
                                     </button>
                                 </mat-menu>

@@ -1,11 +1,11 @@
 export interface List {
-    data: User[],
+    data: User[];
     pagination: {
-        currentPage: number,
-        perPage: number,
-        totalItems: number,
-        totalPages: number
-    }
+        currentPage: number;
+        perPage: number;
+        totalItems: number;
+        totalPages: number;
+    };
 }
 
 export interface Role {
@@ -15,6 +15,7 @@ export interface Role {
 
 export interface UserRole {
     id: number;
+    role_id: number; // Added role_id as in your JSON data
     role: Role;
 }
 
@@ -27,75 +28,37 @@ export interface User {
     is_active: boolean;
     created_at: Date;
     updated_at?: Date;
-    roles: UserRole[];
+    role: UserRole[]; // Use role instead of roles to match your JSON
 }
 
-
-// interface ParentInterface {
-//     id: number,
-//     kh_name: string,
-//     en_name: string,
-//     abbre?: string
-// }
-
-export interface RequestUser {
-    name: string,
-    phone: string,
-    email: string,
-    sex_id: number,
-    role_ids: number,
-    password: string,
-    avatar: string,
+export interface RequestCreateUser {
+    name: string;
+    phone: string;
+    email: string;
+    role_ids: number[];
+    password: string;
+    avatar: string;
 }
 
 export interface ResponseUser {
-    statusCode: string,
-    data: User,
-    message: string
+    data: User;
+    message: string;
 }
 
-export interface RequestPutUser {
-    name: string,
-    phone: string,
-    email: string,
-    sex_id: number,
-    role_ids: number,
-    avatar?: string,
-    roles : { id: number, name: string },
+export interface RequestUserUpdate {
+    name: string;
+    phone: string;
+    email: string;
+    role_ids: number[];
+    avatar?: string;
 }
 
-export interface ReqPutPassword {
-    newPassword: string,
-    newConfirmPassword: string
+export interface PasswordReq {
+    password: string;
+    confirm_password: string;
 }
 
 export interface ResPutPassword {
-    statusCode: number,
-    message: string
-}
-
-export interface OrgSetup {
-    id: number;
-    kh_name: string;
-    en_name: string;
-    abbre: string;
-    organization_id: number;
-    representation_id: number;
-    icon: string;
-    created_at: Date;
-    updated_at: Date;
-}
-export interface TitleSetup {
-    id: number;
-    name: string;
-    abbre: string;
-    created_at: Date;
-    updated_at: Date;
-}
-export interface RoleSetup {
-    id: number;
-    kh_name: string;
-    en_name: string;
-    created_at: Date;
-    updated_at: Date;
+    statusCode: number;
+    message: string;
 }

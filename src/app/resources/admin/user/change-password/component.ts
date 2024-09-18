@@ -1,7 +1,7 @@
 // ================================================================>> Core Library (Angular)
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
 // ================================================================>> Third Party Library (material)
@@ -13,11 +13,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // ================================================================>> Custom Library (Application-specific)
 import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-import { ProfileService } from '../profile.service';
-import { PasswordReq } from 'app/resources/admin/user/interface';
-import { MatDialogRef } from '@angular/material/dialog';
+import { PasswordReq } from '../interface';
+import { UserService } from '../service';
 
 @Component({
     selector: 'profile-change-password',
@@ -34,16 +34,18 @@ import { MatDialogRef } from '@angular/material/dialog';
     ]
 })
 
-export class ChangePasswordComponent implements OnInit {
+export class ChangePasswordUserComponent implements OnInit {
 
     passwordForm: UntypedFormGroup;
     saving: boolean = false;
 
     constructor(
-        private _dialogRef: MatDialogRef<ChangePasswordComponent>,
+        @Inject(MAT_DIALOG_DATA) public id: number,
+        private _service: UserService,
         private formBuilder: UntypedFormBuilder,
         private snackBarService: SnackbarService,
-        private profileService: ProfileService
+        private dialogRef: MatDialogRef<ChangePasswordUserComponent>
+
     ) { }
 
     ngOnInit(): void {
@@ -59,7 +61,6 @@ export class ChangePasswordComponent implements OnInit {
             confirm_password: [null, [Validators.required]],
         }, { validator: passwordMatchValidator }); // Add custom validator
     }
-
     submit(): void {
         if (this.passwordForm.invalid) {
             return;
@@ -71,10 +72,10 @@ export class ChangePasswordComponent implements OnInit {
             confirm_password: this.passwordForm.value.confirm_password
         };
 
-        this.profileService.updatePassword(body).subscribe({
+        this._service.updatePassword(this.id, body).subscribe({
             next: response => {
                 this.passwordForm.enable();
-                this._dialogRef.close()
+                this.dialogRef.close()
                 this.snackBarService.openSnackBar(response.message, GlobalConstants.success);
             },
             error: (err: HttpErrorResponse) => {
@@ -90,6 +91,7 @@ export class ChangePasswordComponent implements OnInit {
         });
     }
 }
+// Custom validator function to check if passwords match
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const newPassword = control.get('new_password')?.value;
     const confirmPassword = control.get('confirm_password')?.value;

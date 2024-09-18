@@ -1,7 +1,7 @@
 // ================================================================================>> Core Library
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, inject } from '@angular/core';
 
 // ================================================================================>> Thrid Party Library
 import { MatButtonModule } from '@angular/material/button';
@@ -28,9 +28,11 @@ import { CapitalizePipe } from 'helper/pipes/capitalize.pipe';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-import { SharedCreateUserComponent } from '../create/component';
-import { List, User } from '../interface';
+import { ChangePasswordUserComponent } from '../change-password/component';
+import { CreateUserComponent } from '../create/component';
+import { List, ResponseUser, User } from '../interface';
 import { UserService } from '../service';
+import { ViewUserComponent } from '../view/component';
 import { SkeletonComponent } from './skeleton';
 @Component({
     selector: 'shared-list-user',
@@ -70,13 +72,22 @@ export class UserComponent implements OnInit, OnDestroy {
     page: number = 1;
     key: string = '';
     isLoading: boolean = false;
-    copiedStatus: { [key: string]: boolean } = {};
-
+    roles: { id: number; name: string }[] = [];
     constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef,) { }
     ngOnInit(): void {
         this.list()
+        this._setUp()
     }
 
+    _setUp(): void {
+        this.userService.setup().subscribe({
+            next: (response) => {
+                this.roles = response.roles;
+            },
+            error: (err) => {
+            }
+        });
+    }
     list(_page: number = 1, _page_size: number = 10): void {
         const params: { page: number, page_size: number, key?: string } = {
             page: _page,
@@ -89,9 +100,7 @@ export class UserComponent implements OnInit, OnDestroy {
         this.isLoading = true;
         this.userService.list(params).subscribe({
             next: res => {
-                console.log(res)
                 this.dataSource.data = res.data ?? [];
-                console.log(this.dataSource.data)
                 this.total = res.pagination.totalItems;
                 this.limit = res.pagination.perPage;
                 this.page = res.pagination.currentPage;
@@ -103,9 +112,11 @@ export class UserComponent implements OnInit, OnDestroy {
             }
         });
     }
+
+    ResponseData = new EventEmitter<ResponseUser>();
     create(): void {
         const dialogConfig = new MatDialogConfig();
-        // dialogConfig.data = this.labels.find((v: { id: number, name: string }) => v.name == this.filterType);
+        dialogConfig.data = this.roles;
         dialogConfig.width = "550px";
         dialogConfig.position = { right: '0px' };
         dialogConfig.height = '100dvh';
@@ -113,37 +124,40 @@ export class UserComponent implements OnInit, OnDestroy {
 
         dialogConfig.autoFocus = false;
         dialogConfig.autoFocus = false;
-        const dialogRef = this.matDialog.open(SharedCreateUserComponent, dialogConfig);
-        dialogRef.afterClosed().subscribe(() => {
-            this.list();  // Refresh data when the dialog is closed
+        const dialogRef = this.matDialog.open(CreateUserComponent, dialogConfig);
+        dialogRef.afterClosed().subscribe((user: User | null) => {
+            this.list();
         });
     }
-    // view(id): void {
-    //     const dialogConfig = new MatDialogConfig();
-    //     dialogConfig.data = {id};
-    //     dialogConfig.autoFocus = false;
-    //     dialogConfig.position = { right: '0px' };
-    //     dialogConfig.height = '100dvh';
-    //     dialogConfig.width = '100dvw';
-    //     dialogConfig.maxWidth = '550px';
-    //     dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-    //     dialogConfig.enterAnimationDuration = '0s';
-    //     const dialogRef = this.matDialog.open(SharedViewUserComponent, dialogConfig);
-    // }
-    // changPassword(id: number) {
-    //     const dialogConfig = new MatDialogConfig();
-    //     dialogConfig.autoFocus = false;
-    //     dialogConfig.position = { right: '0px' };
-    //     dialogConfig.height = '100dvh';
-    //     dialogConfig.width = '100dvw';
-    //     dialogConfig.maxWidth = '550px';
-    //     dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-    //     dialogConfig.enterAnimationDuration = '0s';
-    //     dialogConfig.data = id
-    //     const dialogRef = this.matDialog.open(ChangePasswordComponentForManager, dialogConfig);
+    view(element: User): void {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.data = { element, roles: this.roles }; // Pass both user and roles
+        dialogConfig.autoFocus = false;
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
+        const dialogRef = this.matDialog.open(ViewUserComponent, dialogConfig);
+        dialogRef.afterClosed().subscribe((user: User | null) => {
+            this.list();
+        });
+    }
+    changPassword(id: number) {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.autoFocus = false;
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
+        dialogConfig.data = id
+        const dialogRef = this.matDialog.open(ChangePasswordUserComponent, dialogConfig);
 
-    //     this.cdr.detectChanges();
-    // }
+        this.cdr.detectChanges();
+    }
     onPageChanged(event: PageEvent): void {
         if (event && event.pageSize) {
             this.limit = event.pageSize;
@@ -152,10 +166,10 @@ export class UserComponent implements OnInit, OnDestroy {
         }
     }
 
-    onDelete(user: User): void {
+    onDelete(element: User): void {
         // Build the config form
         const configAction: HelperConfirmationConfig = {
-            title: `Remove <strong> ${user.name} </strong>`,
+            title: `Remove <strong> ${element.name} </strong>`,
             message: 'Are you sure you want to remove this user permanently? <span class="font-medium">This action cannot be undone!</span>',
             icon: ({
                 show: true,
@@ -181,9 +195,9 @@ export class UserComponent implements OnInit, OnDestroy {
         // Subscribe to afterClosed from the dialog reference
         dialogRef.afterClosed().subscribe((result: string) => {
             if (result && typeof result === 'string' && result === 'confirmed') {
-                this.userService.delete(user.id).subscribe({
+                this.userService.delete(element.id).subscribe({
                     next: (response: { statusCode: number, message: string }) => {
-                        this.dataSource.data = this.dataSource.data.filter((v: User) => v.id != user.id);
+                        this.dataSource.data = this.dataSource.data.filter((v: User) => v.id != element.id);
                         this.snackBarService.openSnackBar(response.message, GlobalConstants.success);
                     },
                     error: (err: HttpErrorResponse) => {
@@ -200,8 +214,10 @@ export class UserComponent implements OnInit, OnDestroy {
         const body = {
             is_active: status ? true : false
         };
+        console.log(body)
         this.userService.updateStatus(user.id, body).subscribe({
             next: (response) => {
+                this.cdr.detectChanges();
                 this.snackBarService.openSnackBar(response.message, GlobalConstants.success);
             },
             error: (err) => {

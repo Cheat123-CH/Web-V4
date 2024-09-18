@@ -11,7 +11,7 @@ import { BehaviorSubject, Observable, catchError, delayWhen, timer } from 'rxjs'
 import { env } from 'envs/env';
 
 // Local
-import { List, RequestPutUser, RequestUser, ResponseUser, User } from './interface';
+import { List, PasswordReq, RequestCreateUser, RequestUserUpdate, ResponseUser } from './interface';
 
 @Injectable({
     providedIn: 'root',
@@ -34,6 +34,9 @@ export class UserService {
         return this._items.asObservable();
     }
 
+    setup(): Observable<{ roles: { id: number; name: string }[] }> {
+        return this.httpClient.get<{ roles: { id: number; name: string }[] }>(`${env.API_BASE_URL}/admin/users/setup`);
+    }
     list(params?: { page: number, page_size: number, key?: string }): Observable<List> {
         const requestStartTime = Date.now();
         return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/users`, { params: params }).pipe(
@@ -56,29 +59,32 @@ export class UserService {
         );
     }
 
-    view1(id: number): Observable<{ data: User }> {
-        return this.httpClient.get<{ data: User }>(this.url + '/admin/users/view/' + id, this.httpOptions);
-    }
     view(id: number): Observable<any> {
-        return this.httpClient.get<any>(`${env.API_BASE_URL}/admin/users/view/${id}`);
-    }
-    create(body: RequestUser): Observable<ResponseUser> {
-        return this.httpClient.post<ResponseUser>(this.url + '/admin/users', body, this.httpOptions);
+        return this.httpClient.get<any>(`${env.API_BASE_URL}/admin/users/${id}`);
     }
 
-    update(id: number = 0, body: RequestPutUser): Observable<{ statusCode: number, data: User, message: string }> {
-        return this.httpClient.patch<{ statusCode: number, data: User, message: string }>(this.url + '/admin/users/' + id, body, this.httpOptions);
+    create(body: RequestCreateUser): Observable<ResponseUser> {
+        return this.httpClient.post<ResponseUser>(`${env.API_BASE_URL}/admin/users`, body, this.httpOptions);
     }
 
-    delete(id: number = 0): any {
-        return this.httpClient.delete(this.url + '/admin/users/' + id, this.httpOptions);
+    update(id: number, body: RequestUserUpdate): Observable<ResponseUser> {
+        return this.httpClient.put<ResponseUser>(
+            `${env.API_BASE_URL}/admin/users/${id}`,
+            body,
+            this.httpOptions
+        );
+    }
+
+
+    delete(id: number): any {
+        return this.httpClient.delete(`${env.API_BASE_URL}/admin/users/${id}`, this.httpOptions);
     }
 
     updateStatus(id: number = 0, body: { is_active: boolean }): Observable<{ statusCode: number, message: string }> {
         return this.httpClient.put<{ statusCode: number, message: string }>(`${this.url}/admin/users/status/${id}`, body, this.httpOptions);
     }
 
-    updatePassword(body: any): Observable<any> {
-        return this.httpClient.put(`${env.API_BASE_URL}/general-manager/administrators/update-password`, body);
+    updatePassword(id: number, body: PasswordReq): Observable<any> {
+        return this.httpClient.put(`${env.API_BASE_URL}/admin/users/update-password/${id}`, body);
     }
 }

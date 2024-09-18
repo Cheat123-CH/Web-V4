@@ -1,9 +1,8 @@
-import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { env } from 'envs/env';
-import { Observable } from 'rxjs';
-import { PasswordUpdate, ProfileUpdate, ResponseProfile } from './profile.type';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { PasswordReq, ProfileUpdate, ResponseProfile } from './profile.type';
 
 @Injectable({
     providedIn: 'root',
@@ -23,8 +22,8 @@ export class ProfileService {
     }
 
     // Update password endpoint
-    password(body: PasswordUpdate): Observable<{ statusCode: number, message: string }> {
-        return this.http.put<{ statusCode: number, message: string }>(`${this.baseUrl}/api/account/profile/pwd`, body, this.httpOptions);
+    updatePassword(body: PasswordReq): Observable<{ message: string }> {
+        return this.http.put<{ message: string }>(`${this.baseUrl}/account/profile/update-password`, body, this.httpOptions);
     }
 
     // Share variable
