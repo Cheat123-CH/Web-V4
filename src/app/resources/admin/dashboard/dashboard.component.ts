@@ -22,6 +22,8 @@ import GlobalConstants from 'helper/shared/constants';
 import { UiSwitchModule } from 'ngx-ui-switch';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { BarChartComponent } from './bar-chart';
+import { CicleChartComponent } from './cicle-chart';
 import { DashbordService } from './dashboards.service';
 import { CashierData, DashboardResponse, DataCashierResponse, StataticData } from './interface';
 
@@ -48,6 +50,8 @@ import { CashierData, DashboardResponse, DataCashierResponse, StataticData } fro
         MatSelectModule,
         MatInputModule,
         ReactiveFormsModule,
+        BarChartComponent,
+        CicleChartComponent
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
