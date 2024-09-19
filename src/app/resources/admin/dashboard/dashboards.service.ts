@@ -31,22 +31,38 @@ export class DashbordService {
         return this._httpClient.get<DashboardResponse>(`${env.API_BASE_URL}/admin/dashboard`, { params });
     }
     getCashier(
-        today?: string,
-        yesterday?: string,
-        thisWeek?: string,
-        thisMonth?: string
+        year?: string,
+        week?: string
     ): Observable<DataCashierResponse> {
         // Construct HttpParams
         let params = new HttpParams();
-        if (today) params = params.set('today', today);
-        if (yesterday) params = params.set('yesterday', yesterday);
-        if (thisWeek) params = params.set('thisWeek', thisWeek);
-        if (thisMonth) params = params.set('thisMonth', thisMonth);
+        if (year) params = params.set('year', year);
+        if (week) params = params.set('week', week);
 
         // Make the HTTP GET request with HttpParams
         return this._httpClient.get<DataCashierResponse>(`${env.API_BASE_URL}/admin/dashboard/cashier`, { params });
     }
 
+    getProductType(
+        year?: string,
+        week?: string
+    ): Observable<any> {
+        // Construct HttpParams
+        let params = new HttpParams();
+        if (year) params = params.set('year', year);
+        if (week) params = params.set('week', week);
+
+        // Make the HTTP GET request with HttpParams
+        return this._httpClient.get<any>(`${env.API_BASE_URL}/admin/dashboard/product-type`, { params });
+    }
+
+    getDataSale(year?: string, week?: string): Observable<any> {
+        let params = new HttpParams();
+        if (year) params = params.set('year', year);
+        if (week) params = params.set('week', week);
+
+        return this._httpClient.get<any>(`${env.API_BASE_URL}/admin/dashboard/data-sale`, { params });
+    }
 
 }
 

@@ -23,6 +23,9 @@
                     alt="Profile Image">
             </div>
 
+            <div class="flex flex-row justify-center gap-2 max-w-50">
+                <span class="text-gray-700 text-3xl">{{user?.name}}</span>
+            </div>
 
             <div class="grid grid-cols-1 gap-6 md:grid-cols-3">
 
@@ -38,7 +41,7 @@
 
                 <div class="flex flex-row justify-center gap-2 max-w-50">
                     <mat-icon svgIcon="mdi:calendar-blank-outline"></mat-icon>
-                    <span class="text-gray-500">Jan 14, 2024</span>
+                    <span class="text-gray-500">{{ user?.created_at | date: 'dd LLL YYY' }}</span>
                 </div>
 
             </div>

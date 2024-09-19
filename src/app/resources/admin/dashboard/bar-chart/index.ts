@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, Sim
 import { MatIconModule } from '@angular/material/icon';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
+import { DashbordService } from '../dashboards.service'; // Import your service
 
 @Component({
     selector: 'sup-bar-chart',
@@ -15,38 +16,69 @@ export class BarChartComponent implements OnInit, OnChanges {
     @Input() dateForChart_I: string | null = null;
     @ViewChild("chartContainer1", { read: ElementRef }) chartContainer!: ElementRef;
     chartOptions: Partial<ApexOptions> = {};
-    private defaultDate: string = ''; // Set default date here if needed
+    private defaultDate: string = ''; // Set default date if needed
 
     constructor(
         private _cdr: ChangeDetectorRef,
-        private _snackBarService: SnackbarService
+        private _snackBarService: SnackbarService,
+        private _dashboardService: DashbordService // Inject the service
     ) { }
 
     public data: any | undefined;
     public year: string = '';
 
+    // English to Khmer day name mapping
+    private dayMapping: { [key: string]: string } = {
+        'Monday': 'ចន្ទ',
+        'Tuesday': 'អង្គារ',
+        'Wednesday': 'ពុធ',
+        'Thursday': 'ព្រហស្បតិ៍',
+        'Friday': 'សុក្រ',
+        'Saturday': 'សៅរ៍',
+        'Sunday': 'អាទិត្យ'
+    };
+
     ngOnInit(): void {
         // Initialize with default or initial date
         this.year = this.dateForChart_I || this.defaultDate || '2023';
-        this.fetchData(); // Call fetchData during initialization
+        this.fetchData(); // Fetch data during initialization
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['dateForChart_I']) {
             if (!changes['dateForChart_I'].isFirstChange()) {
                 this.year = changes['dateForChart_I'].currentValue || this.defaultDate;
-                this.fetchData(); // Fetch data with updated date
+                this.fetchData(); // Fetch data when the input changes
             }
         }
     }
 
-    private fetchData(year?: string): void {
-        // Simulated mock data for testing purposes (7 days of the week)
-        this.data = {
-            n_of_dat_ion_week: [10, 15, 30, 20, 25, 35, 18] // Example data for 7 days (Monday to Sunday)
-        };
+    private fetchData(year?: string, week?: string): void {
+        this._dashboardService.getDataSale(year, week)
+            .subscribe({
+                next: (response: any) => {
+                    console.log(response);
+                    // Safely check if labels and data exist, otherwise initialize them as empty arrays
+                    let labels = response?.labels || [];
+                    let data = response?.data || [];
 
-        const { n_of_dat_ion_week } = this.data;
+                    // Map English labels to Khmer labels
+                    labels = labels.map((label: string) => this.dayMapping[label] || label);
+
+                    if (labels.length && data.length) {
+                        this.updateChart(labels, data);
+                    } else {
+                        this._snackBarService.openSnackBar('No data available', 'Info');
+                    }
+                },
+                error: (err) => {
+                    const errorMessage = err.error?.message || 'Error fetching data';
+                    this._snackBarService.openSnackBar(errorMessage, 'Error');
+                }
+            });
+    }
+
+    private updateChart(labels: string[], data: number[]): void {
         this.chartOptions = {
             chart: {
                 height: 300,
@@ -65,7 +97,7 @@ export class BarChartComponent implements OnInit, OnChanges {
                 width: 0
             },
             series: [
-                { name: "អតិថិជន", data: n_of_dat_ion_week, color: '#3D5AFE' } // Only one bar series for customers
+                { name: "ចំនួនលក់", data: data, color: '#3D5AFE' } // Ensure data is passed correctly here
             ],
             plotOptions: {
                 bar: { columnWidth: "50%" }
@@ -81,14 +113,11 @@ export class BarChartComponent implements OnInit, OnChanges {
                 markers: { width: 16, height: 16, offsetY: 0, radius: 100 }
             },
             xaxis: {
-                // Days of the week in Khmer
-                categories: [
-                    "ចន្ទ", "អង្គារ", "ពុធ", "ព្រហស្បតិ៍", "សុក្រ", "សៅរ៍", "អាទិត្យ"
-                ]
+                categories: labels // Now use the Khmer labels
             },
             yaxis: {
                 min: 0,
-                max: 50,
+                max: Math.max(...data) + 10000, 
                 tickAmount: 5,
                 labels: {
                     formatter: function (value) { return value.toFixed(0); }
@@ -103,7 +132,7 @@ export class BarChartComponent implements OnInit, OnChanges {
             },
         };
 
-        this._cdr.detectChanges();
+        this._cdr.detectChanges(); // Trigger change detection to update the chart
     }
 
     private modifyGridLines(): void {

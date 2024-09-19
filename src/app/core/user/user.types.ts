@@ -4,6 +4,7 @@ export interface User {
     phone: string;
     email: string;
     avatar: string;
+    created_at: Date
     roles: Role[];
 }
 

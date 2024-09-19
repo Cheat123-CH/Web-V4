@@ -165,31 +165,23 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 }
             });
     }
+    
     cashierData: CashierData[]
     getCahsierData(): void {
-        const cacheKey = this.today || this.yesterday || this.thisWeek || this.thisMonth;
-
-        if (this.cache[cacheKey]) {
-            this.stataticData = this.cache[cacheKey];
-            return;
-        }
-
         this.isLoading = true;
-        this._service.getCashier(this.today, this.yesterday, this.thisWeek, this.thisMonth)
+        this._service.getCashier()
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
                 next: (response: DataCashierResponse) => {
                     if (response && response.data) {
                         this.cashierData = response.data;
-                        console.log(this.cashierData)
-                        this.cache[cacheKey] = response.data;
                     }
                     this.isLoading = false;
                     this._changeDetectorRef.markForCheck(); // Trigger UI update
                 },
                 error: (err) => {
-                    const errorMessage = err.error?.message ?? GlobalConstants.genericError;
-                    this._snackBarService.openSnackBar(errorMessage, GlobalConstants.error);
+                    const errorMessage = err.error?.message ?? 'Error fetching cashier data.';
+                    console.error(errorMessage);
                     this.isLoading = false;
                 }
             });

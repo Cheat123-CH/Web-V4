@@ -1,5 +1,4 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -12,12 +11,8 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { SaleService } from 'app/resources/cashier/sale/sale.service';
 import { DetailsService } from 'app/shared/details/details.service';
 import { env } from 'envs/env';
-import FileSaver from 'file-saver';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants from 'helper/shared/constants';
 import { Subject } from 'rxjs';
-import { ProductsDialogComponent } from '../dialog/component';
-import { Data } from '../product.types';
 @Component({
     selector: 'dashboard-gm-fast-view-customer',
     templateUrl: './view.template.html',

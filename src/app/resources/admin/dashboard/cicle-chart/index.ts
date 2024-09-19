@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
+import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
+import { DashbordService } from '../dashboards.service';
 
 @Component({
     selector: 'cicle-chart',
@@ -11,73 +12,71 @@ import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
     imports: [NgApexchartsModule, MatIconModule],
 })
 export class CicleChartComponent implements OnInit {
-    @Input() dateForChart_II: string | null = null;
+    @Input() dateForChart_II: string | null = null; // Accept date input
     @ViewChild("chartContainer2", { read: ElementRef }) chartContainer: ElementRef<HTMLDivElement>;
 
     chartOptions: Partial<ApexOptions> = {};
     public year: string = '';
+    public week: string = ''; // Add week as a filter
     private defaultDate: string = '';
+    public data: any | undefined;
 
     constructor(
         private _cdr: ChangeDetectorRef,
-        private _snackBarService: SnackbarService
+        private _snackBarService: SnackbarService,
+        private _cashierService: DashbordService // Inject your service here
     ) { }
-
-    public data: any | undefined;
 
     ngOnInit(): void {
         this.year = this.dateForChart_II || this.defaultDate;
-        this._dataCustomerByYear();
+        this._fetchProductData(this.year, this.week); // Fetch product data on init with both year and week
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['dateForChart_II']) {
             if (!changes['dateForChart_II'].isFirstChange()) {
                 this.year = changes['dateForChart_II'].currentValue || this.defaultDate;
-                this._dataCustomerByYear();
+                this._fetchProductData(this.year, this.week); // Fetch product data on change
             }
         }
     }
 
-    private _dataCustomerByYear(year?: string): void {
-        // Mock data for the chart
-        this.data = {
-            yearlyGuestCount: 5,  // Example data for Alcohol
-            yearlyCustomerCount: 12,  // Example data for Beverage
-            allCustomerCount: 28,  // Total count for all categories
-            categories: [
-                { name: 'Alcohol', count: 5, date: '18-09-2024' },
-                { name: 'Beverage', count: 12, date: '18-09-2024' },
-                { name: 'Food-Meat', count: 8, date: '18-09-2024' },
-                { name: 'Snacks', count: 3, date: '18-09-2024' }
-            ]
-        };
+    private _fetchProductData(year?: string, week?: string): void {
+        // Pass year and week to the service
+        this._cashierService.getProductType(year, week)
+            .subscribe({
+                next: (response: any) => {
+                    if (response && response.labels && response.data) {
+                        this._updateChart(response.labels, response.data);
+                    }
+                },
+                error: (err) => {
+                    const errorMessage = err.error?.message || 'Error fetching product data';
+                    this._snackBarService.openSnackBar(errorMessage, 'Error');
+                }
+            });
+    }
 
-        const { yearlyGuestCount, yearlyCustomerCount, allCustomerCount } = this.data;
-
+    private _updateChart(labels: string[], data: number[]): void {
+        const totalSum = data.map(Number).reduce((a, b) => a + b, 0);
         this.chartOptions = {
             chart: {
                 type: 'donut',
                 height: 400,
             },
-            series: [5, 12, 8, 3], // Mock data for each category
-            labels: [
-                `Alcohol (${this.data.categories[0].count})`,
-                `Beverage (${this.data.categories[1].count})`,
-                `Food-Meat (${this.data.categories[2].count})`,
-                `Snacks (${this.data.categories[3].count})`
-            ],
+            series: data.map(Number), // Use the data from the API
+            labels: labels.map((label, index) => `${label} (${data[index]})`), // Format the labels with data
             legend: {
                 position: 'bottom',
                 horizontalAlign: 'center',
                 offsetY: -140,
-                fontSize: '14px', // Adjusted font size for legend
-                fontFamily: 'Arial, sans-serif', // Customized font for legend
+                fontSize: '14px',
+                fontFamily: 'Arial, sans-serif',
                 labels: {
                     colors: '#000', // Change legend text color
                 }
             },
-            colors: ['#FF8F00', '#3D5AFE', '#00C853', '#FFC107'], // Colors for the categories
+            colors: ['#FF8F00', '#3D5AFE', '#00C853', '#FFC107'], // Customize the colors as needed
             responsive: [
                 {
                     breakpoint: 480,
@@ -101,31 +100,31 @@ export class CicleChartComponent implements OnInit {
                             total: {
                                 show: true,
                                 label: 'Total',
-                                fontSize: '18px', // Customize total label font size
-                                fontFamily: 'Arial, sans-serif', // Customize total label font family
+                                fontSize: '18px',
+                                fontFamily: 'Arial, sans-serif',
                                 color: '#373d3f',
-                                formatter: () => `${allCustomerCount}` // Only display total count, no percentage
+                                formatter: () => `${totalSum}` // Display total sum of data
                             }
                         }
                     }
                 }
             },
             tooltip: {
-                enabled: false, // Disable tooltips to avoid showing percentages
+                enabled: false,
             },
             dataLabels: {
-                enabled: true, // Enable data labels
+                enabled: true,
                 formatter: function (val, opts) {
-                    return opts.w.config.series[opts.seriesIndex]; // Show only the raw values (counts), not percentages
+                    return opts.w.config.series[opts.seriesIndex]; // Show raw values
                 },
                 style: {
-                    fontSize: '14px', // Customize font size of the data labels
-                    fontFamily: 'Arial, sans-serif', // Customize font family of the data labels
-                    colors: ['#000'] // Customize font color of the data labels
+                    fontSize: '14px',
+                    fontFamily: 'Arial, sans-serif',
+                    colors: ['#000']
                 }
             }
         };
 
-        this._cdr.detectChanges();
+        this._cdr.detectChanges(); // Trigger change detection to update the chart
     }
 }

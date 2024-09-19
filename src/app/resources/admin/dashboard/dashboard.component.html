@@ -136,7 +136,7 @@
                         <div class="sm-form-field-appearance-outline height-header">
                             <mat-form-field appearance="outline" class="w-full">
                                 <mat-label>ជ្រើសរើសកាលបរិច្ឆេទ</mat-label>
-                                <mat-select formControlName="date_type" (selectionChange)="dateTypeHandler()">
+                                <mat-select>
                                     <mat-option *ngFor="let item of dateType" [value]="item.id">
                                         <span>{{item.name}}</span>
                                     </mat-option>
@@ -208,7 +208,7 @@
                         <div class="sm-form-field-appearance-outline height-header">
                             <mat-form-field appearance="outline" class="w-full">
                                 <mat-label>ជ្រើសរើសកាលបរិច្ឆេទ</mat-label>
-                                <mat-select formControlName="date_type" (selectionChange)="dateTypeHandler()">
+                                <mat-select>
                                     <mat-option *ngFor="let item of dateType" [value]="item.id">
                                         <span>{{item.name}}</span>
                                     </mat-option>
@@ -224,7 +224,7 @@
                 </form>
                 <div>
                     <div class="w-full bg-transparent dark:bg-opacity-5 pb-1 mt-10">
-                        <cicle-chart ></cicle-chart>
+                        <cicle-chart></cicle-chart>
                     </div>
                 </div>
             </div>
@@ -239,7 +239,7 @@
                         <div class="sm-form-field-appearance-outline height-header">
                             <mat-form-field appearance="outline" class="w-full">
                                 <mat-label>ជ្រើសរើសកាលបរិច្ឆេទ</mat-label>
-                                <mat-select formControlName="date_type" (selectionChange)="dateTypeHandler()">
+                                <mat-select>
                                     <mat-option *ngFor="let item of dateType" [value]="item.id">
                                         <span>{{item.name}}</span>
                                     </mat-option>
