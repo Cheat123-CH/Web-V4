@@ -117,7 +117,7 @@ export class BarChartComponent implements OnInit, OnChanges {
             },
             yaxis: {
                 min: 0,
-                max: Math.max(...data) + 10000, 
+                max: Math.max(...data) + 10000,
                 tickAmount: 5,
                 labels: {
                     formatter: function (value) { return value.toFixed(0); }
