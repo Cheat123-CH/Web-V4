@@ -3,7 +3,6 @@ export interface ResponseProfile {
     message: string;
 }
 
-
 export interface ProfileUpdate {
     name: string
     phone: string

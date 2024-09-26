@@ -15,8 +15,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 
-// Decoder
-
 // ================================================================================>> Custom Library
 // Core
 import { UserService } from 'app/core/user/user.service';
@@ -59,9 +57,6 @@ export class UpdateProfileDialogComponent {
         private readonly _formBuilder: UntypedFormBuilder,
         private readonly _accountService: ProfileService,
         private readonly _snackBarService: SnackbarService,
-        private readonly _userService: UserService,
-        private _authService: AuthService,
-        private _router: Router
     ) { }
 
     ngOnInit(): void {
@@ -71,7 +66,6 @@ export class UpdateProfileDialogComponent {
         this.ngBuilderForm();
         console.log(this.form);
     }
-
 
     ngBuilderForm(): void {
         this.form = this._formBuilder.group({
@@ -85,6 +79,7 @@ export class UpdateProfileDialogComponent {
     srcChange(base64: string): void {
         this.form.get('avatar').setValue(base64);
     }
+
     submit(): void {
         this.loading = true;
         this.form.disable();
@@ -133,8 +128,6 @@ export class UpdateProfileDialogComponent {
         });
     }
 
-
-
     onFileChange(event: any): void {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
@@ -149,8 +142,6 @@ export class UpdateProfileDialogComponent {
         }
     }
 
-
-    // Add this កែសម្រួលប្រវត្តិរូប method
     close(): void {
         this._dialogRef.close();
         this.opened = false;

@@ -90,6 +90,7 @@ export class ChangePasswordComponent implements OnInit {
         });
     }
 }
+
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const newPassword = control.get('new_password')?.value;
     const confirmPassword = control.get('confirm_password')?.value;

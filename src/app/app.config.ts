@@ -24,6 +24,7 @@ export const appConfig: ApplicationConfig = {
             withInMemoryScrolling({ scrollPositionRestoration: 'enabled' }),
             withHashLocation()
         ),
+        
         provideServiceWorker('ngsw-worker.js', {
             enabled: !isDevMode(),
             registrationStrategy: 'registerWhenStable:30000'

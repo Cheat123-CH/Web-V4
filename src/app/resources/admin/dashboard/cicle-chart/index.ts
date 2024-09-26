@@ -76,7 +76,7 @@ export class CicleChartComponent implements OnInit {
                     colors: '#000', // Change legend text color
                 }
             },
-            colors: ['#FF8F00', '#3D5AFE', '#00C853', '#FFC107'], // Customize the colors as needed
+            colors: ['#81D4FA', '#80DEEA', '#A5D6A7', '#80CBC4', '#B39DDB'], // Customize the colors as needed
             responsive: [
                 {
                     breakpoint: 480,
@@ -110,12 +110,15 @@ export class CicleChartComponent implements OnInit {
                 }
             },
             tooltip: {
-                enabled: false,
+                enabled: true,
+                y: {
+                    formatter: (val) => `${val}`, // Only show raw value, no percentage
+                }
             },
             dataLabels: {
-                enabled: true,
+                enabled: true, // Enable labels, but show raw values only
                 formatter: function (val, opts) {
-                    return opts.w.config.series[opts.seriesIndex]; // Show raw values
+                    return opts.w.config.series[opts.seriesIndex]; // Show only raw values
                 },
                 style: {
                     fontSize: '14px',

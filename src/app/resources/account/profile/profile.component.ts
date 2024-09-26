@@ -50,10 +50,8 @@ export class ProfileComponent implements OnInit {
     ngOnInit(): void {
         // ===>> Get Data from Global User Service
         this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: User) => {
-
             // Data Maping
             this.user = user;
-
             // Mark for check
             this._changeDetectorRef.markForCheck();
         });
@@ -74,6 +72,7 @@ export class ProfileComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
         });
     }
+    
     updatePassword(): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = this.user;

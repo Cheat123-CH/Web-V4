@@ -71,6 +71,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     dateTypeControl = new FormControl('', { updateOn: 'blur' });
     form: FormGroup;
     stataticData: StataticData;
+    cashierData: CashierData[]
     public dateType = [
         { id: 'today', name: 'ថ្ងៃនេះ' },
         { id: 'yesterday', name: 'ម្សិលមិញ' },
@@ -84,7 +85,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _userService: UserService,
-        private _matDialog: MatDialog,
         private _snackBarService: SnackbarService,
         private _service: DashbordService,
     ) { }
@@ -165,8 +165,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 }
             });
     }
-    
-    cashierData: CashierData[]
+
     getCahsierData(): void {
         this.isLoading = true;
         this._service.getCashier()
