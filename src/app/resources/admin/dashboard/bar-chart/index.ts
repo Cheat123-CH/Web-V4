@@ -110,7 +110,7 @@ export class BarChartComponent implements OnInit, OnChanges {
                 offsetY: -5,
                 fontSize: '18px',
                 labels: { colors: '#64748b', useSeriesColors: false },
-                markers: { width: 16, height: 16, offsetY: 0, radius: 100 }
+               // markers: { width: 16, height: 16, offsetY: 0, radius: 100 }
             },
             xaxis: {
                 categories: labels // Now use the Khmer labels
