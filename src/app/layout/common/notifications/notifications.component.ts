@@ -18,8 +18,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
 import { Notification } from 'app/layout/common/notifications/notifications.types';
-import { Subject, takeUntil } from 'rxjs';
-
+import { env } from 'envs/env';
+import { interval, Subject, switchMap, takeUntil } from 'rxjs';
 @Component({
     selector: 'notifications',
     templateUrl: './notifications.component.html',
@@ -41,7 +41,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     @ViewChild('notificationsOrigin') private _notificationsOrigin: MatButton;
     @ViewChild('notificationsPanel')
     private _notificationsPanel: TemplateRef<any>;
-
+    fileUrl: string = env.FILE_BASE_URL;
     notifications: Notification[];
     unreadCount: number = 0;
     private _overlayRef: OverlayRef;
@@ -55,7 +55,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         private _notificationsService: NotificationsService,
         private _overlay: Overlay,
         private _viewContainerRef: ViewContainerRef
-    ) {}
+    ) { }
 
     // -----------------------------------------------------------------------------------------------------
     // @ Lifecycle hooks
@@ -65,9 +65,11 @@ export class NotificationsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        // Subscribe to notification changes
-        this._notificationsService.notifications$
-            .pipe(takeUntil(this._unsubscribeAll))
+        interval(3000)
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                switchMap(() => this._notificationsService.getAll())
+            )
             .subscribe((notifications: Notification[]) => {
                 // Load the notifications
                 this.notifications = notifications;
@@ -75,7 +77,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
                 // Calculate the unread count
                 this._calculateUnreadCount();
 
-                // Mark for check
+                // Mark for check to update the view
                 this._changeDetectorRef.markForCheck();
             });
     }
@@ -137,14 +139,21 @@ export class NotificationsComponent implements OnInit, OnDestroy {
      * Toggle read status of the given notification
      */
     toggleRead(notification: Notification): void {
-        // Toggle the read status
+        // Toggle the read status in the local notification object
         notification.read = !notification.read;
-
-        // Update the notification
         this._notificationsService
             .update(notification.id, notification)
-            .subscribe();
+            .subscribe(
+                (updatedNotification) => {
+                    console.log('Notification updated successfully:', updatedNotification);
+                },
+                (error) => {
+                    console.error('Error updating notification:', error);
+                }
+            );
+
     }
+
 
     /**
      * Delete the given notification
