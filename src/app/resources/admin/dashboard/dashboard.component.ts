@@ -3,7 +3,8 @@ import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatDialog } from '@angular/material/dialog';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -15,7 +16,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
-import { format } from 'date-fns';
+import { format, getISOWeek } from 'date-fns';
 import { env } from 'envs/env';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
@@ -51,7 +52,9 @@ import { CashierData, DashboardResponse, DataCashierResponse, StataticData } fro
         MatInputModule,
         ReactiveFormsModule,
         BarChartComponent,
-        CicleChartComponent
+        CicleChartComponent,
+        MatDatepickerModule,
+        MatNativeDateModule,
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },
@@ -71,7 +74,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     dateTypeControl = new FormControl('', { updateOn: 'blur' });
     form: FormGroup;
     stataticData: StataticData;
-    cashierData: CashierData[]
+    cashierData: CashierData[];
+    selectedDate: Date;
     public dateType = [
         { id: 'today', name: 'ថ្ងៃនេះ' },
         { id: 'yesterday', name: 'ម្សិលមិញ' },
@@ -104,7 +108,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             .subscribe(() => this.dateTypeHandler());
 
         this.getStaticData();
-        this.getCahsierData()
+        this.getCashierData()
     }
     dateTypeHandler(): void {
         const selectedDateType = this.dateTypeControl.value;
@@ -166,9 +170,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
             });
     }
 
-    getCahsierData(): void {
+    getCashierData(): void {
         this.isLoading = true;
-        this._service.getCashier()
+        let year: string | undefined;
+        let week: string | undefined;
+
+        if (this.selectedDate) {
+            year = format(this.selectedDate, 'yyyy');  // Extract year
+            week = getISOWeek(this.selectedDate).toString();  // Extract week
+        }
+
+        this._service.getCashier(year, week)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
                 next: (response: DataCashierResponse) => {
@@ -176,7 +188,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                         this.cashierData = response.data;
                     }
                     this.isLoading = false;
-                    this._changeDetectorRef.markForCheck(); // Trigger UI update
+                    this._changeDetectorRef.markForCheck();  // Trigger UI update
                 },
                 error: (err) => {
                     const errorMessage = err.error?.message ?? 'Error fetching cashier data.';
@@ -186,6 +198,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
             });
     }
 
+    selectedDate3: Date
+    onDateChangeForChart(): void {
+    }
+
+    selectedDate4: Date | null = null;
+    onDateChangeForChart2(event: any): void {
+        console.log("Selected Date 4: ", this.selectedDate4);
+        // Do something with the selected date (this.selectedDate4)
+    }
 
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);

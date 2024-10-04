@@ -1,19 +1,21 @@
-import { ChangeDetectorRef, Component, ElementRef, Input, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { format, getISOWeek } from 'date-fns'; // Import necessary functions for date formatting
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { DashbordService } from '../dashboards.service';
+import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'cicle-chart',
     standalone: true,
     templateUrl: './template.html',
     styleUrls: ['./style.scss'],
-    imports: [NgApexchartsModule, MatIconModule],
+    imports: [NgApexchartsModule, MatIconModule, NgIf],
 })
-export class CicleChartComponent implements OnInit {
-    @Input() dateForChart_II: string | null = null; // Accept date input
-    @ViewChild("chartContainer2", { read: ElementRef }) chartContainer: ElementRef<HTMLDivElement>;
+export class CicleChartComponent implements OnInit, OnChanges {
+    @Input() selectedDate: Date | null = null; // Receive selectedDate from the parent component
+    @ViewChild("chartContainer2", { read: ElementRef, static: false }) chartContainer!: ElementRef<HTMLDivElement>;
 
     chartOptions: Partial<ApexOptions> = {};
     public year: string = '';
@@ -28,16 +30,17 @@ export class CicleChartComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        this.year = this.dateForChart_II || this.defaultDate;
-        this._fetchProductData(this.year, this.week); // Fetch product data on init with both year and week
+        this.year = this.defaultDate || format(new Date(), 'yyyy'); // Use current year if defaultDate is not set
+        this.week = getISOWeek(new Date()).toString(); // Default to current week
+        this._fetchProductData(this.year, this.week); // Fetch product data on init
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['dateForChart_II']) {
-            if (!changes['dateForChart_II'].isFirstChange()) {
-                this.year = changes['dateForChart_II'].currentValue || this.defaultDate;
-                this._fetchProductData(this.year, this.week); // Fetch product data on change
-            }
+        if (changes['selectedDate'] && this.selectedDate) {
+            // Only update if selectedDate is not null
+            this.year = format(this.selectedDate, 'yyyy'); // Extract year from selected date
+            this.week = getISOWeek(this.selectedDate).toString(); // Extract ISO week number from selected date
+            this._fetchProductData(this.year, this.week); // Fetch product data on change with both year and week
         }
     }
 
@@ -48,6 +51,8 @@ export class CicleChartComponent implements OnInit {
                 next: (response: any) => {
                     if (response && response.labels && response.data) {
                         this._updateChart(response.labels, response.data);
+                    } else {
+                        this._snackBarService.openSnackBar('No data available', 'Info');
                     }
                 },
                 error: (err) => {

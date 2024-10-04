@@ -24,6 +24,7 @@ import { ProductType } from '../sale/sale.types';
 import { ItemComponent } from './item/item.component';
 import { OrderService } from './order.service';
 import { Data, Product } from './order.types';
+import { ViewDetailSaleComponent } from 'app/shared/view/view.component';
 interface CartItem {
 
     id: number;
@@ -290,10 +291,14 @@ export class OrderComponent implements OnInit, OnDestroy {
                 // Open a dialog to display order details
                 const dialogConfig = new MatDialogConfig();
                 dialogConfig.data = response.data;
-                dialogConfig.width = "650px";
-                dialogConfig.minHeight = "200px";
                 dialogConfig.autoFocus = false;
-                this.matDialog.open(SharedDetailsComponent, dialogConfig);
+                dialogConfig.position = { right: '0px' };
+                dialogConfig.height = '100dvh';
+                dialogConfig.width = '100dvw';
+                dialogConfig.maxWidth = '550px';
+                dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+                dialogConfig.enterAnimationDuration = '0s';
+                this.matDialog.open(ViewDetailSaleComponent, dialogConfig);
             },
 
             error: (err: HttpErrorResponse) => {

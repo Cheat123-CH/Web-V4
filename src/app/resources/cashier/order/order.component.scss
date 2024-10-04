@@ -10,7 +10,7 @@
 
         .pos-content {
             width: 100%;
-            height: calc(100vh - 7.5rem); /* Match height with body */
+            height: auto; /* Match height with body */
             display: flex;
 
             .list-pos-left {
@@ -27,7 +27,7 @@
             .list-pos-right {
                 min-width: 28rem;
                 max-width: 28rem;
-                height: 100%; /* Ensure the right side also takes full available height */
+                height: auto; /* Ensure the right side also takes full available height */
 
                 .list-pos-right-body {
                     height: calc(100vh - 11rem); /* Same logic for the right content, ensuring it fits the viewport */
@@ -62,4 +62,12 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     border-radius: 0.3rem;
     padding: 0.3rem 0.5rem;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* for Internet Explorer, Edge */
+    scrollbar-width: none;  /* for Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* for Chrome, Safari, and Opera */
 }

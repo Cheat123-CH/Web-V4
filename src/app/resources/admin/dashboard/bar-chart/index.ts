@@ -1,5 +1,7 @@
+import { NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
+import { format, getISOWeek } from 'date-fns'; // Import date-fns for date manipulation
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
 import { DashbordService } from '../dashboards.service'; // Import your service
@@ -9,23 +11,18 @@ import { DashbordService } from '../dashboards.service'; // Import your service
     standalone: true,
     templateUrl: './template.html',
     styleUrls: ['./style.scss'],
-    imports: [NgApexchartsModule, MatIconModule],
+    imports: [NgApexchartsModule, MatIconModule, NgIf],
 })
 export class BarChartComponent implements OnInit, OnChanges {
 
-    @Input() dateForChart_I: string | null = null;
+    @Input() selectedDate: Date | null = null; // Receive selectedDate from the parent component
     @ViewChild("chartContainer1", { read: ElementRef }) chartContainer!: ElementRef;
     chartOptions: Partial<ApexOptions> = {};
     private defaultDate: string = ''; // Set default date if needed
 
-    constructor(
-        private _cdr: ChangeDetectorRef,
-        private _snackBarService: SnackbarService,
-        private _dashboardService: DashbordService // Inject the service
-    ) { }
-
     public data: any | undefined;
     public year: string = '';
+    public week: string = ''; // Store week as a filter
 
     // English to Khmer day name mapping
     private dayMapping: { [key: string]: string } = {
@@ -38,17 +35,25 @@ export class BarChartComponent implements OnInit, OnChanges {
         'Sunday': 'អាទិត្យ'
     };
 
+    constructor(
+        private _cdr: ChangeDetectorRef,
+        private _snackBarService: SnackbarService,
+        private _dashboardService: DashbordService // Inject the service
+    ) { }
+
     ngOnInit(): void {
         // Initialize with default or initial date
-        this.year = this.dateForChart_I || this.defaultDate || '2023';
+        this.year = this.defaultDate;
+        this.week = ''; // No week on init, unless default date is set
         this.fetchData(); // Fetch data during initialization
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['dateForChart_I']) {
-            if (!changes['dateForChart_I'].isFirstChange()) {
-                this.year = changes['dateForChart_I'].currentValue || this.defaultDate;
-                this.fetchData(); // Fetch data when the input changes
+        if (changes['selectedDate']) {
+            if (this.selectedDate) {
+                this.year = format(this.selectedDate, 'yyyy'); // Extract year from selectedDate
+                this.week = getISOWeek(this.selectedDate).toString(); // Extract ISO week from selectedDate
+                this.fetchData(this.year, this.week); // Fetch data based on the new year and week
             }
         }
     }
@@ -57,7 +62,6 @@ export class BarChartComponent implements OnInit, OnChanges {
         this._dashboardService.getDataSale(year, week)
             .subscribe({
                 next: (response: any) => {
-                    console.log(response);
                     // Safely check if labels and data exist, otherwise initialize them as empty arrays
                     let labels = response?.labels || [];
                     let data = response?.data || [];
@@ -109,8 +113,7 @@ export class BarChartComponent implements OnInit, OnChanges {
                 fontWeight: 400,
                 offsetY: -5,
                 fontSize: '18px',
-                labels: { colors: '#64748b', useSeriesColors: false },
-               // markers: { width: 16, height: 16, offsetY: 0, radius: 100 }
+                labels: { colors: '#64748b', useSeriesColors: false }
             },
             xaxis: {
                 categories: labels // Now use the Khmer labels

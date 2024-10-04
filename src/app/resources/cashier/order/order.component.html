@@ -1,4 +1,4 @@
-<div class="pos-section bg-white dark:bg-gray-800 overflow-hidden h-screen">
+<div class="pos-section bg-white dark:bg-gray-800 overflow-hidden h-screen mt-4 mx-4 rounded-tl-lg rounded-tr-lg">
     <div class="min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pl-5 pr-2.5 border-b">
         <div class="flex flex-1 items-center font-medium">
             <div class="flex items-center">
@@ -26,23 +26,25 @@
                 <div class="md:text-3xl font-semibold mt-4 mb-4">ប្រភេទផលិតផល</div>
 
                 <!-- Tab Headers Custom Styling with Tailwind CSS -->
-                <div class="flex flex-wrap gap-4 mb-4">
-                    <div *ngFor="let item of data; trackBy: trackById" (click)="selectTab(item)"
-                        [class.bg-blue-500]="selectedTab?.id === item?.id"
-                        [class.text-white]="selectedTab?.id === item?.id"
-                        [class.border-blue-500]="selectedTab?.id === item?.id"
-                        [class.bg-gray-100]="selectedTab?.id !== item?.id"
-                        [class.text-gray-600]="selectedTab?.id !== item?.id"
-                        [class.border-gray-200]="selectedTab?.id !== item?.id"
-                        [class.bg-white]="selectedTab?.id !== item?.id"
-                        class="tab-item cursor-pointer px-6 py-2 rounded-lg border-2 text-center dark:bg-gray-800">
-                        <div class="flex flex-col">
-                            <span class="text-sm sm:text-base md:text-lg">{{item?.name}}</span>
-                            <span class="text-sm sm:text-base md:text-md">{{item?.products.length}} Items</span>
+                <div class="overflow-x-auto scrollbar-hide whitespace-nowrap mb-4">
+                    <div class="flex gap-1">
+                        <div *ngFor="let item of data; trackBy: trackById"
+                            (click)="selectTab(item)"
+                            [class.bg-blue-500]="selectedTab?.id === item?.id"
+                            [class.text-white]="selectedTab?.id === item?.id"
+                            [class.border-blue-500]="selectedTab?.id === item?.id"
+                            [class.bg-gray-100]="selectedTab?.id !== item?.id"
+                            [class.text-gray-600]="selectedTab?.id !== item?.id"
+                            [class.border-gray-200]="selectedTab?.id !== item?.id"
+                            [class.bg-white]="selectedTab?.id !== item?.id"
+                            class="tab-item cursor-pointer px-6 py-2 rounded-lg border-2 text-center dark:bg-gray-800 inline-block">
+                            <div class="flex flex-col">
+                                <span class="text-sm sm:text-base md:text-lg">{{item?.name}}</span>
+                                <span class="text-sm sm:text-base md:text-md">{{item?.products.length}} Items</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-
 
                 <div class="md:text-3xl font-semibold mt-4">ផលិតផល</div>
                 <!-- Mat Tab Group (Hidden, still functional) -->
