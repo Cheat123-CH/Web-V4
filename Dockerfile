@@ -8,6 +8,7 @@ ARG FILE_BASE_URL
 WORKDIR /usr/app
 
 COPY ./package.json /usr/app/package.json
+COPY ./package-lock.json /usr/app/package-lock.json
 
 # Install Dependencies
 RUN npm install --legacy-peer-deps
