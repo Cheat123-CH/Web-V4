@@ -16,7 +16,6 @@ import { Data, List } from './product.types';
 export class ProductService {
 
     constructor(private httpClient: HttpClient) { };
-
     // Method to fetch initial setup data for products
     setup(): Observable<{ data: { id: number, name: string }[] }> {
         return this.httpClient.get<{ data: { id: number, name: string }[] }>(`${env.API_BASE_URL}/admin/products/setup`);

@@ -61,6 +61,7 @@ export class ChangePasswordUserComponent implements OnInit {
             confirm_password: [null, [Validators.required]],
         }, { validator: passwordMatchValidator }); // Add custom validator
     }
+
     submit(): void {
         if (this.passwordForm.invalid) {
             return;
@@ -91,6 +92,7 @@ export class ChangePasswordUserComponent implements OnInit {
         });
     }
 }
+
 // Custom validator function to check if passwords match
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const newPassword = control.get('new_password')?.value;

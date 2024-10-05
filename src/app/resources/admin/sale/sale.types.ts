@@ -11,7 +11,6 @@ export interface List {
 
 // Interface representing data for a receipt
 export interface Data {
-
     id: number,
     receipt_number: number,
     total_price: number,

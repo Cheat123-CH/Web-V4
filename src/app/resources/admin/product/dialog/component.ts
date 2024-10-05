@@ -5,7 +5,6 @@ import { Component, EventEmitter, Inject, OnDestroy, OnInit } from '@angular/cor
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-
 // ================================================================================>> Thrid Party Library
 // Material
 import { HttpErrorResponse } from '@angular/common/http';
@@ -76,7 +75,6 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
 
     // Constructor with dependency injection
     constructor(
-
         @Inject(MAT_DIALOG_DATA) public data: { title: string, product: Data, setup: { id: number, name: string }[] },
         private dialogRef: MatDialogRef<ProductsDialogComponent>,
         private formBuilder: UntypedFormBuilder,
@@ -86,20 +84,18 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
 
     // ngOnInit method
     ngOnInit(): void {
-
         // Set the image source based on the product data (if available)
         this.data.product != null ? this.src = `${env.FILE_BASE_URL}${this.data.product.image}` : '';
-
         // Initialize the form builder
         this.ngBuilderForm();
     }
 
     // srcChange method
     srcChange(base64: string): void {
-
         // Set the 'image' form control value with the provided base64 image data
         this.productForm.get('image').setValue(base64);
     }
+
     onFileChange(event: any): void {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
@@ -113,12 +109,11 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
             this.snackBarService.openSnackBar('Please select an image file.', GlobalConstants.error);
         }
     }
+
     // ngBuilderForm method
     ngBuilderForm(): void {
-
         // Use the form builder to create the productForm with default values from the data
         this.productForm = this.formBuilder.group({
-
             code: [this.data?.product?.code || null, [Validators.required]],
             name: [this.data?.product?.name || null, [Validators.required]],
             type_id: [this.data?.product?.type?.id || null, [Validators.required]],
@@ -127,17 +122,14 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
         });
     }
 
-
     // submit method
     submit() {
-
         // If data.product is null, call create(); otherwise, call update()
         this.data.product == null ? this.create() : this.update();
     }
 
     // create method
     create(): void {
-
         // Disable closing the dialog during the create process
         this.dialogRef.disableClose = true;
 
@@ -203,7 +195,6 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
             }
         });
     }
-
 
     // update method
     update(): void {

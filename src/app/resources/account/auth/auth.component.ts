@@ -46,11 +46,13 @@ export class AuthSignInComponent implements OnInit {
         type: 'success',
         message: '',
     };
+
     images: string[] = [
         'images/apps/pos1.png',
         'images/apps/pos1.png',
         'images/apps/pos1.png',
     ];
+    
     currentImage: string = this.images[0];
     imageIndex: number = 0;
     interval: any;

@@ -65,7 +65,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
      * On init
      */
     ngOnInit(): void {
-        interval(3000)
+        interval(1000)
             .pipe(
                 takeUntil(this._unsubscribeAll),
                 switchMap(() => this._notificationsService.getAll())

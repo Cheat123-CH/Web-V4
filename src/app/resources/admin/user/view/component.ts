@@ -52,6 +52,7 @@ export class ViewUserComponent implements OnInit {
     ngOnInit(): void {
         this.viewData()
     }
+    
     viewData() {
         this.isLoading = true;
         this._service.view(this.data.element.id).subscribe((res) => {

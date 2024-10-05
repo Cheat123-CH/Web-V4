@@ -51,7 +51,8 @@ export class ProductComponent implements OnInit {
     // Injecting necessary services
     private productService = inject(ProductService);
     private snackBarService = inject(SnackbarService);
-
+    // Creating a product using a dialog
+    private matDialog = inject(MatDialog);
     // Component properties
     displayedColumns: string[] = ['no', 'product', 'price', 'created', 'action'];
     dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
@@ -67,7 +68,6 @@ export class ProductComponent implements OnInit {
 
     // Initialization logic
     ngOnInit(): void {
-
         this.initSetup();
         this.list(this.page, this.limit);
     }
@@ -112,7 +112,6 @@ export class ProductComponent implements OnInit {
         });
     }
 
-
     // Handles page change event from the paginator
     onPageChanged(event: PageEvent): void {
         if (event && event.pageSize) {
@@ -122,9 +121,6 @@ export class ProductComponent implements OnInit {
             this.list(this.page, this.limit);
         }
     }
-
-    // Creating a product using a dialog
-    private matDialog = inject(MatDialog);
 
     create(): void {
 

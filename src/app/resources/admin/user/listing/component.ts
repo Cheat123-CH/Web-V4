@@ -88,6 +88,7 @@ export class UserComponent implements OnInit, OnDestroy {
             }
         });
     }
+
     list(_page: number = 1, _page_size: number = 10): void {
         const params: { page: number, page_size: number, key?: string } = {
             page: _page,
@@ -129,6 +130,7 @@ export class UserComponent implements OnInit, OnDestroy {
             this.list();
         });
     }
+
     view(element: User): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = { element, roles: this.roles }; // Pass both user and roles
@@ -144,6 +146,7 @@ export class UserComponent implements OnInit, OnDestroy {
             this.list();
         });
     }
+
     changPassword(id: number) {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.autoFocus = false;
@@ -158,6 +161,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
         this.cdr.detectChanges();
     }
+    
     onPageChanged(event: PageEvent): void {
         if (event && event.pageSize) {
             this.limit = event.pageSize;

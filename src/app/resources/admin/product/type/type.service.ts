@@ -17,9 +17,9 @@ import { Data, List } from './type.types';
 export class ProductsTypeService {
 
     constructor(private httpClient: HttpClient) { }
+
     // Method to retrieve a list of product types from the backend
     list(): Observable<List> {
-
         return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/products/types`, {
             headers: new HttpHeaders().set('Content-Type', 'application/json')
         }).pipe(

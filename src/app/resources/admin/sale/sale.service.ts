@@ -18,6 +18,7 @@ export class SaleService {
 
     constructor(private httpClient: HttpClient) { }
     private loadingSpinner = inject(LoadingSpinnerService);
+
     list(params?: { page: number, page_size: number, key?: string }): Observable<List> {
         return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/sales`, { params: params }).pipe(
             switchMap((response: List) => {
@@ -40,4 +41,5 @@ export class SaleService {
     delete(id: number = 0): Observable<{ status_code: number, message: string }> {
         return this.httpClient.delete<{ status_code: number, message: string }>(`${env.API_BASE_URL}/admin/sales/${id}`);
     }
+
 }

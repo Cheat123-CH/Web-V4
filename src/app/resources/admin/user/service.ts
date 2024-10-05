@@ -37,6 +37,7 @@ export class UserService {
     setup(): Observable<{ roles: { id: number; name: string }[] }> {
         return this.httpClient.get<{ roles: { id: number; name: string }[] }>(`${env.API_BASE_URL}/admin/users/setup`);
     }
+    
     list(params?: { page: number, page_size: number, key?: string }): Observable<List> {
         const requestStartTime = Date.now();
         return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/users`, { params: params }).pipe(

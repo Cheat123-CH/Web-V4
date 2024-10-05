@@ -65,7 +65,6 @@ export class UpdateUserComponent implements OnInit {
         });
 
         // Set initial avatar src
-
         this.src = this.fileUrl + this.data.element.avatar;
     }
 

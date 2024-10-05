@@ -5,7 +5,6 @@ import { Component, EventEmitter, Inject, OnDestroy, OnInit } from '@angular/cor
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-
 // ================================================================================>> Thrid Party Library
 // Material
 import { HttpErrorResponse } from '@angular/common/http';

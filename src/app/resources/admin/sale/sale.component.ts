@@ -5,7 +5,6 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
-
 // ================================================================>> Third-Party Library
 // angular party
 import { MatButtonModule } from '@angular/material/button';
@@ -55,6 +54,9 @@ import { Data, List } from './sale.types';
 })
 export class SaleComponent implements OnInit {
 
+    // Injecting the MatDialog service
+    private matDialog = inject(MatDialog)
+
     constructor(
         private saleService: SaleService,
         private snackBarService: SnackbarService,
@@ -72,6 +74,8 @@ export class SaleComponent implements OnInit {
     receipt_number: string = '';
     isLoading: boolean = false;
     key: string = '';
+    downloading: boolean = false;
+
     // Lifecycle hook: ngOnInit, called after the component is initialized
     ngOnInit(): void {
         this.list(this.page, this.limit);
@@ -110,9 +114,6 @@ export class SaleComponent implements OnInit {
             this.list(this.page, this.limit);
         }
     }
-
-    // Injecting the MatDialog service
-    private matDialog = inject(MatDialog)
 
     // Method to open a dialog to view details of a sale
     view(row: Data): void {
@@ -193,9 +194,6 @@ export class SaleComponent implements OnInit {
             }
         });
     }
-
-    // Property to track the state of downloading
-    downloading: boolean = false;
 
     // Method to initiate the download of a sale invoice
     print(row: Data) {

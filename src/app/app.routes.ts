@@ -42,6 +42,7 @@ export const appRoutes: Route[] = [
         },
         loadChildren: () => import('app/resources/account/auth/auth.routes')
     },
+    
     // Admin routes
     {
         path: '',

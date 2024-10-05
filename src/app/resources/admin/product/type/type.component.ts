@@ -126,7 +126,6 @@ export class ProductsTypeComponent implements OnInit {
         });
     }
 
-
     update(row: Data): void {
 
         // Create a new MatDialogConfig to configure the appearance and behavior of the dialog
@@ -161,6 +160,7 @@ export class ProductsTypeComponent implements OnInit {
             this.dataSource.data[index].name = type.name;
         });
     }
+
     // Deleting a product with confirmation
     private helpersConfirmationService = inject(HelperConfirmationService)
     onDelete(type: Data): void {
@@ -225,12 +225,9 @@ export class ProductsTypeComponent implements OnInit {
         });
     }
 
-
     getTotal(): number {
-
         // Use map to extract the 'n_of_products' property from each item in the dataSource
         return this.dataSource.data.map(t => t.n_of_products)
-
             // Use reduce to sum up all the extracted values
             .reduce((acc, value) => Number(acc) + Number(value), 0);
     }

@@ -5,7 +5,6 @@
 }
 ::ng-deep .sm-form-field-appearance-outline.height-header {
     .mat-mdc-form-field.mat-form-field-appearance-outline {
-
         .mat-mdc-form-field-flex {
             height: 2.5rem !important;
             width: 11rem;
@@ -23,13 +22,11 @@
         }
 
         .mat-mdc-form-field-infix {
-
             input.mat-mdc-input-element.mdc-text-field__input,
             .mat-mdc-select,
             .mat-date-range-input .mat-date-range-input-container {
                 height: 2.5rem !important;
             }
-
             .mat-mdc-select .mat-mdc-select-trigger .mat-mdc-select-value .mat-mdc-select-value-text>* {
                 padding-top: 6px !important;
             }

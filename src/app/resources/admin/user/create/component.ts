@@ -125,6 +125,7 @@ export class CreateUserComponent {
             this.snackBarService.openSnackBar('Please select an image file.', GlobalConstants.error);
         }
     }
+    
     closeDialog() {
         this.dialogRef.close();
     }
