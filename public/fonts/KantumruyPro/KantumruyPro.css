@@ -1,25 +1,17 @@
 /* Kantumruy Pro font faces */
 @font-face {
     font-family: 'Kantumruy Pro';
-    font-weight: 100;
+    font-weight: 100 900;
     font-display: swap;
     font-style: normal;
-    src: url("KantumruyPro-Regular.ttf") format("truetype");
+    src: url("KantumruyPro-VariableFont_wght.ttf") format("truetype");
 }
 
 
 @font-face {
     font-family: 'Kantumruy Pro';
-    font-weight: 100;
+    font-weight: 100 900;
     font-display: swap;
     font-style: italic;
-    src: url("KantumruyPro-Italic.ttf") format("truetype");
+    src: url("KantumruyPro-Italic-VariableFont_wght.ttf") format("truetype");
 }
-
-@font-face {
-    font-family: 'Moulpali';
-    src: url('Moulpali-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-  }
-  
