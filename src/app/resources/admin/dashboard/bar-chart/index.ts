@@ -18,8 +18,6 @@ export class BarChartComponent implements OnInit, OnChanges {
     @Input() selectedDate: Date | null = null; // Receive selectedDate from the parent component
     @ViewChild("chartContainer1", { read: ElementRef }) chartContainer!: ElementRef;
     chartOptions: Partial<ApexOptions> = {};
-    private defaultDate: string = ''; // Set default date if needed
-
     public data: any | undefined;
     public year: string = '';
     public week: string = ''; // Store week as a filter
@@ -42,8 +40,6 @@ export class BarChartComponent implements OnInit, OnChanges {
     ) { }
 
     ngOnInit(): void {
-        // Initialize with default or initial date
-        this.year = this.defaultDate;
         this.week = ''; // No week on init, unless default date is set
         this.fetchData(); // Fetch data during initialization
     }
