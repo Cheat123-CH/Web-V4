@@ -64,7 +64,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     private _organizationDataSubject = new BehaviorSubject<StataticData[]>([]);
     organizationData$ = this._organizationDataSubject.asObservable();
-    isLoading: boolean = false;
     user: User;
     fileUrl = env.FILE_BASE_URL;
     today?: string;
@@ -151,7 +150,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.isLoading = true;
         this._service.getStaticData(this.today, this.yesterday, this.thisWeek, this.thisMonth)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
@@ -160,18 +158,15 @@ export class DashboardComponent implements OnInit, OnDestroy {
                         this.stataticData = response.statatics;
                         this.cache[cacheKey] = response.statatics;
                     }
-                    this.isLoading = false;
                     this._changeDetectorRef.markForCheck(); // Trigger UI update
                 },
                 error: (err) => {
                     this._snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
-                    this.isLoading = false;
                 }
             });
     }
 
     getCashierData(): void {
-        this.isLoading = true;
         let year: string | undefined;
         let week: string | undefined;
 
@@ -187,13 +182,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     if (response && response.data) {
                         this.cashierData = response.data;
                     }
-                    this.isLoading = false;
                     this._changeDetectorRef.markForCheck();  // Trigger UI update
                 },
                 error: (err) => {
                     const errorMessage = err.error?.message ?? 'Error fetching cashier data.';
                     console.error(errorMessage);
-                    this.isLoading = false;
                 }
             });
     }
