@@ -1,10 +1,10 @@
+import { NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { format, getISOWeek } from 'date-fns'; // Import necessary functions for date formatting
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { DashbordService } from '../dashboards.service';
-import { NgIf } from '@angular/common';
 
 @Component({
     selector: 'cicle-chart',
@@ -20,7 +20,6 @@ export class CicleChartComponent implements OnInit, OnChanges {
     chartOptions: Partial<ApexOptions> = {};
     public year: string = '';
     public week: string = ''; // Add week as a filter
-    private defaultDate: string = '';
     public data: any | undefined;
 
     constructor(
@@ -30,7 +29,6 @@ export class CicleChartComponent implements OnInit, OnChanges {
     ) { }
 
     ngOnInit(): void {
-        this.year = this.defaultDate || format(new Date(), 'yyyy'); // Use current year if defaultDate is not set
         this.week = getISOWeek(new Date()).toString(); // Default to current week
         this._fetchProductData(this.year, this.week); // Fetch product data on init
     }
@@ -50,6 +48,7 @@ export class CicleChartComponent implements OnInit, OnChanges {
             .subscribe({
                 next: (response: any) => {
                     if (response && response.labels && response.data) {
+                        console.log(response.data, response.labels)
                         this._updateChart(response.labels, response.data);
                     } else {
                         this._snackBarService.openSnackBar('No data available', 'Info');
