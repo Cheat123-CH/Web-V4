@@ -14,7 +14,7 @@ import { DashbordService } from '../dashboards.service';
     imports: [NgApexchartsModule, MatIconModule, NgIf],
 })
 export class CicleChartComponent implements OnInit, OnChanges {
-    @Input() selectedDate: Date | null = null; // Receive selectedDate from the parent component
+    @Input() selectedDate: Date | string; // Receive selectedDate from the parent component
     @ViewChild("chartContainer2", { read: ElementRef, static: false }) chartContainer!: ElementRef<HTMLDivElement>;
 
     chartOptions: Partial<ApexOptions> = {};
@@ -29,26 +29,24 @@ export class CicleChartComponent implements OnInit, OnChanges {
     ) { }
 
     ngOnInit(): void {
-        this.week = getISOWeek(new Date()).toString(); // Default to current week
         this._fetchProductData(this.year, this.week); // Fetch product data on init
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['selectedDate'] && this.selectedDate) {
-            // Only update if selectedDate is not null
-            this.year = format(this.selectedDate, 'yyyy'); // Extract year from selected date
-            this.week = getISOWeek(this.selectedDate).toString(); // Extract ISO week number from selected date
-            this._fetchProductData(this.year, this.week); // Fetch product data on change with both year and week
+        if (changes['selectedDate']) {
+            if (this.selectedDate) {
+                this.year = format(this.selectedDate, 'yyyy'); // Extract year from selectedDate
+                this.week = getISOWeek(this.selectedDate).toString(); // Extract ISO week from selectedDate
+                this._fetchProductData(this.year, this.week); // Fetch data based on the new year and week
+            }
         }
     }
 
     private _fetchProductData(year?: string, week?: string): void {
-        // Pass year and week to the service
         this._cashierService.getProductType(year, week)
             .subscribe({
                 next: (response: any) => {
                     if (response && response.labels && response.data) {
-                        console.log(response.data, response.labels)
                         this._updateChart(response.labels, response.data);
                     } else {
                         this._snackBarService.openSnackBar('No data available', 'Info');

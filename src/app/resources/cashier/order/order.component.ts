@@ -121,7 +121,6 @@ export class OrderComponent implements OnInit, OnDestroy {
     }
     // Function to handle tab selection
     selectTab(item: any): void {
-        console.log("click", item)
         this.selectedTab = item;
         this._changeDetectorRef.detectChanges(); // Trigger change detection manually
     }
@@ -183,8 +182,6 @@ export class OrderComponent implements OnInit, OnDestroy {
                 code: incomingItem.code,
                 type: incomingItem.type,
             };
-            console.log(newItem)
-
             this.carts.push(newItem);
             // Set canSubmit to true, indicating that there is at least one item in the cart
             this.canSubmit = true;

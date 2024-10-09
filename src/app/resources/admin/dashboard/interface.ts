@@ -32,3 +32,8 @@ export interface CashierData {
 export interface DataCashierResponse {
     data: CashierData[];
 }
+
+export interface DataSaleResponse {
+    labels: string[];
+    data: number[];
+  }

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DashboardResponse, DataCashierResponse } from './interface';
+import { DashboardResponse, DataCashierResponse, DataSaleResponse } from './interface';
 // Helper
 // ================================================================================>> Thrid Party Library
 // RxJS
@@ -30,7 +30,7 @@ export class DashbordService {
         // Make the HTTP GET request with HttpParams
         return this._httpClient.get<DashboardResponse>(`${env.API_BASE_URL}/admin/dashboard`, { params });
     }
-    
+
     getCashier(
         year?: string,
         week?: string
@@ -57,12 +57,18 @@ export class DashbordService {
         return this._httpClient.get<any>(`${env.API_BASE_URL}/admin/dashboard/product-type`, { params });
     }
 
-    getDataSale(year?: string, week?: string): Observable<any> {
+    getDataSale(year?: string, week?: string): Observable<DataSaleResponse> {
         let params = new HttpParams();
-        if (year) params = params.set('year', year);
-        if (week) params = params.set('week', week);
 
-        return this._httpClient.get<any>(`${env.API_BASE_URL}/admin/dashboard/data-sale`, { params });
+        // Set params only if values are provided
+        if (year) {
+            params = params.set('year', year);
+        }
+        if (week) {
+            params = params.set('week', week);
+        }
+
+        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/admin/dashboard/data-sale`, { params });
     }
 
 }

@@ -5,6 +5,7 @@ import { format, getISOWeek } from 'date-fns'; // Import date-fns for date manip
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
 import { DashbordService } from '../dashboards.service'; // Import your service
+import { DataSaleResponse } from '../interface';
 
 @Component({
     selector: 'sup-bar-chart',
@@ -18,7 +19,7 @@ export class BarChartComponent implements OnInit, OnChanges {
     @Input() selectedDate: Date | null = null; // Receive selectedDate from the parent component
     @ViewChild("chartContainer1", { read: ElementRef }) chartContainer!: ElementRef;
     chartOptions: Partial<ApexOptions> = {};
-    public data: any | undefined;
+    public data: DataSaleResponse;
     public year: string = '';
     public week: string = ''; // Store week as a filter
 
@@ -40,29 +41,25 @@ export class BarChartComponent implements OnInit, OnChanges {
     ) { }
 
     ngOnInit(): void {
-        this.week = ''; // No week on init, unless default date is set
-        this.fetchData(); // Fetch data during initialization
+        this.fetchData(); // Fetch data without filters on initialization
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes['selectedDate']) {
-            if (this.selectedDate) {
-                this.year = format(this.selectedDate, 'yyyy'); // Extract year from selectedDate
-                this.week = getISOWeek(this.selectedDate).toString(); // Extract ISO week from selectedDate
-                this.fetchData(this.year, this.week); // Fetch data based on the new year and week
-            }
+        if (changes['selectedDate'] && this.selectedDate) {
+            this.year = format(this.selectedDate, 'yyyy'); // Extract year from selectedDate
+            this.week = getISOWeek(this.selectedDate).toString(); // Extract ISO week from selectedDate
+            this.fetchData(this.year, this.week); // Fetch data based on the new year and week
+        } else {
+            this.fetchData(); // Fetch data without filters if no date is selected
         }
     }
 
     private fetchData(year?: string, week?: string): void {
         this._dashboardService.getDataSale(year, week)
             .subscribe({
-                next: (response: any) => {
-                    // Safely check if labels and data exist, otherwise initialize them as empty arrays
+                next: (response: DataSaleResponse) => {
                     let labels = response?.labels || [];
                     let data = response?.data || [];
-
-                    // Map English labels to Khmer labels
                     labels = labels.map((label: string) => this.dayMapping[label] || label);
 
                     if (labels.length && data.length) {
@@ -97,7 +94,7 @@ export class BarChartComponent implements OnInit, OnChanges {
                 width: 0
             },
             series: [
-                { name: "ចំនួនលក់", data: data, color: '#3D5AFE' } // Ensure data is passed correctly here
+                { name: "ចំនួនលក់", data: data, color: '#3D5AFE' }
             ],
             plotOptions: {
                 bar: { columnWidth: "50%" }
@@ -112,7 +109,7 @@ export class BarChartComponent implements OnInit, OnChanges {
                 labels: { colors: '#64748b', useSeriesColors: false }
             },
             xaxis: {
-                categories: labels // Now use the Khmer labels
+                categories: labels
             },
             yaxis: {
                 min: 0,

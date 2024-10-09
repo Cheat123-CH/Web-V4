@@ -19,7 +19,8 @@ import { RouterLink } from '@angular/router';
 import { NotificationsService } from 'app/layout/common/notifications/notifications.service';
 import { Notification } from 'app/layout/common/notifications/notifications.types';
 import { env } from 'envs/env';
-import { interval, Subject, switchMap, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+
 @Component({
     selector: 'notifications',
     templateUrl: './notifications.component.html',
@@ -42,14 +43,11 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     @ViewChild('notificationsPanel')
     private _notificationsPanel: TemplateRef<any>;
     fileUrl: string = env.FILE_BASE_URL;
-    notifications: Notification[];
+    notifications: Notification[] = [];
     unreadCount: number = 0;
     private _overlayRef: OverlayRef;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
-    /**
-     * Constructor
-     */
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _notificationsService: NotificationsService,
@@ -57,190 +55,83 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         private _viewContainerRef: ViewContainerRef
     ) { }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Lifecycle hooks
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * On init
-     */
     ngOnInit(): void {
-        interval(1000)
-            .pipe(
-                takeUntil(this._unsubscribeAll),
-                switchMap(() => this._notificationsService.getAll())
-            )
-            .subscribe((notifications: Notification[]) => {
-                // Load the notifications
-                this.notifications = notifications;
+        this._notificationsService.notifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((data: Notification[]) => {
+            this.notifications = data;
+            this._calculateUnreadCount(); // Recalculate unread count
+            this._changeDetectorRef.markForCheck(); // Trigger view update
+        });
 
-                // Calculate the unread count
-                this._calculateUnreadCount();
-
-                // Mark for check to update the view
-                this._changeDetectorRef.markForCheck();
-            });
+        // Connect to the WebSocket server
+        this._notificationsService.connect();
     }
 
-    /**
-     * On destroy
-     */
     ngOnDestroy(): void {
-        // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
 
-        // Dispose the overlay
+        // Disconnect from the WebSocket server
+        this._notificationsService.disconnect();
+
         if (this._overlayRef) {
             this._overlayRef.dispose();
         }
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Public methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Open the notifications panel
-     */
     openPanel(): void {
-        // Return if the notifications panel or its origin is not defined
         if (!this._notificationsPanel || !this._notificationsOrigin) {
             return;
         }
 
-        // Create the overlay if it doesn't exist
         if (!this._overlayRef) {
             this._createOverlay();
         }
 
-        // Attach the portal to the overlay
-        this._overlayRef.attach(
-            new TemplatePortal(this._notificationsPanel, this._viewContainerRef)
-        );
+        this._overlayRef.attach(new TemplatePortal(this._notificationsPanel, this._viewContainerRef));
     }
 
-    /**
-     * Close the notifications panel
-     */
     closePanel(): void {
         this._overlayRef.detach();
     }
 
-    /**
-     * Mark all notifications as read
-     */
     markAllAsRead(): void {
-        // Mark all as read
         this._notificationsService.markAllAsRead().subscribe();
     }
 
-    /**
-     * Toggle read status of the given notification
-     */
     toggleRead(notification: Notification): void {
-        // Toggle the read status in the local notification object
         notification.read = !notification.read;
-        this._notificationsService
-            .update(notification.id, notification)
-            .subscribe(
-                (updatedNotification) => {
-                    console.log('Notification updated successfully:', updatedNotification);
-                },
-                (error) => {
-                    console.error('Error updating notification:', error);
-                }
-            );
-
+        this._notificationsService.update(notification.id, notification).subscribe();
     }
 
-
-    /**
-     * Delete the given notification
-     */
     delete(notification: Notification): void {
-        // Delete the notification
         this._notificationsService.delete(notification.id).subscribe();
     }
 
-    /**
-     * Track by function for ngFor loops
-     *
-     * @param index
-     * @param item
-     */
     trackByFn(index: number, item: any): any {
         return item.id || index;
     }
 
-    // -----------------------------------------------------------------------------------------------------
-    // @ Private methods
-    // -----------------------------------------------------------------------------------------------------
-
-    /**
-     * Create the overlay
-     */
     private _createOverlay(): void {
-        // Create the overlay
         this._overlayRef = this._overlay.create({
             hasBackdrop: true,
             backdropClass: 'helper-backdrop-on-mobile',
             scrollStrategy: this._overlay.scrollStrategies.block(),
             positionStrategy: this._overlay
                 .position()
-                .flexibleConnectedTo(
-                    this._notificationsOrigin._elementRef.nativeElement
-                )
+                .flexibleConnectedTo(this._notificationsOrigin._elementRef.nativeElement)
                 .withLockedPosition(true)
                 .withPush(true)
                 .withPositions([
-                    {
-                        originX: 'start',
-                        originY: 'bottom',
-                        overlayX: 'start',
-                        overlayY: 'top',
-                    },
-                    {
-                        originX: 'start',
-                        originY: 'top',
-                        overlayX: 'start',
-                        overlayY: 'bottom',
-                    },
-                    {
-                        originX: 'end',
-                        originY: 'bottom',
-                        overlayX: 'end',
-                        overlayY: 'top',
-                    },
-                    {
-                        originX: 'end',
-                        originY: 'top',
-                        overlayX: 'end',
-                        overlayY: 'bottom',
-                    },
+                    { originX: 'start', originY: 'bottom', overlayX: 'start', overlayY: 'top' },
+                    { originX: 'start', originY: 'top', overlayX: 'start', overlayY: 'bottom' },
+                    { originX: 'end', originY: 'bottom', overlayX: 'end', overlayY: 'top' },
+                    { originX: 'end', originY: 'top', overlayX: 'end', overlayY: 'bottom' },
                 ]),
         });
-
-        // Detach the overlay from the portal on backdrop click
-        this._overlayRef.backdropClick().subscribe(() => {
-            this._overlayRef.detach();
-        });
+        this._overlayRef.backdropClick().subscribe(() => this._overlayRef.detach());
     }
 
-    /**
-     * Calculate the unread count
-     *
-     * @private
-     */
     private _calculateUnreadCount(): void {
-        let count = 0;
-
-        if (this.notifications && this.notifications.length) {
-            count = this.notifications.filter(
-                (notification) => !notification.read
-            ).length;
-        }
-
-        this.unreadCount = count;
+        this.unreadCount = this.notifications.filter(notification => !notification.read).length;
     }
 }
