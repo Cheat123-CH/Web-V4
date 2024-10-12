@@ -135,8 +135,6 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
 
         // Set saving to true to indicate that the create operation is in progress
         this.saving = true;
-
-        console.log(this.productForm.value)
         // Call the productService.create method to create a new product
         this.productService.create(this.productForm.value).subscribe({
 
@@ -204,8 +202,6 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
 
         // Set saving to true to indicate that the update operation is in progress
         this.saving = true;
-
-        console.log(this.productForm.value)
         // Call the productService.update method to update an existing product
         this.productService.update(this.data.product.id, this.productForm.value).subscribe({
 

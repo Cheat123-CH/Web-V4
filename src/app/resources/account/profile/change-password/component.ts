@@ -13,14 +13,14 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 // ================================================================>> Custom Library (Application-specific)
 import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { PasswordReq } from 'app/resources/admin/user/interface';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { ProfileService } from '../profile.service';
-import { PasswordReq } from 'app/resources/admin/user/interface';
-import { MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-    selector: 'profile-change-password',
+    selector: 'app-profile-change-password',
     standalone: true,
     templateUrl: './component.html',
     imports: [

@@ -77,7 +77,6 @@ export class ProductComponent implements OnInit {
 
         this.productService.setup().subscribe({
             next: response => this.setup = response.data,
-            error: err => console.log(err)
         });
     }
 
@@ -95,7 +94,6 @@ export class ProductComponent implements OnInit {
         this.isLoading = true;
         this.productService.list(params).subscribe({
             next: (res: List) => {
-                console.log(res)
                 this.dataSource.data = res.data;
                 this.total = res.pagination.totalItems;
                 this.limit = res.pagination.perPage;
