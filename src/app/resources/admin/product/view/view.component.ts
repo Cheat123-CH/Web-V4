@@ -49,8 +49,6 @@ export class ViewDetailProductComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-
-        console.log(this.dataSource.data);
     }
 
     closeDialog() {
