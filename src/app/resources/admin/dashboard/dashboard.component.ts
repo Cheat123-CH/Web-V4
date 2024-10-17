@@ -1,10 +1,11 @@
 import { CommonModule, HashLocationStrategy, LocationStrategy, NgClass, NgFor, NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -27,6 +28,7 @@ import { BarChartComponent } from './bar-chart';
 import { CicleChartComponent } from './cicle-chart';
 import { DashbordService } from './dashboards.service';
 import { CashierData, DashboardResponse, DataCashierResponse, StataticData } from './interface';
+import { ReportComponent } from './report/component';
 
 @Component({
     selector: 'admin-dashboard',
@@ -97,7 +99,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
             this.user = user;
             this._changeDetectorRef.markForCheck();
         });
-
+        this.startCarousel();
         this.form = new FormGroup({
             date_type: this.dateTypeControl
         });
@@ -191,17 +193,65 @@ export class DashboardComponent implements OnInit, OnDestroy {
             });
     }
 
+    private matDialog = inject(MatDialog);
+    report(): void {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.autoFocus = false;
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
+        const dialogRef = this.matDialog.open(ReportComponent, dialogConfig);
+
+    }
+
     selectedDate3: Date
     onDateChangeForChart(): void {
     }
 
     selectedDate4: Date | null = null;
     onDateChangeForChart2(event: any): void {
-        console.log("Selected Date 4: ", this.selectedDate4);
-        // Do something with the selected date (this.selectedDate4)
+    }
+
+    isCart1Visible = false;
+    intervalId: any;
+    startCarousel() {
+        this.toggleCart();
+    }
+
+    toggleCart() {
+        this.isCart1Visible = !this.isCart1Visible;
+    }
+
+    showCart(cart1: boolean) {
+        this.isCart1Visible = cart1;
+    }
+    listView = true; // Start with the list view by default
+    chartView = false;
+    lineView = false;
+    // Toggle views
+    showListView() {
+        this.listView = true;
+        this.chartView = false;
+        this.lineView = false;
+    }
+
+    showChartView() {
+        this.listView = false;
+        this.chartView = true;
+        this.lineView = false;
+    }
+
+    showLineView() {
+        this.listView = false;
+        this.chartView = false;
+        this.lineView = true;
     }
 
     ngOnDestroy(): void {
+        clearInterval(this.intervalId);
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }

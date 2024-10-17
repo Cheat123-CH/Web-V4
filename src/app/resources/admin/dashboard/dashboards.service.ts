@@ -71,5 +71,26 @@ export class DashbordService {
         return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/admin/dashboard/data-sale`, { params });
     }
 
+    getDataSaleReport(startDate: string, endDate: string): Observable<any> {
+        const params = new HttpParams()
+            .set('startDate', startDate)
+            .set('endDate', endDate);
+        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/sale`, { params });
+    }
+
+    getDataCashierReport(startDate: string, endDate: string): Observable<any> {
+        const params = new HttpParams()
+            .set('startDate', startDate)
+            .set('endDate', endDate);
+        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/cashier`, { params });
+    }
+
+    getDataProductReport(startDate: string, endDate: string): Observable<any> {
+        const params = new HttpParams()
+            .set('startDate', startDate)
+            .set('endDate', endDate);
+        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/product`, { params });
+    }
+
 }
 
