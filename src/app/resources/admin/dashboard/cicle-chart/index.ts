@@ -78,7 +78,7 @@ export class CicleChartComponent implements OnInit, OnChanges {
                     colors: '#000', // Change legend text color
                 }
             },
-            colors: ['#81D4FA', '#80DEEA', '#A5D6A7', '#80CBC4', '#B39DDB'], // Customize the colors as needed
+            colors: ['#a3e635', '#16a34a', '#d9f99d', '#86efac', '#81D4FA', '#80DEEA', '#A5D6A7', '#80CBC4', '#B39DDB'], // Customize the colors as needed
             responsive: [
                 {
                     breakpoint: 480,
@@ -96,7 +96,7 @@ export class CicleChartComponent implements OnInit, OnChanges {
                     endAngle: 90,
                     expandOnClick: true,
                     donut: {
-                        size: '60%',
+                        size: '65%',
                         labels: {
                             show: true,
                             total: {

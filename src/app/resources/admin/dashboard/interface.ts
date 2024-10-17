@@ -7,6 +7,9 @@ export interface StataticData {
     totalProductType: number;
     totalUser: number;
     totalOrder: number;
+    total: string;
+    totalPercentageIncrease: number;
+    saleIncreasePreviousDay: string;
 }
 
 interface RoleDetails {
@@ -36,4 +39,4 @@ export interface DataCashierResponse {
 export interface DataSaleResponse {
     labels: string[];
     data: number[];
-  }
+}
