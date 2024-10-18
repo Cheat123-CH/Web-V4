@@ -25,7 +25,9 @@ import { UiSwitchModule } from 'ngx-ui-switch';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { BarChartComponent } from './bar-chart';
+import { SaleCashierBarChartComponent } from './bar-chart-sale';
 import { CicleChartComponent } from './cicle-chart';
+import { SaleCicleChartComponent } from './cicle-chart-sale';
 import { DashbordService } from './dashboards.service';
 import { CashierData, DashboardResponse, DataCashierResponse, StataticData } from './interface';
 import { ReportComponent } from './report/component';
@@ -57,6 +59,8 @@ import { ReportComponent } from './report/component';
         CicleChartComponent,
         MatDatepickerModule,
         MatNativeDateModule,
+        SaleCashierBarChartComponent,
+        SaleCicleChartComponent
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

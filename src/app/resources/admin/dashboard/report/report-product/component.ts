@@ -23,6 +23,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { HttpErrorResponse } from '@angular/common/http';
+import FileSaver from 'file-saver';
 import { PortraitComponent } from 'helper/components/portrait/portrait.component';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
@@ -148,15 +149,14 @@ export class ReportProductComponent implements OnInit, OnDestroy {
             }
             // Call the service with formatted startDate and endDate
             this.saving = true;
-            this._service.getDataCashierReport(this.formatDate(startDate), this.formatDate(endDate)).subscribe({
+            this._service.getDataProductReport(this.formatDate(startDate), this.formatDate(endDate)).subscribe({
                 next: (response) => {
                     // Close the dialog
                     this.dialogRef.close();
 
-                    // Set saving to false to indicate the operation is completed
                     this.saving = false;
-                    // let blob = this.b64toBlob(response.data, 'application/pdf');
-                    // FileSaver.saveAs(blob, 'Report-' + 'name' + '.pdf');
+                    let blob = this.b64toBlob(response.data, 'application/pdf');
+                    FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមផលិតផល' + '.pdf');
                     // Show a success message using the snackBarService
                     this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
                 },
