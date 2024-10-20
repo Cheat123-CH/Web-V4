@@ -22,11 +22,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { Subject } from 'rxjs';
-import { Data } from '../type.types';
+import { env } from 'envs/env';
+import { PortraitComponent } from 'helper/components/portrait/portrait.component';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import { ProductsTypeService } from '../type.service';
 import GlobalConstants from 'helper/shared/constants';
+import { Subject } from 'rxjs';
+import { ProductsTypeService } from '../type.service';
+import { Data } from '../type.types';
 @Component({
     selector: 'create-car-type-component-seletor',
     templateUrl: './template.html',
@@ -52,6 +54,7 @@ import GlobalConstants from 'helper/shared/constants';
         MatDividerModule,
         MatRadioModule,
         MatDialogModule,
+        PortraitComponent
     ]
 })
 export class ProductsTypeDialogComponent implements OnInit, OnDestroy {
@@ -62,7 +65,7 @@ export class ProductsTypeDialogComponent implements OnInit, OnDestroy {
     // Form related properties
     typeForm: UntypedFormGroup;
     saving: boolean = false;
-
+    src: string = 'icons/image.jpg';
     // Constructor with dependency injection
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { title: string, type: Data },
@@ -75,7 +78,7 @@ export class ProductsTypeDialogComponent implements OnInit, OnDestroy {
 
     // Lifecycle hook: ngOnInit
     ngOnInit(): void {
-
+        this.data.type != null ? this.src = `${env.FILE_BASE_URL}${this.data.type.image}` : '';
         // Initialize the form on component initialization
         this.ngBuilderForm();
     }
@@ -85,8 +88,8 @@ export class ProductsTypeDialogComponent implements OnInit, OnDestroy {
 
         // Create the form group with initial values
         this.typeForm = this.formBuilder.group({
-
-            name: [this.data?.type?.name || null, [Validators.required]]
+            name: [this.data?.type?.name || null, [Validators.required]],
+            image: [null, this.data?.type?.image == null ? Validators.required : []],
         });
     }
 
@@ -97,9 +100,29 @@ export class ProductsTypeDialogComponent implements OnInit, OnDestroy {
         this.data.type == null ? this.create() : this.update();
     }
 
+    // srcChange method
+    srcChange(base64: string): void {
+        // Set the 'image' form control value with the provided base64 image data
+        this.typeForm.get('image').setValue(base64);
+    }
+
+    onFileChange(event: any): void {
+        const file = event.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                this.src = e.target.result; // Preview image
+                this.typeForm.get('image')?.setValue(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            this.snackBarService.openSnackBar('Please select an image file.', GlobalConstants.error);
+        }
+    }
+
     // Method to handle create operation
     create(): void {
-        if(this.typeForm.valid && !this.saving){
+        if (this.typeForm.valid && !this.saving) {
 
         }
         // Disable dialog close while the operation is in progress
@@ -156,7 +179,6 @@ export class ProductsTypeDialogComponent implements OnInit, OnDestroy {
         this._service.update(this.data.type.id, this.typeForm.value).subscribe({
 
             next: response => {
-
                 // Emit the response data using the EventEmitter
                 this.ResponseData.emit(response.data);
 

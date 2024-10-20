@@ -55,7 +55,6 @@ export class ViewDetailSaleComponent implements OnInit, OnDestroy {
             // Assuming row.details contains the data for the table
             this.dataSource.data = this.row.details;
         }
-        console.log(this.dataSource.data);
     }
 
     getTotal(): number {

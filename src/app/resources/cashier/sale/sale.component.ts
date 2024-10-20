@@ -22,13 +22,13 @@ import FileSaver from 'file-saver';
 // ================================================================>> Custom Library
 import { SharedDetailsComponent } from 'app/shared/details/details.component';
 import { DetailsService } from 'app/shared/details/details.service';
+import { ViewDetailSaleComponent } from 'app/shared/view/view.component';
 import { env } from 'envs/env';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { SaleService } from './sale.service';
 import { Data, List } from './sale.types';
-import { ViewDetailSaleComponent } from 'app/shared/view/view.component';
 
 // Component decorator specifying metadata for the component
 @Component({
@@ -62,7 +62,7 @@ export class SaleComponent implements OnInit {
     ) { }
 
     // Component properties
-    displayedColumns: string[] = ['no','receipt', 'price', 'ordered_at','seller', 'action'];
+    displayedColumns: string[] = ['no', 'receipt', 'price', 'ordered_at', 'ordered_at_time', 'device', 'seller', 'action'];
     dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
 
     fileUrl: string = env.FILE_BASE_URL;

@@ -6,7 +6,7 @@ ARG API_BASE_URL
 ARG FILE_BASE_URL
 
 WORKDIR /usr/app
-
+RUN npm uninstall ws
 COPY ./package.json /usr/app/package.json
 COPY ./package-lock.json /usr/app/package-lock.json
 

@@ -40,19 +40,23 @@
                     <ng-container matColumnDef="no">
                         <th mat-header-cell *matHeaderCellDef class="w-10">ល.រ</th>
                         <td mat-cell *matCellDef="let i = index">
-                            <span>{{i+1}}</span>
+                            <span>{{i+1}}.</span>
                         </td>
                     </ng-container>
 
                     <ng-container matColumnDef="name">
                         <th mat-header-cell *matHeaderCellDef class="w-[80%]">ឈ្មោះ</th>
                         <td mat-cell *matCellDef="let element">
-                            <span>{{element?.name}}</span>
+                            <div class="flex gap-1 items-center">
+                                <img class="w-6 h-6 scale-90 object-cover dark:bg-white dark:bg-opacity-5  transition-all rounded-lg hover:border-green-300"
+                                    [src]="fileUrl+element.image" alt="invalid img">
+                                <span>{{element?.name}}</span>
+                            </div>
                         </td>
                     </ng-container>
 
                     <ng-container matColumnDef="n_of_products">
-                        <th mat-header-cell *matHeaderCellDef>ចំនួនផលិតផល</th>
+                        <th mat-header-cell *matHeaderCellDef class="text-right">ផលិតផល</th>
                         <td mat-cell *matCellDef="let element">
                             <span class="min-w-[95px] max-w-[95px] flex justify-end text-gray-500">
                                 {{element?.n_of_products | number}}

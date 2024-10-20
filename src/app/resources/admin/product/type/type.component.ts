@@ -111,9 +111,9 @@ export class ProductsTypeComponent implements OnInit {
 
             // Push the new type data to the data array
             data.push({
-
                 id: type.id,
                 name: type.name,
+                image: type.image,
                 n_of_products: type.n_of_products,
                 created_at: type.created_at
             });
@@ -158,6 +158,7 @@ export class ProductsTypeComponent implements OnInit {
 
             // Update the 'name' property of the corresponding row with the edited name from the dialog
             this.dataSource.data[index].name = type.name;
+            this.dataSource.data[index].image = type.image;
         });
     }
 

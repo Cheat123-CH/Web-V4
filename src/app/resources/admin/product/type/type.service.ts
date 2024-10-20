@@ -40,14 +40,14 @@ export class ProductsTypeService {
     }
 
     // Method to create a new product type
-    create(body: { name: string }): Observable<{ data: Data, message: string }> {
+    create(body: { name: string, image: string }): Observable<{ data: Data, message: string }> {
         return this.httpClient.post<{ data: Data, message: string }>(`${env.API_BASE_URL}/admin/products/types`, body, {
             headers: new HttpHeaders().set('Content-Type', 'application/json')
         });
     }
 
     // Method to update an existing product type
-    update(id: number, body: { name: string }): Observable<{ data: Data, message: string }> {
+    update(id: number, body: { name: string, image: string }): Observable<{ data: Data, message: string }> {
         return this.httpClient.put<{ data: Data, message: string }>(`${env.API_BASE_URL}/admin/products/types/${id}`, body, {
             headers: new HttpHeaders().set('Content-Type', 'application/json')
         });

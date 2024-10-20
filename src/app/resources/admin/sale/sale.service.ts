@@ -19,8 +19,29 @@ export class SaleService {
     constructor(private httpClient: HttpClient) { }
     private loadingSpinner = inject(LoadingSpinnerService);
 
-    list(params?: { page: number, page_size: number, key?: string }): Observable<List> {
-        return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/sales`, { params: params }).pipe(
+    setup(): Observable<{ data: { id: number, name: string }[] }> {
+        return this.httpClient.get<{ data: { id: number, name: string }[] }>(`${env.API_BASE_URL}/admin/sales/setup`);
+    }
+
+    list(params?: {
+        page: number;
+        page_size: number;
+        key?: string;
+        timeType?: string;
+        platform?: string;
+        cashier?: number;
+        startDate?: string;
+        endDate?: string;
+    }): Observable<List> {
+        // Filter out null or undefined parameters
+        const filteredParams: { [key: string]: any } = {};
+        Object.keys(params || {}).forEach(key => {
+            if (params![key] !== null && params![key] !== undefined) {
+                filteredParams[key] = params![key];
+            }
+        });
+
+        return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/sales`, { params: filteredParams }).pipe(
             switchMap((response: List) => {
                 this.loadingSpinner.open();
                 return of(response);

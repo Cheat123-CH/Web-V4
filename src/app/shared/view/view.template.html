@@ -8,8 +8,13 @@
 
     <!-- Dialog Title -->
     <div mat-dialog-title class="min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pl-5 pr-2.5 border-b">
-        <div class="flex flex-1 items-center text-slate-500">
-            <h1 class="text-3xl">វិក្កយបត្រ {{ row?.receipt_number }}</h1>
+        <div class="flex flex-1 items-center text-slate-500 gap-3">
+            <h1 class="text-3xl">វិក្កយបត្រ {{ row?.receipt_number }} .</h1>
+            <mat-icon *ngIf="row.platform === 'Web'" class="icon-size-6 text-gray-500" svgIcon="mdi:monitor"></mat-icon>
+            <mat-icon *ngIf="row.platform === 'Mobile'" class="icon-size-6 text-gray-500"
+                svgIcon="mdi:cellphone"></mat-icon>
+            <mat-icon *ngIf="row.platform === 'Unknown' || row.platform === null" class="icon-size-6 text-gray-500"
+                svgIcon="mdi:crosshairs-question"></mat-icon>
         </div>
 
         <!-- Print Button -->
@@ -38,7 +43,7 @@
                 </div>
                 <div class="flex justify-start items-center gap-2">
                     <p class="text-lg md:text-xl leading-8">៖</p>
-                    <p class="text-lg md:text-xl leading-8 pl-5 text-gray-600">{{row?.receipt_number}}</p>
+                    <p class="text-lg md:text-xl leading-8 pl-5 text-gray-600">#{{row?.receipt_number}}</p>
                 </div>
             </div>
             <!-- Order Date -->
@@ -48,8 +53,9 @@
                     <p class="text-lg md:text-xl leading-8">កាលបរិច្ឆេទ</p>
                 </div>
                 <div class="flex justify-start items-center gap-2">
-                    <p class="text-lg md:text-xl leading-8">៖</p>
-                    <p class="text-lg md:text-xl leading-8 pl-5 text-gray-600">{{row?.ordered_at | date: 'dd-LL-YYY' }}
+                    <p class="text-md md:text-lg leading-8">៖</p>
+                    <p class="text-md md:text-lg leading-8 pl-5 text-gray-500">{{row?.ordered_at | date: 'dd-LL-YYY' }}
+                        {{ row?.ordered_at | date: 'hh:mm a' }}
                     </p>
                 </div>
             </div>
@@ -64,7 +70,7 @@
                     <p class="text-lg md:text-xl leading-8">៖</p>
                     <div class="text-lg md:text-xl leading-8 pl-5 text-gray-600">
                         <div class="flex items-center">
-                            <img class="border border-blue-200 min-w-10 max-w-10 min-h-10 max-h-10 object-cover rounded-full"
+                            <img class="border border-blue-200 min-w-8 max-w-8 min-h-8 max-h-8 object-cover rounded-full"
                                 [src]="fileUrl + row.cashier?.avatar" alt="profile">
                             <span class="ml-3">{{ row.cashier.name }}</span>
                         </div>
@@ -126,7 +132,7 @@
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
-                <div class="flex justify-end text-gray-900 font-semibold border-t pt-3 pr-[15px]">សរុប ៖ {{ getTotal() |
+                <div class="flex justify-end text-gray-600 font-semibold border-t pt-3 pr-[15px]">សរុប(រៀល) ៖ {{ getTotal() |
                     number }}
                 </div>
             </div>
