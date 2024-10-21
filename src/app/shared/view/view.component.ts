@@ -10,12 +10,12 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { SaleService } from 'app/resources/cashier/sale/sale.service';
-import { DetailsService } from 'app/shared/details/details.service';
 import { env } from 'envs/env';
 import FileSaver from 'file-saver';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { Subject } from 'rxjs';
+import { DetailsService } from '../details/details.service';
 @Component({
     selector: 'dashboard-gm-fast-view-customer',
     templateUrl: './view.template.html',

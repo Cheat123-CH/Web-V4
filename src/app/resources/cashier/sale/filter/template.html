@@ -35,14 +35,6 @@
                 </mat-form-field>
             </div>
 
-            <mat-form-field appearance="outline" class="w-full">
-                <mat-label>អ្នកគិតប្រាក់</mat-label>
-                <mat-select formControlName="cashier" placeholder="Select Cashier">
-                    <mat-option *ngFor="let cashier of setup" [value]="cashier?.id">
-                        {{ cashier?.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
             <div class="inline-flex w-full rounded-full h-12">
                 <!-- Web Button -->
                 <button type="button" [ngClass]="{

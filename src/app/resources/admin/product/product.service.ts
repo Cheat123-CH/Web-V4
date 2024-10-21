@@ -7,7 +7,7 @@ import { Observable, catchError, of, switchMap, throwError } from 'rxjs';
 
 // ================================================================>> Custom Library (Application-specific)
 import { env } from 'envs/env';
-import { Data, List } from './product.types';
+import { Data, List, SetupResponse } from './product.types';
 
 @core.Injectable({
     providedIn: 'root',
@@ -17,12 +17,29 @@ export class ProductService {
 
     constructor(private httpClient: HttpClient) { };
     // Method to fetch initial setup data for products
-    setup(): Observable<{ data: { id: number, name: string }[] }> {
-        return this.httpClient.get<{ data: { id: number, name: string }[] }>(`${env.API_BASE_URL}/admin/products/setup`);
+    setup(): Observable<SetupResponse> {
+        return this.httpClient.get<SetupResponse>(`${env.API_BASE_URL}/admin/products/setup`);
     }
 
-    list(params: { page: number, page_size: number, key?: string, type_id?: number }): Observable<List> {
-        return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/products`, { params }).pipe(
+    list(params?: {
+        page: number;
+        page_size: number;
+        key?: string;
+        timeType?: string;
+        creator_id?: number;
+        type_id?: number;
+        startDate?: string;
+        endDate?: string
+    }): Observable<List> {
+        // Filter out null or undefined parameters
+        const filteredParams: { [key: string]: any } = {};
+        Object.keys(params || {}).forEach(key => {
+            if (params![key] !== null && params![key] !== undefined) {
+                filteredParams[key] = params![key];
+            }
+        });
+
+        return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/products`, { params: filteredParams }).pipe(
             switchMap((response: List) => of(response)),
             catchError((error: HttpErrorResponse) => {
                 // Rethrow the error while maintaining the Observable<List> type

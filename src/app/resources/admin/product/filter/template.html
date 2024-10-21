@@ -1,7 +1,7 @@
 <div class="out-create-section md-form-field-appearance-outline">
     <div mat-dialog-title class="min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pr-2.5">
         <div class="flex flex-1 items-center text-slate-500">
-            <h1 class="text-3xl">ស្វែងរកវិក្ក័យប័ត្រ</h1>
+            <h1 class="text-3xl">ស្វែងរកផលិតផល</h1>
         </div>
         <div class="flex items-center cursor-pointer">
             <mat-icon class="-mb-0.5" [svgIcon]="'heroicons_outline:x-mark'" (click)="closeDialog()"></mat-icon>
@@ -36,35 +36,22 @@
             </div>
 
             <mat-form-field appearance="outline" class="w-full">
-                <mat-label>អ្នកគិតប្រាក់</mat-label>
-                <mat-select formControlName="cashier" placeholder="Select Cashier">
-                    <mat-option *ngFor="let cashier of setup" [value]="cashier?.id">
-                        {{ cashier?.name }}
+                <mat-label>ប្រភេទផលិតផល</mat-label>
+                <mat-select formControlName="type_id" placeholder="Select Cashier">
+                    <mat-option *ngFor="let type of setup.productTypes" [value]="type?.id">
+                        {{ type?.name }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
-            <div class="inline-flex w-full rounded-full h-12">
-                <!-- Web Button -->
-                <button type="button" [ngClass]="{
-                    'active z-10 ring-2 bg-gray-100': isSelected('Web'),
-                    'inactive': !isSelected('Web')
-                  }" (click)="setPlatform('Web')" class="flex-1 px-4 py-2 text-lg font-medium border border-gray-200
-                         rounded-l-md  dark:bg-gray-800
-                         dark:border-gray-700 dark:hover:bg-gray-700">
-                    តាមប្រព័ន្ធកុំព្យូទ័រ
-                </button>
 
-                <!-- Mobile Button -->
-                <button type="button" [ngClass]="{
-                    'active z-10 ring-2 bg-gray-100': isSelected('Mobile'),
-                    'inactive': !isSelected('Mobile')
-                  }" (click)="setPlatform('Mobile')" class="flex-1 px-4 py-2 text-lg font-medium border border-gray-200
-                         rounded-r-md  dark:bg-gray-800
-                         dark:border-gray-700 dark:hover:bg-gray-700">
-                    តាមរយៈទូរស័ព្ទ
-                </button>
-            </div>
-
+            <mat-form-field appearance="outline" class="w-full">
+                <mat-label>អ្នកបញ្ចូលទិន្នន័យ</mat-label>
+                <mat-select formControlName="creator_id" placeholder="Select Cashier">
+                    <mat-option *ngFor="let creator of setup.users" [value]="creator?.id">
+                        {{ creator?.name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
         </form>
     </div>
 

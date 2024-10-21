@@ -19,6 +19,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import FileSaver from 'file-saver';
 
 // ================================================================>> Custom Library
+
 import { DetailsService } from 'app/shared/details/details.service';
 import { ViewDetailSaleComponent } from 'app/shared/view/view.component';
 import { env } from 'envs/env';
@@ -83,6 +84,7 @@ export class SaleComponent implements OnInit {
         this.list(this.page, this.limit);
         this.initSetup();
     }
+
     // Method to retrieve a list of sales based on provided parameters and filters
     list(
         _page: number = 1,
@@ -134,6 +136,7 @@ export class SaleComponent implements OnInit {
             next: response => this.setup = response.data,
         });
     }
+
     // Method to open the filter dialog and update the list with the selected filters
     openFilterDialog(): void {
         const dialogConfig = new MatDialogConfig();
@@ -152,7 +155,6 @@ export class SaleComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.filter_data = result;
-                console.log(this.filter_data)
                 this.cdr.detectChanges();
                 this.list(1, 10, this.filter_data);
             }

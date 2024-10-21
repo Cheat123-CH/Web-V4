@@ -1,7 +1,7 @@
 // ================================================================>> Core Library (Angular)
 import { DatePipe, DecimalPipe, NgClass, NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 // ================================================================>> Angular Material Modules
@@ -20,8 +20,9 @@ import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/serv
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { ProductsDialogComponent } from './dialog/component';
+import { FilterProductComponent } from './filter/component';
 import { ProductService } from './product.service';
-import { Data, List } from './product.types';
+import { Data, List, ProductType, User } from './product.types';
 import { ViewDetailProductComponent } from './view/view.component';
 
 
@@ -54,17 +55,23 @@ export class ProductComponent implements OnInit {
     // Creating a product using a dialog
     private matDialog = inject(MatDialog);
     // Component properties
-    displayedColumns: string[] = ['no', 'product', 'price', 'created', 'action'];
+    displayedColumns: string[] = ['no', 'product', 'price', 'total_sale', 'total_sale_price', 'created', 'seller', 'action'];
     dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
 
     fileUrl: string = env.FILE_BASE_URL;
-    setup: { id: number, name: string }[] = [];
+    setup: { productTypes: ProductType[]; users: User[] } = { productTypes: [], users: [] };
+    productTypes: ProductType[] = [];
+    users: User[] = [];
     total: number = 10;
     limit: number = 10;
     page: number = 1;
     key: string = '';
     type_id: number = 0;
     isLoading: boolean = false;
+    constructor(
+        private cdr: ChangeDetectorRef,
+        private dialog: MatDialog
+    ) { }
 
     // Initialization logic
     ngOnInit(): void {
@@ -74,23 +81,41 @@ export class ProductComponent implements OnInit {
 
     // Fetches initial setup data for products
     initSetup(): void {
-
         this.productService.setup().subscribe({
-            next: response => this.setup = response.data,
+            next: (response) => {
+                this.setup = response.data; // Store the setup data
+                this.productTypes = response.data.productTypes;
+                this.users = response.data.users;
+            },
+            error: (err) => {
+                console.error('Error fetching setup data:', err); // Handle errors
+            },
         });
     }
 
     // Fetches the list of products based on parameters
-    list(_page: number = 1, _page_size: number = 10): void {
-        const params: { page: number, page_size: number, key?: string, type_id: number } = {
+    list(_page: number = 1,
+        _page_size: number = 10,
+        filter_data: { timeType?: string; platform?: string; cashier?: number; startDate?: string; endDate?: string } = {}): void {
+        const params: {
+            page: number;
+            page_size: number;
+            key?: string;
+            timeType?: string;
+            creator_id?: number;
+            type_id?: number;
+            startDate?: string;
+            endDate?: string;
+        } = {
             page: _page,
             page_size: _page_size,
-            type_id: this.type_id || 0 // Default to 0 if type_id is not set
+            ...filter_data // Spread operator to add filters dynamically
         };
 
-        if (this.key && this.key.trim() !== '') {
+        if (this.key !== '') {
             params.key = this.key;
         }
+        console.log(params)
         this.isLoading = true;
         this.productService.list(params).subscribe({
             next: (res: List) => {
@@ -106,6 +131,28 @@ export class ProductComponent implements OnInit {
                     err?.error?.message ?? GlobalConstants.genericError,
                     GlobalConstants.error
                 );
+            }
+        });
+    }
+
+    filter_data: any;
+    openFilterDialog(): void {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.autoFocus = false;
+        dialogConfig.data = this.setup
+        dialogConfig.restoreFocus = false; // Avoids focus issues
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
+        const dialogRef = this.dialog.open(FilterProductComponent, dialogConfig);
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.filter_data = result;
+                this.cdr.detectChanges();
+                this.list(1, 10, this.filter_data);
             }
         });
     }
@@ -160,6 +207,7 @@ export class ProductComponent implements OnInit {
         dialogConfig.data = element
         const dialogRef = this.matDialog.open(ViewDetailProductComponent, dialogConfig);
     }
+
     // Updating a product using a dialog
     update(row: Data): void {
 
@@ -189,6 +237,8 @@ export class ProductComponent implements OnInit {
             this.dataSource.data = data;
         });
     }
+
+    getReport() { }
 
     // Deleting a product with confirmation
     private helpersConfirmationService = inject(HelperConfirmationService)

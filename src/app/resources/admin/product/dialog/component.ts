@@ -148,13 +148,17 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
                     name: response.data.name,
                     image: response.data.image,
                     unit_price: response.data.unit_price,
+                    total_sale: response.data.total_sale,
                     created_at: response.data.created_at,
-
                     type: {
-
                         id: response.data.type_id,
                         name: this.data.setup.find(v => v.id === response.data.type_id)?.name || ''
-                    }
+                    },
+                    creator: {
+                        id: response.data.creator.id,
+                        name: response.data.creator.name,
+                        avatar: response.data.creator.avatar || '',
+                    },
                 };
 
 
@@ -215,13 +219,18 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
                     name: response.data.name,
                     image: response.data.image,
                     unit_price: response.data.unit_price,
+                    total_sale: response.data.total_sale,
                     created_at: response.data.created_at,
                     type: {
                         id: response.data.type_id,
                         name: this.data.setup.find(v => v.id === response.data.type_id)?.name || ''
-                    }
+                    },
+                    creator: {
+                        id: response.data.creator.id,
+                        name: response.data.creator.name,
+                        avatar: response.data.creator.avatar || '', 
+                    },
                 };
-
 
                 // Emit the updated product data to the parent component
                 this.ResponseData.emit(product);

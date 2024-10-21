@@ -1,7 +1,7 @@
 // ================================================================>> Core Library
 import { DatePipe, DecimalPipe, NgClass, NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
@@ -27,6 +27,7 @@ import { env } from 'envs/env';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
+import { FilterSaleComponent } from './filter/component';
 import { SaleService } from './sale.service';
 import { Data, List } from './sale.types';
 
@@ -58,7 +59,9 @@ export class SaleComponent implements OnInit {
     constructor(
         private saleService: SaleService,
         private snackBarService: SnackbarService,
-        private detailsService: DetailsService
+        private detailsService: DetailsService,
+        private cdr: ChangeDetectorRef,
+        private dialog: MatDialog
     ) { }
 
     // Component properties
@@ -72,21 +75,40 @@ export class SaleComponent implements OnInit {
     receipt_number: string = '';
     isLoading: boolean = false;
     key: string = '';
+    setup: { id: number, name: string }[] = [];
     // Lifecycle hook: ngOnInit, called after the component is initialized
     ngOnInit(): void {
         this.list(this.page, this.limit);
+        this.initSetup();
     }
 
     // Method to retrieve a list of sales based on provided parameters
-    list(_page: number = 1, _page_size: number = 10): void {
-        const params: { page: number, page_size: number, key?: string } = {
+    list(
+        _page: number = 1,
+        _page_size: number = 10,
+        filter_data: { timeType?: string; platform?: string; cashier?: number; startDate?: string; endDate?: string } = {}
+    ): void {
+        const params: {
+            page: number;
+            page_size: number;
+            key?: string;
+            timeType?: string;
+            platform?: string;
+            cashier?: number;
+            startDate?: string;
+            endDate?: string;
+        } = {
             page: _page,
-            page_size: _page_size
-        }
-        if (this.key != '') {
+            page_size: _page_size,
+            ...filter_data // Spread operator to add filters dynamically
+        };
+
+        if (this.key !== '') {
             params.key = this.key;
         }
+
         this.isLoading = true;
+
         this.saleService.list(params).subscribe({
             next: (res: List) => {
                 this.dataSource.data = res.data ?? [];
@@ -95,9 +117,12 @@ export class SaleComponent implements OnInit {
                 this.page = res.pagination.currentPage;
                 this.isLoading = false;
             },
-            error: err => {
+            error: (err) => {
                 this.isLoading = false;
-                this.snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
+                this.snackBarService.openSnackBar(
+                    err.error?.message ?? GlobalConstants.genericError,
+                    GlobalConstants.error
+                );
             }
         });
     }
@@ -136,6 +161,37 @@ export class SaleComponent implements OnInit {
         dialogConfig.enterAnimationDuration = '0s';
         dialogConfig.data = row
         const dialogRef = this.matDialog.open(ViewDetailSaleComponent, dialogConfig);
+    }
+
+    filter_data: { timeType: string; platform: string; cashier: number; startDate: string; endDate: string };
+    initSetup(): void {
+        this.saleService.setup().subscribe({
+            next: response => this.setup = response.data,
+        });
+    }
+
+    openFilterDialog(): void {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.autoFocus = false;
+        dialogConfig.data = this.setup
+        dialogConfig.restoreFocus = false; // Avoids focus issues
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
+
+        const dialogRef = this.dialog.open(FilterSaleComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.filter_data = result;
+                console.log(this.filter_data)
+                this.cdr.detectChanges();
+                this.list(1, 10, this.filter_data);
+            }
+        });
     }
 
     private helpersConfirmationService = inject(HelperConfirmationService)
