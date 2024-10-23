@@ -64,13 +64,12 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
     filterForm: UntypedFormGroup;
 
     public dateType = [
-        { id: 'today', name: 'ថ្ងៃនេះ' },
-        { id: 'thisWeek', name: 'សប្តាហ៍នេះ' },
-        { id: 'thisMonth', name: 'ខែនេះ' },
-        { id: 'lastMonth', name: 'ខែមុន' },
-        { id: '3MonthAgo', name: '3 ខែមុន' },
-        { id: '6MonthAgo', name: '6 ខែមុន' },
-        { id: 'startandend', name: 'ជ្រើសរើសអំឡុងពេល' }
+        { id: 'today', name: 'ថ្ងៃនេះ', showDate: '' },
+        { id: 'thisWeek', name: 'សប្តាហ៍នេះ', showDate: '' },
+        { id: 'thisMonth', name: 'ខែនេះ', showDate: '' },
+        { id: '3MonthAgo', name: '3 ខែមុន', showDate: '' },
+        { id: '6MonthAgo', name: '6 ខែមុន', showDate: '' },
+        { id: 'startandend', name: 'ជ្រើសរើសអំឡុងពេល', showDate: '' }
     ];
 
     constructor(
@@ -82,12 +81,11 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
-        console.log(this.data.type)
         this.ngBuilderForm();
+        this.updateShowDate();
         this.handleTimeTypeChanges();
     }
 
-    // Initialize the form with default values
     ngBuilderForm(): void {
         const today = this.getTodayInCambodia();
         this.filterForm = this.formBuilder.group({
@@ -97,9 +95,10 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         });
     }
 
-    // Handle changes to the timeType field
     handleTimeTypeChanges(): void {
         this.filterForm.get('timeType')!.valueChanges.subscribe((value) => {
+            this.updateShowDate();
+
             if (value === 'startandend') {
                 this.filterForm.get('startDate')!.enable();
                 this.filterForm.get('endDate')!.enable();
@@ -113,7 +112,33 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         });
     }
 
-    // Calculate date ranges based on the selected type
+    updateShowDate(): void {
+        this.dateType.forEach((type) => {
+            type.showDate = this.getDisplayDate(type.id);
+        });
+    }
+
+    getDisplayDate(type: string): string {
+        const now = new Date();
+        //const formatDate = (date: Date) => date.toISOString().split('T')[0];
+        const formatDate = (date: Date): string => {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
+        if (type === 'today') {
+            return `( ${formatDate(now)} )`;
+        }
+
+        if (type === 'startandend') {
+            return;
+        }
+
+        const { startDate, endDate } = this.calculateDateRange(type);
+        return `(${formatDate(startDate)} - ${formatDate(endDate)})`;
+    }
+
     calculateDateRange(type: string): { startDate: Date; endDate: Date } {
         const now = new Date();
         let startDate = new Date();
@@ -125,62 +150,45 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
                 break;
 
             case 'thisWeek':
-                const dayOfWeek = now.getDay(); // Get the current day of the week (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
-                const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek; // Calculate the difference to get to Monday
-
+                const diffToMonday = (now.getDay() - 1 + 7) % 7;
                 startDate = new Date(now);
-                startDate.setDate(now.getDate() + diffToMonday); // Set to Monday
-                startDate.setHours(0, 0, 0, 0); // Start of the day on Monday
+                startDate.setDate(now.getDate() - diffToMonday);
+                startDate.setHours(0, 0, 0, 0);
 
                 endDate = new Date(startDate);
-                endDate.setDate(startDate.getDate() + 6); // Set to Sunday
-                endDate.setHours(23, 59, 59, 999); // End of the day on Sunday
+                endDate.setDate(startDate.getDate() + 6);
+                endDate.setHours(23, 59, 59, 999);
                 break;
 
             case 'thisMonth':
-                startDate = new Date(now.getFullYear(), now.getMonth(), 1); // 1st day of the current month
-                startDate.setHours(0, 0, 0, 0); // Start of the day
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                startDate.setHours(0, 0, 0, 0);
 
-                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Last day of the current month (30th or 31st)
-                endDate.setHours(23, 59, 59, 999); // End of the day
-                break;
-
-            case 'lastMonth':
-                startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1); // 1st day of the previous month
-                startDate.setHours(0, 0, 0, 0); // Start of the day
-
-                endDate = new Date(now.getFullYear(), now.getMonth(), 0); // Last day of the previous month
-                endDate.setHours(23, 59, 59, 999); // End of the day
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                endDate.setHours(23, 59, 59, 999);
                 break;
 
             case '3MonthAgo':
-                startDate = new Date(now.getFullYear(), now.getMonth() - 3, 1); // 1st day of the month three months ago
-                startDate.setHours(0, 0, 0, 0); // Start of the day
+                const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+                startDate = new Date(threeMonthsAgo);
+                startDate.setHours(0, 0, 0, 0);
 
-                endDate = new Date(now.getFullYear(), now.getMonth() - 2, 0); // Last day of the month three months ago
-                endDate.setHours(23, 59, 59, 999); // End of the day
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                endDate.setHours(23, 59, 59, 999);
                 break;
 
             case '6MonthAgo':
-                startDate = new Date(now.getFullYear(), now.getMonth() - 6, 1); // 1st day of the month six months ago
-                startDate.setHours(0, 0, 0, 0); // Start of the day
+                const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+                startDate = new Date(sixMonthsAgo);
+                startDate.setHours(0, 0, 0, 0);
 
-                endDate = new Date(now.getFullYear(), now.getMonth() - 5, 0); // Last day of the month six months ago
-                endDate.setHours(23, 59, 59, 999); // End of the day
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                endDate.setHours(23, 59, 59, 999);
                 break;
         }
 
         return { startDate, endDate };
     }
-
-    // Helper method to get today's date in Cambodian timezone (UTC+7)
-    getTodayInCambodia(): Date {
-        const now = new Date();
-        const timeZone = 'Asia/Phnom_Penh';
-        const formattedDate = format(now, 'yyyy-MM-dd', { timeZone });
-        return new Date(formattedDate);
-    }
-
     submit(): void {
         if (this.filterForm.valid) {
             const formValue = this.filterForm.value;
@@ -195,6 +203,7 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
             // Call the service with formatted startDate and endDate
             this.saving = true;
             if (this.data.type === 1) {
+                console.log(this.formatDate(startDate), this.formatDate(endDate))
                 this._service.getDataSaleReport(this.formatDate(startDate), this.formatDate(endDate)).subscribe({
                     next: (response) => {
                         this.dialogRef.close();
@@ -279,6 +288,11 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         }
     }
 
+    formatDate(date: Date | string): string {
+        const d = new Date(date);
+        return d.toISOString().split('T')[0];
+    }
+
     // =================================>> Convert base64 to blob
     b64toBlob(b64Data: string, contentType: string, sliceSize?: number) {
         contentType = contentType || '';
@@ -298,12 +312,13 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         return blob;
     }
 
-    // Helper method to format the date as 'YYYY-MM-DD'
-    formatDate(date: Date | string): string {
-        const d = new Date(date);
-        return d.toISOString().split('T')[0];
-    }
 
+    getTodayInCambodia(): Date {
+        const now = new Date();
+        const timeZone = 'Asia/Phnom_Penh';
+        const formattedDate = format(now, 'yyyy-MM-dd', { timeZone });
+        return new Date(formattedDate);
+    }
 
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);

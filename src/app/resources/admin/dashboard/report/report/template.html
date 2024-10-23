@@ -17,7 +17,7 @@
                 <mat-label>ពេលវេលា</mat-label>
                 <mat-select formControlName="timeType">
                     <mat-option *ngFor="let type of dateType" [value]="type.id">
-                        {{ type.name }}
+                        {{ type.name }} {{ type?.showDate }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>
