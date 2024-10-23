@@ -31,11 +31,22 @@ export class OrderService {
         );
     }
 
-    // Method to create a new order in the POS system
-    create(body: { cart: string }): Observable<ResponseOrder> {
+    create(body: { cart: string; platform?: string }): Observable<ResponseOrder> {
+        // Set default platform to "Web" if not provided
+        const { cart, platform = 'Web' } = body;
 
-        return this.httpClient.post<ResponseOrder>(`${env.API_BASE_URL}/cashier/ordering/order`, body, {
-            headers: new HttpHeaders().set('Content-Type', 'application/json')
-        });
+        const requestBody = {
+            cart,
+            platform,
+        };
+
+        return this.httpClient.post<ResponseOrder>(
+            `${env.API_BASE_URL}/cashier/ordering/order`,
+            requestBody,
+            {
+                headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+            }
+        );
     }
+
 }

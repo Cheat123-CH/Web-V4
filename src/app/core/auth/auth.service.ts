@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Observable, of, switchMap } from 'rxjs';
 import { env } from 'envs/env';
+import { Observable, of, switchMap } from 'rxjs';
 import { ResponseLogin } from './auth.types';
 
 @Injectable({ providedIn: 'root' })
@@ -32,15 +32,25 @@ export class AuthService {
      *
      * @param credentials
     */
-    signIn(credentials: { username: string; password: string }): Observable<ResponseLogin> {
-        return this._httpClient.post(`${env.API_BASE_URL}/account/auth/login`, credentials).pipe(
+    // Method to sign in a user in the POS system
+    signIn(credentials: { username: string; password: string; platform?: string }): Observable<ResponseLogin> {
+        // Set default platform to "Web" if not provided
+        const { username, password, platform = 'Web' } = credentials;
+
+        const requestBody = {
+            username,
+            password,
+            platform,
+        };
+
+        return this._httpClient.post<ResponseLogin>(`${env.API_BASE_URL}/account/auth/login`, requestBody).pipe(
             switchMap((response: ResponseLogin) => {
-                this.accessToken = response.token;
-                // Return a new observable with the response
-                return of(response);
+                this.accessToken = response.token; // Store the access token
+                return of(response); // Return the response as a new observable
             }),
         );
     }
+
 
     /**
      * Sign out
