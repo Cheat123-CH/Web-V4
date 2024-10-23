@@ -75,7 +75,7 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
 
     // Constructor with dependency injection
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: { title: string, product: Data, setup: { id: number, name: string }[] },
+        @Inject(MAT_DIALOG_DATA) public data: { title: string, product: Data, setup: any },
         private dialogRef: MatDialogRef<ProductsDialogComponent>,
         private formBuilder: UntypedFormBuilder,
         private snackBarService: SnackbarService,
@@ -228,7 +228,7 @@ export class ProductsDialogComponent implements OnInit, OnDestroy {
                     creator: {
                         id: response.data.creator.id,
                         name: response.data.creator.name,
-                        avatar: response.data.creator.avatar || '', 
+                        avatar: response.data.creator.avatar || '',
                     },
                 };
 

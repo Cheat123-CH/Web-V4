@@ -9,7 +9,7 @@
     <!-- Dialog Title -->
     <div mat-dialog-title class="min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pl-5 pr-2.5 border-b">
         <div class="flex flex-1 items-center text-slate-500 gap-3">
-            <h1 class="text-3xl">វិក្កយបត្រ {{ row?.receipt_number }} .</h1>
+            <h1 class="text-3xl">វិក្ក័យប័ត្រ {{ row?.receipt_number }} .</h1>
             <mat-icon *ngIf="row.platform === 'Web'" class="icon-size-6 text-gray-500" svgIcon="mdi:monitor"></mat-icon>
             <mat-icon *ngIf="row.platform === 'Mobile'" class="icon-size-6 text-gray-500"
                 svgIcon="mdi:cellphone"></mat-icon>
@@ -91,7 +91,7 @@
 
                     <!-- Product Name Column -->
                     <ng-container matColumnDef="name">
-                        <th mat-header-cell *matHeaderCellDef class="min-w-52">ផលិតផល</th>
+                        <th mat-header-cell *matHeaderCellDef class="min-w-[180px] ">ផលិតផល</th>
                         <td mat-cell *matCellDef="let element" class="items-start">
                             <div class="flex gap-2 justify-start items-center">
                                 <img class="w-10 h-10" alt="image" [src]="fileUrl +  element.product.image">
@@ -107,7 +107,7 @@
                     <!-- Unit Price Column -->
                     <ng-container matColumnDef="unit_price">
                         <th mat-header-cell *matHeaderCellDef class="w-20 ">តម្លៃ(រៀល)</th>
-                        <td mat-cell *matCellDef="let element" class="text-center">
+                        <td mat-cell *matCellDef="let element" class="text-right">
                             <span>{{ element.unit_price | number }}</span>
                         </td>
                     </ng-container>
@@ -115,15 +115,15 @@
                     <!-- Quantity Column -->
                     <ng-container matColumnDef="qty">
                         <th mat-header-cell *matHeaderCellDef class="w-7">ចំនួន</th>
-                        <td mat-cell *matCellDef="let element">
+                        <td mat-cell *matCellDef="let element" class="text-right">
                             <span>{{ element.qty }}</span>
                         </td>
                     </ng-container>
 
                     <!-- Total Column -->
                     <ng-container matColumnDef="total">
-                        <th mat-header-cell *matHeaderCellDef class="min-w-36">សរុប</th>
-                        <td mat-cell *matCellDef="let element">
+                        <th mat-header-cell *matHeaderCellDef class="min-w-36 text-center">សរុប</th>
+                        <td mat-cell *matCellDef="let element" class="text-right pr-9">
                             <span>{{ (element.unit_price * element.qty) | number }}</span>
                         </td>
                     </ng-container>

@@ -16,6 +16,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 
 // ================================================================>> Custom Library (Application-specific)
 import { env } from 'envs/env';
+import FileSaver from 'file-saver';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
@@ -57,7 +58,6 @@ export class ProductComponent implements OnInit {
     // Component properties
     displayedColumns: string[] = ['no', 'product', 'price', 'total_sale', 'total_sale_price', 'created', 'seller', 'action'];
     dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
-
     fileUrl: string = env.FILE_BASE_URL;
     setup: { productTypes: ProductType[]; users: User[] } = { productTypes: [], users: [] };
     productTypes: ProductType[] = [];
@@ -115,7 +115,6 @@ export class ProductComponent implements OnInit {
         if (this.key !== '') {
             params.key = this.key;
         }
-        console.log(params)
         this.isLoading = true;
         this.productService.list(params).subscribe({
             next: (res: List) => {
@@ -175,7 +174,7 @@ export class ProductComponent implements OnInit {
 
             title: 'បង្កើតផលិតផល',
             product: null,
-            setup: this.setup
+            setup: this.setup.productTypes
         };
 
         dialogConfig.autoFocus = false;
@@ -216,7 +215,7 @@ export class ProductComponent implements OnInit {
 
             title: 'កែប្រែផលិតផល',
             product: row,
-            setup: this.setup
+            setup: this.setup.productTypes
         };
 
         dialogConfig.autoFocus = false;
@@ -238,8 +237,51 @@ export class ProductComponent implements OnInit {
         });
     }
 
-    getReport() { }
+    saving: boolean = false;
+    getReport() {
+        this.saving = true;
+        this.productService.getDataProductReport().subscribe({
+            next: (response) => {
+                this.saving = false;
+                let blob = this.b64toBlob(response.data, 'application/pdf');
+                FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមផលិតផល' + '.pdf');
+                // Show a success message using the snackBarService
+                this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
+            },
+            error: (err: HttpErrorResponse) => {
+                // Set saving to false to indicate the operation is completed (even if it failed)
+                this.saving = false;
+                // Extract error information from the response
+                const errors: { type: string; message: string }[] | undefined = err.error?.errors;
+                let message: string = err.error?.message ?? GlobalConstants.genericError;
 
+                // If there are field-specific errors, join them into a single message
+                if (errors && errors.length > 0) {
+                    message = errors.map((obj) => obj.message).join(', ');
+                }
+                // Show an error message using the snackBarService
+                this.snackBarService.openSnackBar(message, GlobalConstants.error);
+            },
+        });
+    }
+
+    b64toBlob(b64Data: string, contentType: string, sliceSize?: number) {
+        contentType = contentType || '';
+        sliceSize = sliceSize || 512;
+        var byteCharacters = atob(b64Data);
+        var byteArrays = [];
+        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            var slice = byteCharacters.slice(offset, offset + sliceSize);
+            var byteNumbers = new Array(slice.length);
+            for (var i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+        var blob = new Blob(byteArrays, { type: contentType });
+        return blob;
+    }
     // Deleting a product with confirmation
     private helpersConfirmationService = inject(HelperConfirmationService)
     onDelete(product: Data): void {

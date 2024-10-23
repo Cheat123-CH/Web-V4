@@ -52,7 +52,7 @@ export class UpdateUserComponent implements OnInit {
         private dialogRef: MatDialogRef<UpdateUserComponent>,
         private formBuilder: UntypedFormBuilder,
         private snackBarService: SnackbarService
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         // Populate the form with existing user data for updating

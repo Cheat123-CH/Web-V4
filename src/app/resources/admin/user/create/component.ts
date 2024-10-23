@@ -88,6 +88,9 @@ export class CreateUserComponent {
                     avatar: response.data.avatar,
                     is_active: response.data.is_active,
                     created_at: response.data.created_at,
+                    last_login: response.data.last_login,
+                    totalOrders: response.data.totalOrders,
+                    totalSales: response.data.totalSales,
                     role: response.data.role.map((roleData: any) => ({
                         id: roleData.id,
                         role_id: roleData.role_id,
@@ -125,7 +128,7 @@ export class CreateUserComponent {
             this.snackBarService.openSnackBar('Please select an image file.', GlobalConstants.error);
         }
     }
-    
+
     closeDialog() {
         this.dialogRef.close();
     }

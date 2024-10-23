@@ -11,10 +11,12 @@ import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { MatPaginatorModule } from "@angular/material/paginator";
 import { MatSelectModule } from "@angular/material/select";
-import { MatTableModule } from "@angular/material/table";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatTabsModule } from "@angular/material/tabs";
 import { env } from 'envs/env';
 import { User } from "../interface";
 import { UpdateUserComponent } from "../update/component";
+import { Data } from "./interface";
 @Component({
     selector: 'shared-view-user',
     standalone: true,
@@ -32,7 +34,9 @@ import { UpdateUserComponent } from "../update/component";
         MatIconModule,
         MatButtonModule,
         MatPaginatorModule,
-        MatMenuModule
+        MatMenuModule,
+        MatTabsModule,
+        MatTableModule,
     ]
 })
 export class ViewUserComponent implements OnInit {
@@ -40,6 +44,8 @@ export class ViewUserComponent implements OnInit {
     fileUrl = env.FILE_BASE_URL;
     isLoading: boolean = false
     element: any
+    displayedColumns: string[] = ['no', 'receipt', 'price', 'ordered_at', 'ordered_at_time', 'seller'];
+    dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { element: User, roles: { id: number; name: string }[] },
         private _dialogRef: MatDialogRef<ViewUserComponent>,
@@ -52,12 +58,13 @@ export class ViewUserComponent implements OnInit {
     ngOnInit(): void {
         this.viewData()
     }
-    
+
     viewData() {
         this.isLoading = true;
         this._service.view(this.data.element.id).subscribe((res) => {
             this.isLoading = false;
             this.element = res.data;
+            this.dataSource.data = res.sale;
             this.cdr.detectChanges();
         }, (err) => {
             this.isLoading = false;

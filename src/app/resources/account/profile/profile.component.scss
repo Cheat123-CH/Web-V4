@@ -1,26 +1,37 @@
 .list-profile-section {
     width: 100%;
-    height: calc(100dvh - 4.25rem) !important;
+    height: auto !important;
     overflow: hidden;
     z-index: 1;
 
-    .list-profile-body,
+    .list-sale-body,
     .no-data {
         width: 100%;
         height: calc(100dvh - 7.75rem);
         overflow: hidden;
 
-        .list-profile-content {
+        .list-sale-content {
             width: 100%;
             margin-bottom: 0.25rem;
             height: calc(100dvh - 11rem); //7.75rem + 1rem + 0.25rem
             overflow: hidden;
 
-            .list-profile-data {
+            .list-sale-data {
                 width: 100%;
                 max-height: calc(100dvh - 12rem);
                 overflow: auto;
             }
         }
+    }
+}
+
+table {
+    padding: 1rem !important;
+    width: 100%;
+}
+
+::ng-deep .mat-mdc-paginator-container {
+    .mdc-icon-button {
+        @apply dark:bg-gray-700 #{'!important'}
     }
 }

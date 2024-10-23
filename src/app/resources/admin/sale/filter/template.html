@@ -11,7 +11,7 @@
     <div class="out-create-body px-4 pb-2 border-t w-full">
         <form [formGroup]="filterForm" class="out-create-content border-t pt-4">
             <mat-form-field appearance="outline" class="w-full">
-                <mat-label>ប្រភេទពេលវេលា</mat-label>
+                <mat-label>ពេលវេលា</mat-label>
                 <mat-select formControlName="timeType">
                     <mat-option *ngFor="let type of dateType" [value]="type.id">
                         {{ type.name }}
@@ -37,7 +37,7 @@
 
             <mat-form-field appearance="outline" class="w-full">
                 <mat-label>អ្នកគិតប្រាក់</mat-label>
-                <mat-select formControlName="cashier" placeholder="Select Cashier">
+                <mat-select formControlName="cashier" placeholder="អ្នកគិតប្រាក់">
                     <mat-option *ngFor="let cashier of setup" [value]="cashier?.id">
                         {{ cashier?.name }}
                     </mat-option>

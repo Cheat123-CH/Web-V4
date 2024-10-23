@@ -15,10 +15,17 @@ import { Subject, takeUntil } from 'rxjs';
 import { env } from 'envs/env';
 
 // Core
+import { HttpErrorResponse } from '@angular/common/http';
 import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
+import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants from 'helper/shared/constants';
 import { ChangePasswordComponent } from './change-password/component';
+import { ProfileService } from './profile.service';
+import { Data, List } from './profile.type';
 import { UpdateProfileDialogComponent } from './update-dialog';
 
 @Component({
@@ -30,20 +37,30 @@ import { UpdateProfileDialogComponent } from './update-dialog';
         CommonModule,
         MatButtonModule,
         MatIconModule,
-        MatDialogModule
+        MatDialogModule,
+        MatTableModule,
+        MatPaginatorModule,
     ]
 })
 
 export class ProfileComponent implements OnInit {
-
     user: User;
     fileUrl: string = env.FILE_BASE_URL;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-
+    displayedColumns: string[] = ['no', 'type', 'ip', 'date', 'time'];
+    dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
+    total: number = 10;
+    limit: number = 10;
+    page: number = 1;
+    key: string = '';
+    isLoading: boolean = false;
     constructor(
+
         private _changeDetectorRef: ChangeDetectorRef,
         private _userService: UserService,
+        private profileService: ProfileService,
+        private snackBarService: SnackbarService,
         private _dialog: MatDialog,
     ) { }
 
@@ -55,8 +72,42 @@ export class ProfileComponent implements OnInit {
             // Mark for check
             this._changeDetectorRef.markForCheck();
         });
+        this.list(this.page, this.limit)
+    }
+    list(_page: number = 1, _page_size: number = 10,): void {
+        const params: {
+            page: number;
+            page_size: number;
+        } = {
+            page: _page,
+            page_size: _page_size,
+        };
+        this.isLoading = true;
+        this.profileService.list(params).subscribe({
+            next: (res: List) => {
+                this.dataSource.data = res.data;
+                this.total = res.pagination.totalItems;
+                this.limit = res.pagination.perPage;
+                this.page = res.pagination.currentPage;
+                this.isLoading = false; // Set loading state to false once data is loaded
+            },
+            error: (err: HttpErrorResponse) => {
+                this.isLoading = false; // Ensure loading state is false even on error
+                this.snackBarService.openSnackBar(
+                    err?.error?.message ?? GlobalConstants.genericError,
+                    GlobalConstants.error
+                );
+            }
+        });
     }
 
+    onPageChanged(event: PageEvent): void {
+        if (event && event.pageSize) {
+            this.limit = event.pageSize;
+            this.page = event.pageIndex + 1;
+            this.list(this.page, this.limit);
+        }
+    }
     openUpdateProfileDialog(): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = this.user;
@@ -72,7 +123,7 @@ export class ProfileComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
         });
     }
-    
+
     updatePassword(): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = this.user;

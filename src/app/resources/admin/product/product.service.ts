@@ -1,5 +1,5 @@
 // ================================================================>> Core Library (Angular)
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import * as core from '@angular/core';
 
 // ================================================================>> Third party Library
@@ -7,6 +7,7 @@ import { Observable, catchError, of, switchMap, throwError } from 'rxjs';
 
 // ================================================================>> Custom Library (Application-specific)
 import { env } from 'envs/env';
+import { DataSaleResponse } from '../dashboard/interface';
 import { Data, List, SetupResponse } from './product.types';
 
 @core.Injectable({
@@ -65,5 +66,10 @@ export class ProductService {
     // Method to delete a product by ID
     delete(id: number = 0): Observable<{ status_code: number, message: string }> {
         return this.httpClient.delete<{ status_code: number, message: string }>(`${env.API_BASE_URL}/admin/products/${id}`);
+    }
+
+    getDataProductReport(): Observable<any> {
+        const params = new HttpParams()
+        return this.httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/product`, { params });
     }
 }

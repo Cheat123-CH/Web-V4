@@ -24,9 +24,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { PortraitComponent } from 'helper/components/portrait/portrait.component';
 import { Subject } from 'rxjs';
-import { ReportCashierComponent } from './report-chashier/component';
-import { ReportProductComponent } from './report-product/component';
-import { ReportSaleComponent } from './report-sale/component';
+import { ReportGenerateComponent } from './report/component';
 @Component({
     selector: 'app-report-main',
     templateUrl: './template.html',
@@ -67,38 +65,32 @@ export class ReportComponent implements OnInit, OnDestroy {
     }
     private matDialog = inject(MatDialog);
     chooseType(type: number) {
-        if (type === 1) {
-            const dialogConfig = new MatDialogConfig();
-            dialogConfig.autoFocus = false;
-            dialogConfig.position = { right: '0px' };
-            dialogConfig.height = '100dvh';
-            dialogConfig.width = '100dvw';
-            dialogConfig.maxWidth = '550px';
-            dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-            dialogConfig.enterAnimationDuration = '0s';
-            const dialogRef = this.matDialog.open(ReportSaleComponent, dialogConfig);
-        } else if (type === 2) {
-            const dialogConfig = new MatDialogConfig();
-            dialogConfig.autoFocus = false;
-            dialogConfig.position = { right: '0px' };
-            dialogConfig.height = '100dvh';
-            dialogConfig.width = '100dvw';
-            dialogConfig.maxWidth = '550px';
-            dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-            dialogConfig.enterAnimationDuration = '0s';
-            const dialogRef = this.matDialog.open(ReportCashierComponent, dialogConfig);
-        } else {
-            const dialogConfig = new MatDialogConfig();
-            dialogConfig.autoFocus = false;
-            dialogConfig.position = { right: '0px' };
-            dialogConfig.height = '100dvh';
-            dialogConfig.width = '100dvw';
-            dialogConfig.maxWidth = '550px';
-            dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-            dialogConfig.enterAnimationDuration = '0s';
-            const dialogRef = this.matDialog.open(ReportProductComponent, dialogConfig);
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.autoFocus = false;
+        dialogConfig.data = { type };
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
+
+        // Open the appropriate dialog based on the type
+        let component: any;
+        switch (type) {
+            case 1:
+            case 2:
+            case 3:
+                component = ReportGenerateComponent;
+                break;
+            default:
+                console.error('Invalid type:', type);
+                return; // Exit if the type is not recognized
         }
+
+        this.matDialog.open(component, dialogConfig);
     }
+
 
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);

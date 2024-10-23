@@ -14,12 +14,13 @@
     <div class="out-create-body px-4 pb-2 border-t w-full">
         <form [formGroup]="filterForm" class="out-create-content border-t pt-4">
             <mat-form-field appearance="outline" class="w-full">
-                <mat-label>ប្រភេទពេលវេលា</mat-label>
+                <mat-label>ពេលវេលា</mat-label>
                 <mat-select formControlName="timeType">
-                    <mat-option *ngFor="let type of dateType" [value]="type.id">{{ type.name }}</mat-option>
+                    <mat-option *ngFor="let type of dateType" [value]="type.id">
+                        {{ type.name }}
+                    </mat-option>
                 </mat-select>
             </mat-form-field>
-
             <div class="grid grid-cols-2 gap-4" *ngIf="filterForm.get('timeType')!.value === 'startandend'">
                 <mat-form-field appearance="outline" class="w-full">
                     <mat-label>ពី</mat-label>

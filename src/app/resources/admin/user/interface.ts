@@ -27,6 +27,9 @@ export interface User {
     phone: string;
     is_active: boolean;
     created_at: Date;
+    last_login: Date;
+    totalOrders: number,
+    totalSales: number,
     updated_at?: Date;
     role: UserRole[]; // Use role instead of roles to match your JSON
 }

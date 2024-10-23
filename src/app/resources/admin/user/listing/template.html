@@ -36,8 +36,8 @@
                     <mat-icon class="icon-size-6" svgIcon="mdi:plus"></mat-icon>
                     <span class="text-lg ">បង្កើត</span>
                 </button>
-                <button mat-menu-item>
-                    <mat-icon class="icon-size-6 " svgIcon="mdi:download-outline"></mat-icon>
+                <button mat-menu-item (click)="getReport()">
+                    <mat-icon class="icon-size-6" svgIcon="mdi:download-outline"></mat-icon>
                     <span class="text-lg ">ទាញយក</span>
                 </button>
             </mat-menu>
@@ -70,7 +70,7 @@
                         </ng-container>
 
                         <ng-container matColumnDef="profile">
-                            <th mat-header-cell *matHeaderCellDef class="w-[55%]"> គោត្តនាម និង នាម </th>
+                            <th mat-header-cell *matHeaderCellDef class="w-[55%] min-w-[250px]"> គោត្តនាម និង នាម </th>
                             <td mat-cell *matCellDef="let element">
                                 <div class="flex">
                                     <div class="p-2 pl-0">
@@ -88,7 +88,7 @@
                             </td>
                         </ng-container>
                         <ng-container matColumnDef="number">
-                            <th mat-header-cell *matHeaderCellDef class=" w-[200px]"> ទំនាក់ទំនង </th>
+                            <th mat-header-cell *matHeaderCellDef class="w-[200px]">ទំនាក់ទំនង</th>
                             <td mat-cell *matCellDef="let element">
                                 <div class="flex flex-col text-gray-500">
                                     <span>{{ element?.phone }} </span>
@@ -98,17 +98,33 @@
                         </ng-container>
 
                         <ng-container matColumnDef="status">
-                            <th mat-header-cell *matHeaderCellDef class=""> ស្ថានភាព </th>
-                            <td mat-cell *matCellDef="let element" class="customswitch">
+                            <th mat-header-cell *matHeaderCellDef class="min-w-[100px]">ស្ថានភាព</th>
+                            <td mat-cell *matCellDef="let element" class="customswitch text-center">
                                 <ui-switch [checked]="element?.is_active == 1" (change)="onChange($event, element)">
                                 </ui-switch>
                             </td>
                         </ng-container>
 
-                        <ng-container matColumnDef="date">
-                            <th mat-header-cell *matHeaderCellDef class=" min-w-[150px]"> កាលបរិច្ឆេទ </th>
-                            <td mat-cell *matCellDef="let element">
-                                <span class="text-gray-500">{{ element?.created_at | date:'dd-MM-yyyy' }}</span>
+                        <ng-container matColumnDef="last_log">
+                            <th mat-header-cell *matHeaderCellDef class="min-w-[200px] text-center">សកម្មភាពចុងក្រោយ
+                            </th>
+                            <td mat-cell *matCellDef="let element" class="text-center">
+                                <span class="text-gray-500">{{ element?.last_login | date:'dd-MM-yyyy hh:mm' }}</span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="total_sale">
+                            <th mat-header-cell *matHeaderCellDef class="min-w-[150px] text-right">ចំនួនវិក្ក័យប័ត្រ
+                            </th>
+                            <td mat-cell *matCellDef="let element" class="text-right">
+                                <span class="text-gray-500">{{ element?.totalOrders | number }}</span>
+                            </td>
+                        </ng-container>
+
+                        <ng-container matColumnDef="total_price">
+                            <th mat-header-cell *matHeaderCellDef class="min-w-[150px] text-right ">តម្លៃលក់​(រៀល)</th>
+                            <td mat-cell *matCellDef="let element" class="text-right">
+                                <span class="text-gray-500">{{ element?.totalSales | number }}</span>
                             </td>
                         </ng-container>
 
@@ -124,12 +140,12 @@
                                         <span class="text-lg">មើល</span>
                                     </button>
                                     <button mat-menu-item (click)="changPassword(element.id)">
-                                        <mat-icon class="icon-size-6" svgIcon="mdi:key-outline"></mat-icon>
+                                        <mat-icon class="icon-size-6" svgIcon="mdi:lock-outline"></mat-icon>
                                         <span class="text-lg">ពាក្យសំងាត់</span>
                                     </button>
                                     <button mat-menu-item (click)="onDelete(element)">
                                         <mat-icon class="icon-size-6 text-red-400"
-                                            svgIcon="mdi:lock-outline"></mat-icon>
+                                            svgIcon="mdi:trash-can-outline"></mat-icon>
                                         <span class="text-lg text-red-400">លុប</span>
                                     </button>
                                 </mat-menu>

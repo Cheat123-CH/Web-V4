@@ -76,7 +76,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
     yesterday?: string;
     thisWeek?: string;
     thisMonth?: string;
-    dateTypeControl = new FormControl('', { updateOn: 'blur' });
+    dateTypeControl = new FormControl('today', { updateOn: 'blur' });
     form: FormGroup;
     stataticData: StataticData;
     cashierData: CashierData[];
@@ -99,6 +99,8 @@ export class DashboardComponent implements OnInit, OnDestroy {
     ) { }
 
     ngOnInit(): void {
+        const now = new Date();
+        this.today = format(now, 'yyyy-MM-dd'); // Default to today's date
         this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: User) => {
             this.user = user;
             this._changeDetectorRef.markForCheck();

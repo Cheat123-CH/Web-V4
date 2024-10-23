@@ -15,7 +15,7 @@
         </div>
     </div>
 
-    <div class="list-profile-body pt-6 md:pt-20 bg-white dark:bg-gray-800 border-t">
+    <div class="list-profile-body pt-5 md:pt-5 bg-white dark:bg-gray-800 border-t">
         <div class="flex flex-col items-center gap-6">
 
             <div class="max-w-32 w-32 h-32 flex justify-center">
@@ -46,6 +46,96 @@
 
             </div>
 
+        </div>
+        <div class="mt-10">
+            <div class="p-3 border-t border-b">
+                <div class="flex justify-start items-center gap-2">
+                    <mat-icon class="text-gray-700" svgIcon="mdi:format-list-text"></mat-icon>
+                    <span class="font-semibold ">ចូលប្រព័ន្ធ</span>
+                </div>
+            </div>
+            <div>
+                <div class="list-sale-body">
+                    <!-- Show 'No Data' message if the data source is empty -->
+                    <div *ngIf="dataSource.data.length === 0 && !isLoading"
+                        class="no-data bg-white border-t dark:hover:bg-gray-800">
+                        <div class="flex flex-col justify-center items-center mb-4">
+                            <mat-icon class="icon-size-24" svgIcon="toc"></mat-icon>
+                            <span class="text-2xl -mt-3">គ្មានទិន្នន័យ</span>
+                        </div>
+                    </div>
+
+                    <!-- Show data table if there is data -->
+                    <div *ngIf="dataSource.data.length > 0"
+                        class="list-sale-content px-4 pb-4 bg-white rounded-bl-xl rounded-br-xl dark:bg-gray-800">
+                        <div class="list-sale-data border-t">
+                            <table mat-table [dataSource]="dataSource">
+
+                                <ng-container matColumnDef="no">
+                                    <th mat-header-cell *matHeaderCellDef class="w-10">ល.រ</th>
+                                    <td mat-cell *matCellDef="let i = index">
+                                        <span>{{ i + 1 }}.</span>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="type">
+                                    <th mat-header-cell *matHeaderCellDef class="min-w-[50px] text-center">តាមរយះ</th>
+                                    <td mat-cell *matCellDef="let element" class="text-center">
+                                        <mat-icon *ngIf="element.platform === 'Web'" class="icon-size-6 text-gray-500"
+                                            svgIcon="mdi:monitor"></mat-icon>
+                                        <mat-icon *ngIf="element.platform === 'Mobile'"
+                                            class="icon-size-6 text-gray-500" svgIcon="mdi:cellphone"></mat-icon>
+                                        <mat-icon *ngIf="element.platform === 'Unknown' || element.platform === null"
+                                            class="icon-size-6 text-gray-500"
+                                            svgIcon="mdi:crosshairs-question"></mat-icon>
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="ip">
+                                    <th mat-header-cell *matHeaderCellDef class="w-[60%]">IP Address</th>
+                                    <td mat-cell *matCellDef="let element" class="text-start">
+                                        {{ element.ip_address }}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="date">
+                                    <th mat-header-cell *matHeaderCellDef class="min-w-[130px] text-center">កាលបរិច្ឆេទ
+                                    </th>
+                                    <td mat-cell *matCellDef="let element" class="text-center">
+                                        {{ element.timestamp | date: 'dd-LL-YYY'}}
+                                    </td>
+                                </ng-container>
+
+                                <ng-container matColumnDef="time">
+                                    <th mat-header-cell *matHeaderCellDef class="min-w-[100px] text-center">ម៉ោង</th>
+                                    <td mat-cell *matCellDef="let element" class="text-center">
+                                        {{ element.timestamp | date: 'hh:mm a' }}
+                                    </td>
+                                </ng-container>
+
+                                <!-- Header Row -->
+                                <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+
+                                <!-- Data Rows with alternating background colors -->
+                                <tr mat-row *matRowDef="let row; columns: displayedColumns; let i = index" [ngClass]="{
+                                    'bg-white dark:bg-gray-800': i % 2 === 0,
+                                    'bg-gray-100 dark:bg-gray-700': i % 2 !== 0
+                                }">
+                                </tr>
+
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Paginator -->
+                    <div class="list-user-paginator dark:bg-gray-800" *ngIf="dataSource.data.length > 0">
+                        <mat-paginator
+                            class="w-full bg-white flex items-end justify-end overflow-hidden dark:bg-gray-800"
+                            [pageSizeOptions]="[10, 20, 30]" [showFirstLastButtons]="true" [pageIndex]="page - 1"
+                            [length]="total" [pageSize]="limit" (page)="onPageChanged($event)">
+                        </mat-paginator>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>

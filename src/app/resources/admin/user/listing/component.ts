@@ -24,6 +24,7 @@ import { env } from 'envs/env';
 // Local
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import FileSaver from 'file-saver';
 import { CapitalizePipe } from 'helper/pipes/capitalize.pipe';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
@@ -63,7 +64,7 @@ export class UserComponent implements OnInit, OnDestroy {
     private helpersConfirmationService = inject(HelperConfirmationService);
     private matDialog = inject(MatDialog);
 
-    displayedColumns: string[] = ['no', 'profile', 'number', 'status', 'date', 'action'];
+    displayedColumns: string[] = ['no', 'profile', 'number', 'status','last_log', 'total_sale', 'total_price', 'action'];
     dataSource: MatTableDataSource<User> = new MatTableDataSource<User>([]);
     fileUrl: string = env.FILE_BASE_URL;
     link: string = undefined;
@@ -161,7 +162,7 @@ export class UserComponent implements OnInit, OnDestroy {
 
         this.cdr.detectChanges();
     }
-    
+
     onPageChanged(event: PageEvent): void {
         if (event && event.pageSize) {
             this.limit = event.pageSize;
@@ -231,6 +232,51 @@ export class UserComponent implements OnInit, OnDestroy {
         })
     }
 
+    saving: boolean = false;
+    getReport() {
+        this.saving = true;
+        this.userService.getDataCashierReport().subscribe({
+            next: (response) => {
+                this.saving = false;
+                let blob = this.b64toBlob(response.data, 'application/pdf');
+                FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមអ្នក គិតប្រាក់' + '.pdf');
+                // Show a success message using the snackBarService
+                this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
+            },
+            error: (err: HttpErrorResponse) => {
+                // Set saving to false to indicate the operation is completed (even if it failed)
+                this.saving = false;
+                // Extract error information from the response
+                const errors: { type: string; message: string }[] | undefined = err.error?.errors;
+                let message: string = err.error?.message ?? GlobalConstants.genericError;
+
+                // If there are field-specific errors, join them into a single message
+                if (errors && errors.length > 0) {
+                    message = errors.map((obj) => obj.message).join(', ');
+                }
+                // Show an error message using the snackBarService
+                this.snackBarService.openSnackBar(message, GlobalConstants.error);
+            },
+        });
+    }
+
+    b64toBlob(b64Data: string, contentType: string, sliceSize?: number) {
+        contentType = contentType || '';
+        sliceSize = sliceSize || 512;
+        var byteCharacters = atob(b64Data);
+        var byteArrays = [];
+        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            var slice = byteCharacters.slice(offset, offset + sliceSize);
+            var byteNumbers = new Array(slice.length);
+            for (var i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+        var blob = new Blob(byteArrays, { type: contentType });
+        return blob;
+    }
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);

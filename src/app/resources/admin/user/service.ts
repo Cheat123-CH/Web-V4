@@ -1,5 +1,5 @@
 // ================================================================================>> Core Library
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 // ================================================================================>> Thrid Party Library
@@ -12,6 +12,7 @@ import { env } from 'envs/env';
 
 // Local
 import { List, PasswordReq, RequestCreateUser, RequestUserUpdate, ResponseUser } from './interface';
+import { DataSaleResponse } from '../dashboard/interface';
 
 @Injectable({
     providedIn: 'root',
@@ -37,7 +38,7 @@ export class UserService {
     setup(): Observable<{ roles: { id: number; name: string }[] }> {
         return this.httpClient.get<{ roles: { id: number; name: string }[] }>(`${env.API_BASE_URL}/admin/users/setup`);
     }
-    
+
     list(params?: { page: number, page_size: number, key?: string }): Observable<List> {
         const requestStartTime = Date.now();
         return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/users`, { params: params }).pipe(
@@ -76,7 +77,6 @@ export class UserService {
         );
     }
 
-
     delete(id: number): any {
         return this.httpClient.delete(`${env.API_BASE_URL}/admin/users/${id}`, this.httpOptions);
     }
@@ -87,5 +87,10 @@ export class UserService {
 
     updatePassword(id: number, body: PasswordReq): Observable<any> {
         return this.httpClient.put(`${env.API_BASE_URL}/admin/users/update-password/${id}`, body);
+    }
+
+    getDataCashierReport(): Observable<any> {
+        const params = new HttpParams()
+        return this.httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/cashier`, { params });
     }
 }
