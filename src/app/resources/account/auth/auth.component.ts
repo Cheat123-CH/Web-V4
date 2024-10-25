@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
     FormsModule,
@@ -18,6 +19,9 @@ import { AuthService } from 'app/core/auth/auth.service';
 import { LanguagesComponent } from 'app/layout/common/languages/languages.component';
 import { helperAnimations } from 'helper/animations';
 import { HelperAlertComponent, HelperAlertType } from 'helper/components/alert';
+import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants from 'helper/shared/constants';
+import { VerifyOTPAndPasswordComponent } from './verify-otp-password/component';
 
 @Component({
     selector: 'auth-login',
@@ -37,6 +41,8 @@ import { HelperAlertComponent, HelperAlertType } from 'helper/components/alert';
         MatCheckboxModule,
         MatProgressSpinnerModule,
         LanguagesComponent,
+        NgIf,
+        VerifyOTPAndPasswordComponent
     ],
 })
 export class AuthSignInComponent implements OnInit {
@@ -52,7 +58,7 @@ export class AuthSignInComponent implements OnInit {
         'images/apps/pos1.png',
         'images/apps/pos1.png',
     ];
-    
+
     currentImage: string = this.images[0];
     imageIndex: number = 0;
     interval: any;
@@ -65,7 +71,8 @@ export class AuthSignInComponent implements OnInit {
     constructor(
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
-        private _router: Router
+        private _router: Router,
+        private _snackbarService: SnackbarService,
     ) { }
 
     // -----------------------------------------------------------------------------------------------------
@@ -87,10 +94,61 @@ export class AuthSignInComponent implements OnInit {
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
+    toPhone() {
+        this.isChangeToVerifyOtp = false
+    }
+    isChangeToVerifyOtp: boolean = false;
+    checkExistUser() {
+        // Return if the form is invalid
+        if (this.signInForm.invalid) {
+            return;
+        }
+
+        // Disable the form
+        this.signInForm.disable();
+
+        // Call the service to check if the user exists
+        this._authService.checkExistUser(this.signInForm.value).subscribe({
+            next: (res) => {
+                if (res.data) {
+                    console.log("User exists, sending OTP");
+                    this.isChangeToVerifyOtp = true;
+
+                    // Store phone number in local storage
+                    localStorage.setItem('phone', this.signInForm.value.username);
+
+                    // Send OTP to the user
+                    this._authService.sendOtp({ username: this.signInForm.value.username }).subscribe({
+                        next: (otpResponse) => {
+                            this._snackbarService.openSnackBar(otpResponse.message, GlobalConstants.success);
+                        },
+                        error: (otpError) => {
+                            this._snackbarService.openSnackBar(otpError.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
+                        }
+                    });
+
+                } else {
+                    this.isChangeToVerifyOtp = false;
+                    localStorage.removeItem('phone');
+                    this._snackbarService.openSnackBar('អ្នកប្រើប្រាស់មិនមាននៅក្នុងប្រព័ន្ធទេ', GlobalConstants.error);
+                }
+                // Re-enable the form after processing
+                this.signInForm.enable();
+            },
+            error: (err) => {
+                // Handle any errors
+                this.signInForm.enable(); // Re-enable the form
+                this.signInNgForm.resetForm(); // Reset the form
+                this._snackbarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
+                this.showAlert = true;
+            }
+        });
+    }
 
     /**
      * Sign in
-     */
+    */
+
     signIn(): void {
         // Return if the form is invalid
         if (this.signInForm.invalid) {

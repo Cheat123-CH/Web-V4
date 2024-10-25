@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { env } from 'envs/env';
 import { Observable, of, switchMap } from 'rxjs';
-import { ResponseLogin } from './auth.types';
+import { ResponseLogin, ResponseSuccessfullLogin } from './auth.types';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -51,6 +51,46 @@ export class AuthService {
         );
     }
 
+    checkExistUser(credentials: { username: string }): Observable<{ data: boolean; message: string }> {
+        const { username } = credentials;
+
+        const requestBody = {
+            username,
+        };
+        return this._httpClient.post<{ data: boolean; message: string }>(
+            `${env.API_BASE_URL}/account/auth/check-user`,
+            requestBody
+        ).pipe(
+            switchMap((response) => {
+                return of(response); // Return the response as an observable
+            }),
+        );
+    }
+
+    sendOtp(credentials: { username: string }): Observable<{ status: boolean, message: string }> {
+        return this._httpClient.post(`${env.API_BASE_URL}/account/auth/send-otp`, credentials).pipe(
+            switchMap((response: { status: boolean, message: string }) => {
+                // Return a new observable with the response
+                return of(response);
+            }),
+        );
+    }
+
+    verifyOtp(credentials: { username: string; otp: string; platform?: string }): Observable<ResponseSuccessfullLogin> {
+        const { username, otp, platform = 'Web' } = credentials;
+
+        const requestBody = {
+            username,
+            otp,
+            platform,
+        };
+        return this._httpClient.post<ResponseSuccessfullLogin>(`${env.API_BASE_URL}/account/auth/verify-otp`, requestBody).pipe(
+            switchMap((response: ResponseSuccessfullLogin) => {
+                this.accessToken = response.token; // Store access token from the response
+                return of(response); // Return a new observable with the response
+            }),
+        );
+    }
 
     /**
      * Sign out
