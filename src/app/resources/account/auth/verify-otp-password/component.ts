@@ -68,7 +68,6 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
 
     otp_id: string = '';
     temp2fa: string = '';
-
     passwordForm: FormGroup;
 
     constructor(

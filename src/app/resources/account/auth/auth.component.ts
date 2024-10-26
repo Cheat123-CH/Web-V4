@@ -64,6 +64,7 @@ export class AuthSignInComponent implements OnInit {
     interval: any;
     signInForm: UntypedFormGroup;
     showAlert: boolean = false;
+    isLoading: boolean = false
 
     /**
      * Constructor

@@ -32,13 +32,17 @@ export class DashbordService {
     }
 
     getCashier(
-        year?: string,
-        week?: string
+        today?: string,
+        yesterday?: string,
+        thisWeek?: string,
+        thisMonth?: string
     ): Observable<DataCashierResponse> {
         // Construct HttpParams
         let params = new HttpParams();
-        if (year) params = params.set('year', year);
-        if (week) params = params.set('week', week);
+        if (today) params = params.set('today', today);
+        if (yesterday) params = params.set('yesterday', yesterday);
+        if (thisWeek) params = params.set('thisWeek', thisWeek);
+        if (thisMonth) params = params.set('thisMonth', thisMonth);
 
         // Make the HTTP GET request with HttpParams
         return this._httpClient.get<DataCashierResponse>(`${env.API_BASE_URL}/admin/dashboard/cashier`, { params });

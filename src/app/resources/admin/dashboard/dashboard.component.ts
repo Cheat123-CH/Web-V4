@@ -17,7 +17,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { RouterModule } from '@angular/router';
 import { UserService } from 'app/core/user/user.service';
 import { User } from 'app/core/user/user.types';
-import { format, getISOWeek } from 'date-fns';
+import { format } from 'date-fns';
 import { env } from 'envs/env';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
@@ -29,14 +29,14 @@ import { SaleCashierBarChartComponent } from './bar-chart-sale';
 import { CicleChartComponent } from './cicle-chart';
 import { SaleCicleChartComponent } from './cicle-chart-sale';
 import { DashbordService } from './dashboards.service';
-import { CashierData, DashboardResponse, DataCashierResponse, StataticData } from './interface';
+import { CashierData, StataticData } from './interface';
 import { ReportComponent } from './report/component';
 
 @Component({
     selector: 'admin-dashboard',
     standalone: true,
     templateUrl: './dashboard.component.html',
-    styleUrl: './dashboard.component.scss',
+    styleUrls: ['./dashboard.component.scss'],
     imports: [
         CommonModule,
         RouterModule,
@@ -60,36 +60,44 @@ import { ReportComponent } from './report/component';
         MatDatepickerModule,
         MatNativeDateModule,
         SaleCashierBarChartComponent,
-        SaleCicleChartComponent
+        SaleCicleChartComponent,
     ],
-    providers: [
-        { provide: LocationStrategy, useClass: HashLocationStrategy },
-    ],
+    providers: [{ provide: LocationStrategy, useClass: HashLocationStrategy }],
 })
 export class DashboardComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     private _organizationDataSubject = new BehaviorSubject<StataticData[]>([]);
     organizationData$ = this._organizationDataSubject.asObservable();
+
     user: User;
+    public selectedDateName = 'ថ្ងៃនេះ';
+    public selectedDateNameChasier = 'ថ្ងៃនេះ';
     fileUrl = env.FILE_BASE_URL;
+
     today?: string;
     yesterday?: string;
     thisWeek?: string;
     thisMonth?: string;
+
     dateTypeControl = new FormControl('today', { updateOn: 'blur' });
+    dateTypeControlChasier = new FormControl('today', { updateOn: 'blur' });
+
     form: FormGroup;
     stataticData: StataticData;
     cashierData: CashierData[];
-    selectedDate: Date;
+    activeTab: string = 'all';
+    displayedColumns: string[] = ['number_doc', 'title_doc', 'ministry_doc', 'action_doc'];
+    private cache: any = {};
+    private cacheCashier: any = {};
+    isCart1Visible = false;
+    intervalId: any;
+
     public dateType = [
         { id: 'today', name: 'ថ្ងៃនេះ' },
         { id: 'yesterday', name: 'ម្សិលមិញ' },
         { id: 'thisWeek', name: 'សប្តាហ៍នេះ' },
-        { id: 'thisMonth', name: 'ខែនេះ' }
+        { id: 'thisMonth', name: 'ខែនេះ' },
     ];
-    private cache: any = {};
-    activeTab: string = 'all';
-    displayedColumns: string[] = ['number_doc', 'title_doc', 'ministry_doc', 'action_doc'];
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
@@ -100,59 +108,117 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         const now = new Date();
-        this.today = format(now, 'yyyy-MM-dd'); // Default to today's date
-        this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: User) => {
-            this.user = user;
-            this._changeDetectorRef.markForCheck();
-        });
+        this.today = format(now, 'yyyy-MM-dd');
+        this.initializeForm();
+        this.fetchUserData();
         this.startCarousel();
-        this.form = new FormGroup({
-            date_type: this.dateTypeControl
-        });
-
-        this.dateTypeControl.valueChanges
-            .pipe(debounceTime(0), distinctUntilChanged(), takeUntil(this._unsubscribeAll))
-            .subscribe(() => this.dateTypeHandler());
-
         this.getStaticData();
-        this.getCashierData()
+        this.getCashierData();
+        this.setupDateTypeListeners();
     }
-    dateTypeHandler(): void {
-        const selectedDateType = this.dateTypeControl.value;
-        const now = new Date();
 
-        switch (selectedDateType) {
+    initializeForm(): void {
+        this.form = new FormGroup({
+            date_type: this.dateTypeControl,
+            date_type_cashier: this.dateTypeControlChasier,
+        });
+    }
+
+    setupDateTypeListeners(): void {
+        this.dateTypeControl.valueChanges
+            .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this._unsubscribeAll))
+            .subscribe(() => this.dateTypeHandler(true));
+
+        this.dateTypeControlChasier.valueChanges
+            .pipe(debounceTime(300), distinctUntilChanged(), takeUntil(this._unsubscribeAll))
+            .subscribe(() => this.dateTypeHandler(false));
+    }
+
+    fetchUserData(): void {
+        this._userService.user$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((user) => {
+                this.user = user;
+                this._changeDetectorRef.markForCheck();
+            });
+    }
+
+    selectDateType(type: { id: string; name: string }, isMain: boolean): void {
+        if (isMain) {
+            this.selectedDateName = type.name;
+            this.dateTypeControl.setValue(type.id, { emitEvent: true });
+        } else {
+            this.selectedDateNameChasier = type.name;
+            this.dateTypeControlChasier.setValue(type.id, { emitEvent: true });
+        }
+        this._changeDetectorRef.markForCheck();
+    }
+
+    dateTypeHandler(isMain: boolean): void {
+        const selectedType = isMain ? this.dateTypeControl.value : this.dateTypeControlChasier.value;
+        // Apply the selected date type
+        switch (selectedType) {
             case 'today':
-                this.today = format(now, 'yyyy-MM-dd');
-                this.yesterday = this.thisWeek = this.thisMonth = undefined;
+                this.applyToday();
                 break;
             case 'yesterday':
-                const yesterdayDate = new Date(now);
-                yesterdayDate.setDate(now.getDate() - 1);
-                this.yesterday = format(yesterdayDate, 'yyyy-MM-dd');
-                this.today = this.thisWeek = this.thisMonth = undefined;
+                this.applyYesterday();
                 break;
             case 'thisWeek':
-                const firstDayOfWeek = new Date(now);
-                firstDayOfWeek.setDate(now.getDate() - now.getDay());
-                this.thisWeek = format(firstDayOfWeek, 'yyyy-MM-dd');
-                this.today = this.yesterday = this.thisMonth = undefined;
+                this.applyThisWeek();
                 break;
             case 'thisMonth':
-                const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-                this.thisMonth = format(firstDayOfMonth, 'yyyy-MM-dd');
-                this.today = this.yesterday = this.thisWeek = undefined;
-                break;
-            default:
-                this.today = this.yesterday = this.thisWeek = this.thisMonth = undefined;
+                this.applyThisMonth();
                 break;
         }
-        this.getStaticData();
+
+        // Fetch data based on the filter type
+        if (isMain) this.getStaticData();
+        else this.getCashierData();
+    }
+
+    applyToday(): void {
+        this.today = format(new Date(), 'yyyy-MM-dd');
+        this.clearOtherDates('today');
+    }
+
+    applyYesterday(): void {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        this.yesterday = format(yesterday, 'yyyy-MM-dd');
+        this.clearOtherDates('yesterday');
+    }
+
+    applyThisWeek(): void {
+        const firstDayOfWeek = new Date();
+        firstDayOfWeek.setDate(firstDayOfWeek.getDate() - firstDayOfWeek.getDay());
+        this.thisWeek = format(firstDayOfWeek, 'yyyy-MM-dd');
+        this.clearOtherDates('thisWeek');
+    }
+
+    applyThisMonth(): void {
+        const firstDayOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1);
+        this.thisMonth = format(firstDayOfMonth, 'yyyy-MM-dd');
+        this.clearOtherDates('thisMonth');
+    }
+
+    clearOtherDates(activeDate: string): void {
+        if (activeDate !== 'today') this.today = undefined;
+        if (activeDate !== 'yesterday') this.yesterday = undefined;
+        if (activeDate !== 'thisWeek') this.thisWeek = undefined;
+        if (activeDate !== 'thisMonth') this.thisMonth = undefined;
+    }
+
+    getCacheKey(isMain: boolean): string {
+        // Determine the appropriate date for cache key generation
+        const datePart = this.today || this.yesterday || this.thisWeek || this.thisMonth || 'default';
+        const prefix = isMain ? 'main' : 'cashier';
+        const cacheKey = `${prefix}_${datePart}`;
+        return cacheKey;
     }
 
     getStaticData(): void {
-        const cacheKey = this.today || this.yesterday || this.thisWeek || this.thisMonth;
-
+        const cacheKey = this.getCacheKey(true); // Generate cache key for main filter
         if (this.cache[cacheKey]) {
             this.stataticData = this.cache[cacheKey];
             return;
@@ -161,42 +227,46 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this._service.getStaticData(this.today, this.yesterday, this.thisWeek, this.thisMonth)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
-                next: (response: DashboardResponse) => {
-                    if (response) {
-                        this.stataticData = response.statatics;
-                        this.cache[cacheKey] = response.statatics;
-                    }
-                    this._changeDetectorRef.markForCheck(); // Trigger UI update
+                next: (response) => {
+                    this.stataticData = response.statatics;
+                    this.cache[cacheKey] = response.statatics;
+                    this._changeDetectorRef.markForCheck();
                 },
                 error: (err) => {
-                    this._snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
-                }
+                    console.error('Error fetching static data:', err); // Log error
+                    this._snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, 'Error');
+                },
             });
     }
 
     getCashierData(): void {
-        let year: string | undefined;
-        let week: string | undefined;
-
-        if (this.selectedDate) {
-            year = format(this.selectedDate, 'yyyy');  // Extract year
-            week = getISOWeek(this.selectedDate).toString();  // Extract week
+        const cacheKey = this.getCacheKey(false); // Cashier filter cache key
+        if (this.cacheCashier[cacheKey]) {
+            this.cashierData = this.cacheCashier[cacheKey];
+            return;
         }
 
-        this._service.getCashier(year, week)
+        this._service.getCashier(this.today, this.yesterday, this.thisWeek, this.thisMonth)
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
-                next: (response: DataCashierResponse) => {
-                    if (response && response.data) {
-                        this.cashierData = response.data;
-                    }
-                    this._changeDetectorRef.markForCheck();  // Trigger UI update
+                next: (response) => {
+                    this.cashierData = response.data;
+                    this.cacheCashier[cacheKey] = response.data;
+                    this._changeDetectorRef.markForCheck();
                 },
                 error: (err) => {
-                    const errorMessage = err.error?.message ?? 'Error fetching cashier data.';
-                    console.error(errorMessage);
-                }
+                    console.error('Error fetching cashier data:', err);
+                    this._snackBarService.openSnackBar(err.error?.message ?? 'Error fetching cashier data.', 'Error');
+                },
             });
+    }
+
+    startCarousel(): void {
+        this.toggleCart();
+    }
+
+    toggleCart(): void {
+        this.isCart1Visible = !this.isCart1Visible;
     }
 
     private matDialog = inject(MatDialog);
@@ -209,8 +279,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
         dialogConfig.maxWidth = '550px';
         dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
         dialogConfig.enterAnimationDuration = '0s';
-        const dialogRef = this.matDialog.open(ReportComponent, dialogConfig);
-
+        this.matDialog.open(ReportComponent, dialogConfig);
     }
 
     selectedDate3: Date
@@ -221,19 +290,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     onDateChangeForChart2(event: any): void {
     }
 
-    isCart1Visible = false;
-    intervalId: any;
-    startCarousel() {
-        this.toggleCart();
-    }
-
-    toggleCart() {
-        this.isCart1Visible = !this.isCart1Visible;
-    }
-
     showCart(cart1: boolean) {
         this.isCart1Visible = cart1;
     }
+
     listView = true; // Start with the list view by default
     chartView = false;
     lineView = false;

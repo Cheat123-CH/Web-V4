@@ -76,6 +76,8 @@ export class BarChartComponent implements OnInit, OnChanges {
     }
 
     private updateChart(labels: string[], data: number[]): void {
+        const maxValue = Math.max(...data) + 10000; // Calculate max value for y-axis
+
         this.chartOptions = {
             chart: {
                 height: 300,
@@ -113,10 +115,16 @@ export class BarChartComponent implements OnInit, OnChanges {
             },
             yaxis: {
                 min: 0,
-                max: Math.max(...data) + 10000,
+                max: maxValue,
                 tickAmount: 5,
                 labels: {
-                    formatter: function (value) { return value.toFixed(0); }
+                    formatter: function (value: number) {
+                        return value >= 1_000
+                            ? (value / 1_000).toFixed(1) + 'k'
+                            : value >= 1_000
+                                ? (value / 1_000).toFixed(1) + 'k'
+                                : value.toString();
+                    }
                 }
             },
             grid: {

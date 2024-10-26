@@ -38,24 +38,26 @@
                             <!-- Title -->
                             <div class="flex items-center justify-between">
                                 <div class="text-base md:text-lg font-semibold text-gray-800">ការលក់</div>
-                                <form [formGroup]="form">
-                                    <div class="sm-form-field-appearance-outline height-header">
-                                        <mat-form-field appearance="outline" class="w-full">
-                                            <mat-select formControlName="date_type"
-                                                (selectionChange)="dateTypeHandler()">
-                                                <mat-option *ngFor="let item of dateType" [value]="item.id">
-                                                    <span>{{item.name}}</span>
-                                                </mat-option>
-                                            </mat-select>
-                                            <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
-                                        </mat-form-field>
+                                <!-- Main Date Filter -->
+                                <div class="date-filter">
+                                    <div [matMenuTriggerFor]="mainMenu"
+                                        class="flex gap-2 justify-between cursor-pointer items-center bg-gray-200 p-2 rounded-lg min-w-[100px] mr-3">
+                                        <span>{{ selectedDateName }}</span>
+                                        <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
+
+                                        <mat-menu #mainMenu="matMenu">
+                                            <button *ngFor="let type of dateType" mat-menu-item
+                                                (click)="selectDateType(type, true)">
+                                                <span class="text-lg">{{ type.name }}</span>
+                                            </button>
+                                        </mat-menu>
                                     </div>
-                                </form>
+                                </div>
                             </div>
                             <!-- Centered Number -->
                             <div class="flex-grow flex items-center -mt-3">
                                 <div class="text-green-600 text-lg md:text-4xl font-semibold">{{stataticData?.total ??
-                                    0}} ៛</div>
+                                    0 | number}} ៛</div>
                             </div>
 
                             <!-- Comparison Info -->
@@ -71,7 +73,7 @@
                                 <span [ngClass]="{
                                     'text-green-500': stataticData?.totalPercentageIncrease >= 0,
                                     'text-red-500': stataticData?.totalPercentageIncrease < 0
-                                  }">( {{stataticData?.saleIncreasePreviousDay ?? 0 }} )</span>
+                                  }">( {{stataticData?.saleIncreasePreviousDay ?? 0 | number }} )</span>
                                 <span>ធៀបនិងម្សិលមិញ</span>
                             </div>
 
@@ -183,15 +185,18 @@
                         អ្នកគិតប្រាក់
                     </span>
                     <div class="flex gat-2 cursor-pointer items-center ">
-                        <div class="sm-form-field-appearance-outline height-header pr-2">
-                            <mat-form-field appearance="outline" class="w-[190px]">
-                                <mat-label>កាលបរិច្ឆេទ</mat-label>
-                                <input matInput [matDatepicker]="picker" placeholder="កាលបរិច្ឆេទ"
-                                    [(ngModel)]="selectedDate" name="selectedDate" (dateChange)="getCashierData()">
-                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                <mat-datepicker #picker></mat-datepicker>
-                                <mat-error *ngIf="!selectedDate">សូមជ្រើសរើសកាលបរិច្ឆេទ</mat-error>
-                            </mat-form-field>
+                        <!-- Cashier Date Filter -->
+                        <div [matMenuTriggerFor]="cashierMenu"
+                            class="flex gap-2 justify-between cursor-pointer items-center bg-gray-100 p-2 rounded-lg min-w-[100px] mr-3">
+                            <span>{{ selectedDateNameChasier }}</span>
+                            <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
+
+                            <mat-menu #cashierMenu="matMenu">
+                                <button *ngFor="let type of dateType" mat-menu-item
+                                    (click)="selectDateType(type, false)">
+                                    <span class="text-lg">{{ type.name }}</span>
+                                </button>
+                            </mat-menu>
                         </div>
 
                         <div class="p-3 flex items-center rounded-full"
@@ -214,6 +219,7 @@
 
                     </div>
                 </div>
+
                 <div>
                     <!-- List View -->
                     <ng-container *ngIf="listView">
