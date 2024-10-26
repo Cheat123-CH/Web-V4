@@ -1,9 +1,10 @@
 # Stage 1
-FROM node:20-alpine as node
+FROM node:18-alpine as node
 
 # Get Variables
 ARG API_BASE_URL
 ARG FILE_BASE_URL
+ARG SOCKET_URL
 
 WORKDIR /usr/app
 RUN npm uninstall ws
@@ -12,6 +13,7 @@ COPY ./package-lock.json /usr/app/package-lock.json
 
 # Install Dependencies
 RUN npm install --legacy-peer-deps
+
 
 COPY ./ /usr/app
 
