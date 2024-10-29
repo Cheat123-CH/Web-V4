@@ -209,7 +209,7 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
                         this.dialogRef.close();
                         this.saving = false;
                         const blob = this.b64toBlob(response.data, 'application/pdf');
-                        FileSaver.saveAs(blob, 'របាយការណ៍លក់រាយ.pdf');
+                        FileSaver.saveAs(blob, `របាយការណ៍លក់រាយ(${this.getFormattedDateTime()}).pdf`);
                         this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
                     },
                     error: (err: HttpErrorResponse) => {
@@ -232,7 +232,7 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
 
                         this.saving = false;
                         let blob = this.b64toBlob(response.data, 'application/pdf');
-                        FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមអ្នក គិតប្រាក់' + '.pdf');
+                        FileSaver.saveAs(blob, `របាយការណ៍លក់តាមអ្នក គិតប្រាក់(${this.getFormattedDateTime()}).pdf`);
                         // Show a success message using the snackBarService
                         this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
                     },
@@ -261,7 +261,7 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
 
                         this.saving = false;
                         let blob = this.b64toBlob(response.data, 'application/pdf');
-                        FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមផលិតផល' + '.pdf');
+                        FileSaver.saveAs(blob, `របាយការណ៍លក់តាមផលិតផល(${this.getFormattedDateTime()}).pdf`);
                         // Show a success message using the snackBarService
                         this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
                     },
@@ -293,6 +293,23 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         return d.toISOString().split('T')[0];
     }
 
+    getFormattedDateTime(): string {
+        const now = new Date();
+
+        const formattedDate = new Intl.DateTimeFormat('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        }).format(now);
+
+        const formattedTime = new Intl.DateTimeFormat('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+        }).format(now);
+
+        return `${formattedDate} ${formattedTime}`;
+    }
     // =================================>> Convert base64 to blob
     b64toBlob(b64Data: string, contentType: string, sliceSize?: number) {
         contentType = contentType || '';

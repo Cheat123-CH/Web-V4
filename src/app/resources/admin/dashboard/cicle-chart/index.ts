@@ -1,7 +1,8 @@
 import { NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+    ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { format, getISOWeek } from 'date-fns'; // Import necessary functions for date formatting
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { DashbordService } from '../dashboards.service';
@@ -13,50 +14,71 @@ import { DashbordService } from '../dashboards.service';
     styleUrls: ['./style.scss'],
     imports: [NgApexchartsModule, MatIconModule, NgIf],
 })
+
 export class CicleChartComponent implements OnInit, OnChanges {
-    @Input() selectedDate: Date | string; // Receive selectedDate from the parent component
+    @Input() selectedDate: { thisWeek: string; thisMonth: string, threeMonthAgo: string, sixMonthAgo: string } | null = null;
     @ViewChild("chartContainer2", { read: ElementRef, static: false }) chartContainer!: ElementRef<HTMLDivElement>;
 
     chartOptions: Partial<ApexOptions> = {};
-    public year: string = '';
-    public week: string = ''; // Add week as a filter
-    public data: any | undefined;
 
     constructor(
         private _cdr: ChangeDetectorRef,
         private _snackBarService: SnackbarService,
-        private _cashierService: DashbordService // Inject your service here
+        private _cashierService: DashbordService
     ) { }
 
     ngOnInit(): void {
-        this._fetchProductData(this.year, this.week); // Fetch product data on init
-    }
-
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['selectedDate']) {
-            if (this.selectedDate) {
-                this.year = format(this.selectedDate, 'yyyy'); // Extract year from selectedDate
-                this.week = getISOWeek(this.selectedDate).toString(); // Extract ISO week from selectedDate
-                this._fetchProductData(this.year, this.week); // Fetch data based on the new year and week
-            }
+        if (this.selectedDate) {
+            this._fetchProductData(
+                this.selectedDate.thisWeek,
+                this.selectedDate.thisMonth,
+                this.selectedDate.threeMonthAgo,
+                this.selectedDate.sixMonthAgo
+            );
+        } else {
+            this._fetchProductData();
         }
     }
 
-    private _fetchProductData(year?: string, week?: string): void {
-        this._cashierService.getProductType(year, week)
-            .subscribe({
-                next: (response: any) => {
-                    if (response && response.labels && response.data) {
-                        this._updateChart(response.labels, response.data);
-                    } else {
-                        this._snackBarService.openSnackBar('No data available', 'Info');
-                    }
-                },
-                error: (err) => {
-                    const errorMessage = err.error?.message || 'Error fetching product data';
-                    this._snackBarService.openSnackBar(errorMessage, 'Error');
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes['selectedDate'] && this.selectedDate) {
+            this._fetchProductData(
+                this.selectedDate.thisWeek,
+                this.selectedDate.thisMonth,
+                this.selectedDate.threeMonthAgo,
+                this.selectedDate.sixMonthAgo
+            );
+        }
+    }
+
+    private _fetchProductData(
+        thisWeek?: string,
+        thisMonth?: string,
+        threeMonthAgo?: string,
+        sixMonthAgo?: string
+
+    ): void {
+        const params = {
+            thisWeek: thisWeek || undefined,
+            thisMonth: thisMonth || null,
+            threeMonthAgo: threeMonthAgo || null,
+            sixMonthAgo: sixMonthAgo || null,
+
+        };
+
+        this._cashierService.getProductType(params).subscribe({
+            next: (response: any) => {
+                if (response && response.labels && response.data) {
+                    this._updateChart(response.labels, response.data);
+                } else {
+                    this._snackBarService.openSnackBar('No data available', 'Info');
                 }
-            });
+            },
+            error: (err) => {
+                const errorMessage = err.error?.message || 'Error fetching product data';
+                this._snackBarService.openSnackBar(errorMessage, 'Error');
+            }
+        });
     }
 
     private _updateChart(labels: string[], data: number[]): void {
@@ -66,29 +88,18 @@ export class CicleChartComponent implements OnInit, OnChanges {
                 type: 'donut',
                 height: 400,
             },
-            series: data.map(Number), // Use the data from the API
-            labels: labels.map((label, index) => `${label} (${data[index]})`), // Format the labels with data
+            series: data.map(Number),
+            labels: labels.map((label, index) => `${label} (${data[index]})`),
             legend: {
                 position: 'bottom',
                 horizontalAlign: 'center',
                 offsetY: -140,
                 fontSize: '14px',
                 fontFamily: 'Arial, sans-serif',
-                labels: {
-                    colors: '#000', // Change legend text color
-                }
             },
-            colors: ['#a3e635', '#16a34a', '#d9f99d', '#86efac', '#81D4FA', '#80DEEA', '#A5D6A7', '#80CBC4', '#B39DDB'], // Customize the colors as needed
-            responsive: [
-                {
-                    breakpoint: 480,
-                    options: {
-                        chart: {},
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
+            colors: [
+                '#a3e635', '#16a34a', '#d9f99d', '#86efac',
+                '#81D4FA', '#80DEEA', '#A5D6A7', '#80CBC4', '#B39DDB'
             ],
             plotOptions: {
                 pie: {
@@ -102,10 +113,7 @@ export class CicleChartComponent implements OnInit, OnChanges {
                             total: {
                                 show: true,
                                 label: 'Total',
-                                fontSize: '18px',
-                                fontFamily: 'Arial, sans-serif',
-                                color: '#373d3f',
-                                formatter: () => `${totalSum}` // Display total sum of data
+                                formatter: () => `${totalSum}`
                             }
                         }
                     }
@@ -114,18 +122,17 @@ export class CicleChartComponent implements OnInit, OnChanges {
             tooltip: {
                 enabled: true,
                 y: {
-                    formatter: (val) => `${val}`, // Only show raw value, no percentage
+                    formatter: (val) => `${val}`,
                 }
             },
             dataLabels: {
-                enabled: true, // Enable labels, but show raw values only
+                enabled: true,
                 formatter: function (val, opts) {
-                    return opts.w.config.series[opts.seriesIndex]; // Show only raw values
+                    return opts.w.config.series[opts.seriesIndex];
                 },
                 style: {
                     fontSize: '14px',
                     fontFamily: 'Arial, sans-serif',
-                    colors: ['#000']
                 }
             }
         };

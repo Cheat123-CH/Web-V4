@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from 'app/core/auth/auth.service';
+import { HelperAlertComponent, HelperAlertType } from 'helper/components/alert';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { Subject } from 'rxjs';
@@ -34,6 +35,7 @@ import { Subject } from 'rxjs';
         MatIconModule,
         MatCheckboxModule,
         MatProgressSpinnerModule,
+        HelperAlertComponent,
     ],
     selector: 'verify-otp-password',
     templateUrl: 'template.html',
@@ -50,7 +52,10 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
     @ViewChild('input6') input6: ElementRef;
 
     isOtpForm: boolean[] = [true, false, false]; //[otp,password,2fa]
-
+    alert: { type: HelperAlertType; message: string } = {
+        type: 'success',
+        message: '',
+    };
     public token: string = '';
     public numStr1: string = '';
     public numStr2: string = '';
@@ -175,19 +180,30 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
             }
         });
     }
-
+    showAlert: boolean = false;
     signIn(): void {
-        // Sign in
+        this.showAlert = false; // Hide previous alert
+        this.isLoading = true;
+        this.passwordForm.disable(); // Disable the form during request
+
         this._authService.signIn(this.passwordForm.value).subscribe({
-            next: res => {
-                // Navigate to the redirect url
-                this._router.navigateByUrl('');
+            next: () => {
+                this._router.navigateByUrl(''); // Navigate to home on success
             },
-            error: err => {
+            error: (err) => {
                 // Re-enable the form
-                this.passwordForm.enable()
+                this.passwordForm.enable();
+                // Set the alert
+                this.alert = {
+                    type: 'error',
+                    message: err.error?.message || 'Wrong Phone numeber or password',
+                };
+
+                this.isLoading = false;
+                // Show the alert
+                this.showAlert = true;
             }
-        });
+        })
     }
 
     clearAllInput() {

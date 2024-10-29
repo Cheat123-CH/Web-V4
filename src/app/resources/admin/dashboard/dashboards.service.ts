@@ -48,30 +48,11 @@ export class DashbordService {
         return this._httpClient.get<DataCashierResponse>(`${env.API_BASE_URL}/admin/dashboard/cashier`, { params });
     }
 
-    getProductType(
-        year?: string,
-        week?: string
-    ): Observable<any> {
-        // Construct HttpParams
-        let params = new HttpParams();
-        if (year) params = params.set('year', year);
-        if (week) params = params.set('week', week);
-
-        // Make the HTTP GET request with HttpParams
+    getProductType(params: { thisWeek?: string; thisMonth?: string, threeMonthAgo?: string, sixMonthAgo?: string }): Observable<any> {
         return this._httpClient.get<any>(`${env.API_BASE_URL}/admin/dashboard/product-type`, { params });
     }
 
-    getDataSale(year?: string, week?: string): Observable<DataSaleResponse> {
-        let params = new HttpParams();
-
-        // Set params only if values are provided
-        if (year) {
-            params = params.set('year', year);
-        }
-        if (week) {
-            params = params.set('week', week);
-        }
-
+    getDataSale(params: { thisWeek?: string; thisMonth?: string, threeMonthAgo?: string, sixMonthAgo?: string }): Observable<DataSaleResponse> {
         return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/admin/dashboard/data-sale`, { params });
     }
 

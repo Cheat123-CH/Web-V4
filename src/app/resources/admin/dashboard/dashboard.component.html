@@ -41,13 +41,13 @@
                                 <!-- Main Date Filter -->
                                 <div class="date-filter">
                                     <div [matMenuTriggerFor]="mainMenu"
-                                        class="flex gap-2 justify-between cursor-pointer items-center bg-gray-200 p-2 rounded-lg min-w-[100px] mr-3">
+                                        class="flex gap-2 justify-between cursor-pointer items-center bg-gray-200 dark:bg-slate-700 p-2 rounded-lg min-w-[100px] mr-3">
                                         <span>{{ selectedDateName }}</span>
                                         <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
 
                                         <mat-menu #mainMenu="matMenu">
-                                            <button *ngFor="let type of dateType" mat-menu-item
-                                                (click)="selectDateType(type, true)">
+                                            <button *ngFor="let type of dateType.slice(0,4)" mat-menu-item
+                                                (click)="selectDateType(type, 1)">
                                                 <span class="text-lg">{{ type.name }}</span>
                                             </button>
                                         </mat-menu>
@@ -187,13 +187,13 @@
                     <div class="flex gat-2 cursor-pointer items-center ">
                         <!-- Cashier Date Filter -->
                         <div [matMenuTriggerFor]="cashierMenu"
-                            class="flex gap-2 justify-between cursor-pointer items-center bg-gray-100 p-2 rounded-lg min-w-[100px] mr-3">
+                            class="flex gap-2 justify-between cursor-pointer items-center bg-gray-100 dark:bg-slate-700 p-2 rounded-lg min-w-[100px] mr-3">
                             <span>{{ selectedDateNameChasier }}</span>
                             <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
 
                             <mat-menu #cashierMenu="matMenu">
-                                <button *ngFor="let type of dateType" mat-menu-item
-                                    (click)="selectDateType(type, false)">
+                                <button *ngFor="let type of dateType.slice(0,4)" mat-menu-item
+                                    (click)="selectDateType(type, 2)">
                                     <span class="text-lg">{{ type.name }}</span>
                                 </button>
                             </mat-menu>
@@ -285,15 +285,17 @@
                     <span class="text-gray-700 dark:text-slate-300 sm:text-lg md:text-xl text-sm font-semibold">
                         ប្រភេទផលិតផល
                     </span>
-                    <div class="sm-form-field-appearance-outline height-header">
-                        <mat-form-field appearance="outline" class="w-full">
-                            <mat-label>ជ្រើសរើសកាលបរិច្ឆេទ</mat-label>
-                            <input matInput [matDatepicker]="picker2" placeholder="ជ្រើសរើសកាលបរិច្ឆេទ"
-                                [(ngModel)]="selectedDate3" name="selectedDate3" (dateChange)="onDateChangeForChart()">
-                            <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
-                            <mat-datepicker #picker2></mat-datepicker>
-                            <mat-error *ngIf="!selectedDate3">សូមជ្រើសរើសកាលបរិច្ឆេទ</mat-error>
-                        </mat-form-field>
+                    <div [matMenuTriggerFor]="ProductMenu"
+                        class="flex gap-2 justify-between cursor-pointer items-center bg-gray-100 dark:bg-slate-700 p-2 rounded-lg min-w-[100px] mr-3">
+                        <span>{{ selectedDateNameProduct }}</span>
+                        <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
+
+                        <mat-menu #ProductMenu="matMenu">
+                            <button *ngFor="let type of dateType.slice(2)" mat-menu-item
+                                (click)="selectDateType(type, 3)">
+                                <span class="text-lg">{{ type.name }}</span>
+                            </button>
+                        </mat-menu>
                     </div>
                 </div>
                 <div>
@@ -312,16 +314,17 @@
                     <span class="text-gray-700 dark:text-slate-300 sm:text-lg md:text-xl text-sm font-semibold">
                         ស្ថិតិការលក់
                     </span>
-                    <div class="sm-form-field-appearance-outline height-header">
-                        <mat-form-field appearance="outline" class="w-full">
-                            <mat-label>ជ្រើសរើសកាលបរិច្ឆេទ</mat-label>
-                            <input matInput [matDatepicker]="picker4" placeholder="ជ្រើសរើសកាលបរិច្ឆេទ"
-                                [(ngModel)]="selectedDate4" name="selectedDate4"
-                                (dateChange)="onDateChangeForChart2($event)">
-                            <mat-datepicker-toggle matSuffix [for]="picker4"></mat-datepicker-toggle>
-                            <mat-datepicker #picker4></mat-datepicker>
-                            <mat-error *ngIf="!selectedDate4">សូមជ្រើសរើសកាលបរិច្ឆេទ</mat-error>
-                        </mat-form-field>
+                    <div [matMenuTriggerFor]="SaleMenu"
+                        class="flex gap-2 justify-between cursor-pointer items-center bg-gray-100 dark:bg-slate-700 p-2 rounded-lg min-w-[100px] mr-3">
+                        <span>{{ selectedDateNameSale }}</span>
+                        <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
+
+                        <mat-menu #SaleMenu="matMenu">
+                            <button *ngFor="let type of dateType.slice(2)" mat-menu-item
+                                (click)="selectDateType(type, 4)">
+                                <span class="text-lg">{{ type.name }}</span>
+                            </button>
+                        </mat-menu>
                     </div>
                 </div>
                 <div>

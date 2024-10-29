@@ -77,6 +77,14 @@
             </div>
         </div>
 
+        <!-- Alert Message -->
+        @if (showAlert) {
+        <helper-alert class="mt-8" [appearance]="'outline'" [showIcon]="false" [type]="alert.type"
+            [@shake]="alert.type === 'error'">
+            {{ alert.message }}
+        </helper-alert>
+        }
+
         <div class="flex flex-col grow relative md-form-field-appearance-outline">
             <mat-form-field class="w-full thick-border">
                 <mat-label>លេខសម្ងាត់</mat-label>

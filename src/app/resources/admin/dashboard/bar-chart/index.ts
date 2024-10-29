@@ -1,10 +1,13 @@
 import { NgIf } from '@angular/common';
-import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit,
+    SimpleChanges, ViewChild
+} from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { format, getISOWeek } from 'date-fns'; // Import date-fns for date manipulation
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
-import { DashbordService } from '../dashboards.service'; // Import your service
+import { DashbordService } from '../dashboards.service';
 import { DataSaleResponse } from '../interface';
 
 @Component({
@@ -14,16 +17,13 @@ import { DataSaleResponse } from '../interface';
     styleUrls: ['./style.scss'],
     imports: [NgApexchartsModule, MatIconModule, NgIf],
 })
-export class BarChartComponent implements OnInit, OnChanges {
+export class BarChartComponent implements OnInit, OnChanges, AfterViewInit {
+    @Input() selectedDate: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string } | null = null;
+    @ViewChild("chartContainer", { read: ElementRef }) chartContainer!: ElementRef;
 
-    @Input() selectedDate: Date | null = null; // Receive selectedDate from the parent component
-    @ViewChild("chartContainer1", { read: ElementRef }) chartContainer!: ElementRef;
     chartOptions: Partial<ApexOptions> = {};
-    public data: DataSaleResponse;
-    public year: string = '';
-    public week: string = ''; // Store week as a filter
+    public data: DataSaleResponse | null = null;
 
-    // English to Khmer day name mapping
     private dayMapping: { [key: string]: string } = {
         'Monday': 'ចន្ទ',
         'Tuesday': 'អង្គារ',
@@ -37,46 +37,44 @@ export class BarChartComponent implements OnInit, OnChanges {
     constructor(
         private _cdr: ChangeDetectorRef,
         private _snackBarService: SnackbarService,
-        private _dashboardService: DashbordService // Inject the service
+        private _dashboardService: DashbordService
     ) { }
 
     ngOnInit(): void {
-        this.fetchData(); // Fetch data without filters on initialization
+        this.fetchData(); // Fetch data on initialization
     }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['selectedDate'] && this.selectedDate) {
-            this.year = format(this.selectedDate, 'yyyy'); // Extract year from selectedDate
-            this.week = getISOWeek(this.selectedDate).toString(); // Extract ISO week from selectedDate
-            this.fetchData(this.year, this.week); // Fetch data based on the new year and week
-        } else {
-            this.fetchData(); // Fetch data without filters if no date is selected
+            this.fetchData(this.selectedDate);
         }
     }
 
-    private fetchData(year?: string, week?: string): void {
-        this._dashboardService.getDataSale(year, week)
-            .subscribe({
-                next: (response: DataSaleResponse) => {
-                    let labels = response?.labels || [];
-                    let data = response?.data || [];
-                    labels = labels.map((label: string) => this.dayMapping[label] || label);
+    ngAfterViewInit(): void {
+        this.modifyGridLines(); // Ensure the element is available
+    }
 
-                    if (labels.length && data.length) {
-                        this.updateChart(labels, data);
-                    } else {
-                        this._snackBarService.openSnackBar('No data available', 'Info');
-                    }
-                },
-                error: (err) => {
-                    const errorMessage = err.error?.message || 'Error fetching data';
-                    this._snackBarService.openSnackBar(errorMessage, 'Error');
+    private fetchData(filters: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string } = {}): void {
+        this._dashboardService.getDataSale(filters).subscribe({
+            next: (response: DataSaleResponse) => {
+                const labels = response?.labels.map(label => this.dayMapping[label] || label) || [];
+                const data = response?.data || [];
+
+                if (labels.length && data.length) {
+                    this.updateChart(labels, data);
+                } else {
+                    this._snackBarService.openSnackBar('No data available', 'Info');
                 }
-            });
+            },
+            error: (err) => {
+                const errorMessage = err.error?.message || 'Error fetching data';
+                this._snackBarService.openSnackBar(errorMessage, 'Error');
+            }
+        });
     }
 
     private updateChart(labels: string[], data: number[]): void {
-        const maxValue = Math.max(...data) + 10000; // Calculate max value for y-axis
+        const maxValue = Math.max(...data) + 10000;
 
         this.chartOptions = {
             chart: {
@@ -85,22 +83,10 @@ export class BarChartComponent implements OnInit, OnChanges {
                 fontFamily: 'Barlow, Kantumruy Pro sans-serif',
                 foreColor: '#6e729b',
                 toolbar: { show: false },
-                events: {
-                    mounted: () => {
-                        setTimeout(() => this.modifyGridLines(), 500);
-                    }
-                }
             },
-            stroke: {
-                curve: 'smooth',
-                width: 0
-            },
-            series: [
-                { name: "ចំនួនលក់", data: data, color: '#3D5AFE' }
-            ],
-            plotOptions: {
-                bar: { columnWidth: "50%" }
-            },
+            stroke: { curve: 'smooth', width: 0 },
+            series: [{ name: "ចំនួនលក់", data, color: '#3D5AFE' }],
+            plotOptions: { bar: { columnWidth: "50%" } },
             dataLabels: { enabled: false },
             legend: {
                 position: 'bottom',
@@ -110,21 +96,14 @@ export class BarChartComponent implements OnInit, OnChanges {
                 fontSize: '18px',
                 labels: { colors: '#64748b', useSeriesColors: false }
             },
-            xaxis: {
-                categories: labels
-            },
+            xaxis: { categories: labels },
             yaxis: {
                 min: 0,
                 max: maxValue,
                 tickAmount: 5,
                 labels: {
-                    formatter: function (value: number) {
-                        return value >= 1_000
-                            ? (value / 1_000).toFixed(1) + 'k'
-                            : value >= 1_000
-                                ? (value / 1_000).toFixed(1) + 'k'
-                                : value.toString();
-                    }
+                    formatter: (value: number) =>
+                        value >= 1_000 ? (value / 1_000).toFixed(1) + 'k' : value.toString(),
                 }
             },
             grid: {
@@ -136,14 +115,16 @@ export class BarChartComponent implements OnInit, OnChanges {
             },
         };
 
-        this._cdr.detectChanges(); // Trigger change detection to update the chart
+        this._cdr.detectChanges();
     }
 
     private modifyGridLines(): void {
-        const verticalGridLines = this.chartContainer.nativeElement.querySelectorAll('.apexcharts-gridlines-vertical line');
-        if (verticalGridLines.length > 0) {
-            verticalGridLines[0].style.strokeDasharray = '0'; // First vertical line
-            verticalGridLines[verticalGridLines.length - 1].style.strokeDasharray = '0'; // Last vertical line
+        if (this.chartContainer) {
+            const verticalGridLines = this.chartContainer.nativeElement.querySelectorAll('.apexcharts-gridlines-vertical line');
+            if (verticalGridLines.length > 0) {
+                verticalGridLines[0].style.strokeDasharray = '0';
+                verticalGridLines[verticalGridLines.length - 1].style.strokeDasharray = '0';
+            }
         }
     }
 }
