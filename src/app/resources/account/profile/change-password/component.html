@@ -1,7 +1,11 @@
-<div
-    class="user-profile-section p-4 bg-white dark:bg-opacity-5 border-t-8 border-l-8 border-white dark:border-slate-800">
-    <p class="text-2xl mb-4">ផ្លាស់ប្តូរលេខសម្ងាត់របស់អ្នក</p>
-    <form [formGroup]="passwordForm" class="md-form-field-appearance-outline">
+<div class="user-profile-section bg-white dark:bg-opacity-5 border-t-8 border-white dark:border-slate-800">
+    <div mat-dialog-title class="w-full flex justify-between border-b-2 px-4">
+        <p class="md:text-2xl mb-4  text-lg">ផ្លាស់ប្តូរលេខសម្ងាត់របស់អ្នក</p>
+        <button class="helpers-mat-button-sm" (click)="close()" mat-icon-button>
+            <mat-icon class="icon-size-6" svgIcon="heroicons_outline:x-mark" />
+        </button>
+    </div>
+    <form [formGroup]="passwordForm" class="md-form-field-appearance-outline mt-4 px-4">
         <!-- New Password -->
         <mat-form-field appearance="outline" class="w-full">
             <mat-label>ពាក្យសម្ងាត់ថ្មី</mat-label>

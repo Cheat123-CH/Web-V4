@@ -72,4 +72,8 @@ export class ProductService {
         const params = new HttpParams()
         return this.httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/product`, { params });
     }
+
+    view(id: number): Observable<any> {
+        return this.httpClient.get<any>(`${env.API_BASE_URL}/admin/products/${id}`);
+    }
 }

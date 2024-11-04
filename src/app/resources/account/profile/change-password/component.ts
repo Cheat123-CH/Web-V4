@@ -89,6 +89,10 @@ export class ChangePasswordComponent implements OnInit {
             }
         });
     }
+
+    close(): void {
+        this._dialogRef.close();
+    }
 }
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {

@@ -31,6 +31,7 @@ import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { ChangePasswordUserComponent } from '../change-password/component';
 import { CreateUserComponent } from '../create/component';
+import { FilterUserComponent } from '../filter/component';
 import { List, ResponseUser, User } from '../interface';
 import { UserService } from '../service';
 import { ViewUserComponent } from '../view/component';
@@ -64,7 +65,7 @@ export class UserComponent implements OnInit, OnDestroy {
     private helpersConfirmationService = inject(HelperConfirmationService);
     private matDialog = inject(MatDialog);
 
-    displayedColumns: string[] = ['no', 'profile', 'number', 'status','last_log', 'total_sale', 'total_price', 'action'];
+    displayedColumns: string[] = ['no', 'profile', 'number', 'status', 'last_log', 'total_sale', 'total_price', 'action'];
     dataSource: MatTableDataSource<User> = new MatTableDataSource<User>([]);
     fileUrl: string = env.FILE_BASE_URL;
     link: string = undefined;
@@ -74,9 +75,9 @@ export class UserComponent implements OnInit, OnDestroy {
     key: string = '';
     isLoading: boolean = false;
     roles: { id: number; name: string }[] = [];
-    constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef,) { }
+    constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef, private dialog: MatDialog) { }
     ngOnInit(): void {
-        this.list()
+        this.list(this.page, this.limit);
         this._setUp()
     }
 
@@ -90,15 +91,28 @@ export class UserComponent implements OnInit, OnDestroy {
         });
     }
 
-    list(_page: number = 1, _page_size: number = 10): void {
-        const params: { page: number, page_size: number, key?: string } = {
+    list(
+        _page: number = 1,
+        _page_size: number = 10,
+        filter_data: { timeType?: string; platform?: string; type?: number; startDate?: string; endDate?: string } = {}
+    ): void {
+        const params: {
+            page: number;
+            page_size: number;
+            key?: string;
+            type?: number;
+            startDate?: string;
+            endDate?: string;
+        } = {
             page: _page,
-            page_size: _page_size
-        }
-        if (this.key != '') {
+            page_size: _page_size,
+            ...filter_data // Spread operator to add filters dynamically
+        };
+
+        if (this.key !== '') {
             params.key = this.key;
         }
-        console.log(this.key)
+
         this.isLoading = true;
         this.userService.list(params).subscribe({
             next: res => {
@@ -114,7 +128,28 @@ export class UserComponent implements OnInit, OnDestroy {
             }
         });
     }
+    filter_data: { timeType: string; platform: string; type: number; startDate: string; endDate: string };
+    openFilterDialog(): void {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.autoFocus = false;
+        dialogConfig.restoreFocus = false;
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
 
+        const dialogRef = this.dialog.open(FilterUserComponent, dialogConfig);
+
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                this.filter_data = result;
+                this.cdr.detectChanges();
+                this.list(1, 10, this.filter_data);
+            }
+        });
+    }
     ResponseData = new EventEmitter<ResponseUser>();
     create(): void {
         const dialogConfig = new MatDialogConfig();
@@ -139,7 +174,7 @@ export class UserComponent implements OnInit, OnDestroy {
         dialogConfig.position = { right: '0px' };
         dialogConfig.height = '100dvh';
         dialogConfig.width = '100dvw';
-        dialogConfig.maxWidth = '550px';
+        dialogConfig.maxWidth = '750px';
         dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
         dialogConfig.enterAnimationDuration = '0s';
         const dialogRef = this.matDialog.open(ViewUserComponent, dialogConfig);

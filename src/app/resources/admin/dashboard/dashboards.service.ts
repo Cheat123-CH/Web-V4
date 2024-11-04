@@ -48,13 +48,25 @@ export class DashbordService {
         return this._httpClient.get<DataCashierResponse>(`${env.API_BASE_URL}/admin/dashboard/cashier`, { params });
     }
 
-    getProductType(params: { thisWeek?: string; thisMonth?: string, threeMonthAgo?: string, sixMonthAgo?: string }): Observable<any> {
-        return this._httpClient.get<any>(`${env.API_BASE_URL}/admin/dashboard/product-type`, { params });
+    getProductType(params: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string }): Observable<any> {
+        // Filter out undefined or empty values
+        const filteredParams = Object.fromEntries(
+            Object.entries(params).filter(([_, value]) => value !== undefined && value !== '')
+        );
+
+        return this._httpClient.get<any>(`${env.API_BASE_URL}/admin/dashboard/product-type`, { params: filteredParams });
     }
 
-    getDataSale(params: { thisWeek?: string; thisMonth?: string, threeMonthAgo?: string, sixMonthAgo?: string }): Observable<DataSaleResponse> {
-        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/admin/dashboard/data-sale`, { params });
+
+    getDataSale(params: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string }): Observable<DataSaleResponse> {
+        // Filter out undefined or empty values
+        const filteredParams = Object.fromEntries(
+            Object.entries(params).filter(([_, value]) => value !== undefined && value !== '')
+        );
+
+        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/admin/dashboard/data-sale`, { params: filteredParams });
     }
+
 
     getDataSaleReport(startDate?: string, endDate?: string): Observable<any> {
         const params = new HttpParams()

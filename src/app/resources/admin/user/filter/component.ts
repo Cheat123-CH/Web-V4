@@ -25,7 +25,7 @@ import { PortraitComponent } from 'helper/components/portrait/portrait.component
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { Subject, takeUntil } from 'rxjs';
 @Component({
-    selector: 'app-filter-sale',
+    selector: 'app-filter-user',
     templateUrl: './template.html',
     styleUrls: ['./style.scss'],
     standalone: true,
@@ -53,7 +53,7 @@ import { Subject, takeUntil } from 'rxjs';
         MatButtonToggleModule
     ]
 })
-export class FilterSaleComponent implements OnInit, OnDestroy {
+export class FilterUserComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     saving: boolean = false;
     filterForm: FormGroup;
@@ -66,9 +66,14 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
         { id: '6MonthAgo', name: '6 ខែមុន' },
         { id: 'startandend', name: 'ជ្រើសរើសអំឡុងពេល' }
     ];
+
+    public types = [
+        { id: 1, name: 'អ្នកគ្រប់គ្រង' },
+        { id: 2, name: 'អ្នកគិតប្រាក់' }
+    ]
     constructor(
         @Inject(MAT_DIALOG_DATA) public setup: any,
-        private dialogRef: MatDialogRef<FilterSaleComponent>,
+        private dialogRef: MatDialogRef<FilterUserComponent>,
         private formBuilder: FormBuilder,
         private snackBarService: SnackbarService,
         private cdr: ChangeDetectorRef
@@ -83,24 +88,13 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
             timeType: ['today', Validators.required],
             startDate: [{ value: null, disabled: true }],
             endDate: [{ value: null, disabled: true }],
-            cashier: [null],
-            platform: [null]
+            type: [null],
         });
     }
 
     setDefaultToday(): void {
         const { startDate, endDate } = this.calculateDateRange('today');
         this.filterForm.patchValue({ startDate, endDate });
-    }
-
-    setPlatform(value: string): void {
-        const currentValue = this.filterForm.get('platform')!.value;
-        // Toggle the value: if already selected, unselect (set to null)
-        this.filterForm.get('platform')!.setValue(currentValue === value ? null : value);
-    }
-
-    isSelected(platform: string): boolean {
-        return this.filterForm.get('platform')!.value === platform;
     }
 
     handleTimeTypeChanges(): void {

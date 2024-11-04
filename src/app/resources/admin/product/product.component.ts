@@ -200,7 +200,7 @@ export class ProductComponent implements OnInit {
         dialogConfig.position = { right: '0px' };
         dialogConfig.height = '100dvh';
         dialogConfig.width = '100dvw';
-        dialogConfig.maxWidth = '550px';
+        dialogConfig.maxWidth = '750px';
         dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
         dialogConfig.enterAnimationDuration = '0s';
         dialogConfig.data = element

@@ -4,15 +4,15 @@ import { Injectable } from '@angular/core';
 
 // ================================================================================>> Thrid Party Library
 // RxJS
-import { BehaviorSubject, Observable, catchError, delayWhen, timer } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, delayWhen, throwError, timer } from 'rxjs';
 
 // ================================================================================>> Custom Library
 // Environment
 import { env } from 'envs/env';
 
 // Local
-import { List, PasswordReq, RequestCreateUser, RequestUserUpdate, ResponseUser } from './interface';
 import { DataSaleResponse } from '../dashboard/interface';
+import { List, PasswordReq, RequestCreateUser, RequestUserUpdate, ResponseUser } from './interface';
 
 @Injectable({
     providedIn: 'root',
@@ -39,24 +39,31 @@ export class UserService {
         return this.httpClient.get<{ roles: { id: number; name: string }[] }>(`${env.API_BASE_URL}/admin/users/setup`);
     }
 
-    list(params?: { page: number, page_size: number, key?: string }): Observable<List> {
+    list(params?: {
+        page: number; page_size: number; key?: string, type?: number;
+        startDate?: string;
+        endDate?: string;
+    }): Observable<List> {
+        // Record the request start time
         const requestStartTime = Date.now();
-        return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/users`, { params: params }).pipe(
-            // Only add a delay if the request finishes in less than 1 seconds
+
+        // Filter out null and undefined parameters
+        const filteredParams: { [key: string]: any } = {};
+        Object.keys(params || {}).forEach(key => {
+            if (params![key] !== null && params![key] !== undefined) {
+                filteredParams[key] = params![key];
+            }
+        });
+
+        return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/users`, { params: filteredParams }).pipe(
+            // Only add a delay if the request finishes in less than 1 second
             delayWhen(() => {
                 const timeElapsed = Date.now() - requestStartTime;
-                if (timeElapsed < 1000) {
-                    return timer(1000 - timeElapsed);
-                } else {
-                    return timer(0); // No delay
-                }
+                return timer(Math.max(0, 1000 - timeElapsed));
             }),
             catchError((error: HttpErrorResponse) => {
                 console.error('Error occurred:', error);
-                return new Observable(observer => {
-                    observer.error(error);
-                    observer.complete();
-                }) as Observable<List>;
+                return throwError(() => error); // Use throwError to pass the error
             })
         );
     }

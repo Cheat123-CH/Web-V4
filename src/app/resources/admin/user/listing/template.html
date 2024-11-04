@@ -16,17 +16,19 @@
         <div class="flex items-center gap-2">
             <div class="flex items-center gap-2">
                 <div
-                    class="flex items-center min-w-[26ch] max-w-[26ch] h-10 border border-slate-300  dark:bg-gray-800 rounded-[0.65rem] overflow-hidden">
-                    <button class="min-w-10 max-w-10 h-full pt-1.5 hover:opacity-[0.96] transition-all"
-                        (click)="list()">
+                    class="flex items-center min-w-[26ch] max-w-[26ch] h-10 border border-slate-300 dark:bg-gray-800 rounded-[0.65rem] overflow-hidden">
+                    <button class="min-w-10 max-w-10 h-full pt-1.5 hover:opacity-[0.96] transition-all" (click)="list()"
+                        aria-label="Search">
                         <mat-icon class="icon-size-6 text-slate-500"
                             svgIcon="heroicons_outline:magnifying-glass"></mat-icon>
                     </button>
                     <input placeholder="ស្វែងរក" class="w-full px-3 h-10" (keyup.enter)="list()" [(ngModel)]="key">
-                    <button class="helpers-mat-button-sm active:animate-pulse px-2 rounded-full" mat-button>
+                    <button class="helpers-mat-button-sm active:animate-pulse px-2 rounded-full" mat-button
+                        (click)="openFilterDialog()" aria-label="Open Filter">
                         <mat-icon class="icon-size-6" svgIcon="mdi:filter-variant"></mat-icon>
                     </button>
                 </div>
+
             </div>
             <button class="helpers-mat-button-sm w-6 " mat-stroked-button [matMenuTriggerFor]="menu">
                 <mat-icon class="icon-size-6 text-slate-500" svgIcon="mat_outline:more_vert"></mat-icon>

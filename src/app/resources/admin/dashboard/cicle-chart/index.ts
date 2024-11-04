@@ -60,16 +60,16 @@ export class CicleChartComponent implements OnInit, OnChanges {
     ): void {
         const params = {
             thisWeek: thisWeek || undefined,
-            thisMonth: thisMonth || null,
-            threeMonthAgo: threeMonthAgo || null,
-            sixMonthAgo: sixMonthAgo || null,
-
+            thisMonth: thisMonth || undefined,
+            threeMonthAgo: threeMonthAgo || undefined,
+            sixMonthAgo: sixMonthAgo || undefined,
         };
 
         this._cashierService.getProductType(params).subscribe({
             next: (response: any) => {
                 if (response && response.labels && response.data) {
                     this._updateChart(response.labels, response.data);
+
                 } else {
                     this._snackBarService.openSnackBar('No data available', 'Info');
                 }

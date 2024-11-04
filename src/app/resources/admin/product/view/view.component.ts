@@ -1,23 +1,24 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { SaleService } from 'app/resources/cashier/sale/sale.service';
-import { DetailsService } from 'app/shared/details/details.service';
 import { env } from 'envs/env';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { Subject } from 'rxjs';
+import { ProductService } from '../product.service';
+import { Data } from './interface';
 @Component({
     selector: 'dashboard-gm-fast-view-customer',
     templateUrl: './view.template.html',
     styleUrls: ['./view.style.scss'],
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         CommonModule,
         MatTableModule,
@@ -32,23 +33,37 @@ import { Subject } from 'rxjs';
 })
 export class ViewDetailProductComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    // Component properties
-    displayedColumns: string[] = ['number', 'name', 'unit_price', 'qty', 'total'];
-    dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
+    displayedColumns: string[] = ['no', 'receipt', 'price', 'ordered_at', 'ordered_at_time', 'seller'];
+    dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
     fileUrl = env.FILE_BASE_URL;
     public isLoading: boolean;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public element: any,
         private _dialogRef: MatDialogRef<ViewDetailProductComponent>,
-        private _matDialog: MatDialog,
         private cdr: ChangeDetectorRef,
         private _snackbar: SnackbarService,
-        private saleService: SaleService,
-        private detailsService: DetailsService
+        private productService: ProductService,
     ) { }
 
     ngOnInit(): void {
+        this.viewData();
+    }
+
+    viewData() {
+        this.isLoading = true;
+        this.productService.view(this.element.id).subscribe(
+            (res) => {
+                this.dataSource.data = res.data;
+                this.isLoading = false;
+                this.cdr.detectChanges(); // Manually trigger change detection
+            },
+            (err) => {
+                this.isLoading = false;
+                this.cdr.detectChanges(); // Ensure change detection is updated for error as well
+                this._snackbar.openSnackBar(err.error.message, 'Dismiss');
+            }
+        );
     }
 
     closeDialog() {

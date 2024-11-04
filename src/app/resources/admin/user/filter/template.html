@@ -1,7 +1,7 @@
 <div class="out-create-section md-form-field-appearance-outline">
     <div mat-dialog-title class="min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pr-2.5">
         <div class="flex flex-1 items-center text-slate-500">
-            <h1 class="text-3xl">ស្វែងរកផលិតផល</h1>
+            <h1 class="text-3xl">ស្វែងរកអ្នកប្រើប្រាស់</h1>
         </div>
         <div class="flex items-center cursor-pointer">
             <mat-icon class="-mb-0.5" [svgIcon]="'heroicons_outline:x-mark'" (click)="closeDialog()"></mat-icon>
@@ -36,19 +36,10 @@
             </div>
 
             <mat-form-field appearance="outline" class="w-full">
-                <mat-label>ប្រភេទផលិតផល</mat-label>
-                <mat-select formControlName="type_id" placeholder="Select Cashier">
-                    <mat-option *ngFor="let type of setup.productTypes" [value]="type?.id">
+                <mat-label>តួនាទី</mat-label>
+                <mat-select formControlName="type" placeholder="តួនាទី">
+                    <mat-option *ngFor="let type of types" [value]="type.id">
                         {{ type?.name }}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-
-            <mat-form-field appearance="outline" class="w-full">
-                <mat-label>អ្នកបញ្ចូលទិន្នន័យ</mat-label>
-                <mat-select formControlName="creator_id" placeholder="Select Cashier">
-                    <mat-option *ngFor="let creator of setup.users" [value]="creator?.id">
-                        {{ creator?.name }}
                     </mat-option>
                 </mat-select>
             </mat-form-field>

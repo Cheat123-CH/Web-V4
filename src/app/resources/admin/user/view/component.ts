@@ -62,10 +62,9 @@ export class ViewUserComponent implements OnInit {
     viewData() {
         this.isLoading = true;
         this._service.view(this.data.element.id).subscribe((res) => {
-            this.isLoading = false;
             this.element = res.data;
             this.dataSource.data = res.sale;
-            this.cdr.detectChanges();
+            this.isLoading = false;
         }, (err) => {
             this.isLoading = false;
             this._snackbar.openSnackBar(err.error.message, 'Dismiss');

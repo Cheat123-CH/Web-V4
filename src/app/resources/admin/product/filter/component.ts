@@ -135,11 +135,11 @@ export class FilterProductComponent implements OnInit, OnDestroy {
                 break;
             case '3MonthAgo':
                 startDate = new Date(now.getFullYear(), now.getMonth() - 3, 1);
-                endDate = new Date(now.getFullYear(), now.getMonth() - 2, 0);
+                endDate = new Date(now.getFullYear(), now.getMonth(), 0);
                 break;
             case '6MonthAgo':
                 startDate = new Date(now.getFullYear(), now.getMonth() - 6, 1);
-                endDate = new Date(now.getFullYear(), now.getMonth() - 5, 0);
+                endDate = new Date(now.getFullYear(), now.getMonth(), 0);
                 break;
             default:
                 startDate = endDate = now;

@@ -132,7 +132,8 @@
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
-                <div class="flex justify-end text-gray-600 font-semibold border-t pt-3 pr-[15px]">សរុប(រៀល) ៖ {{ getTotal() |
+                <div class="flex justify-end text-gray-600 font-semibold border-t pt-3 pr-[5px]">សរុប(រៀល) ៖ {{
+                    getTotal() |
                     number }}
                 </div>
             </div>
