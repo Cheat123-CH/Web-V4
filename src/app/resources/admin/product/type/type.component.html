@@ -35,7 +35,8 @@
         <div *ngIf="dataSource.data.length > 0"
             class="list-sale-content px-4 pb-4 bg-white rounded-bl-xl rounded-br-xl dark:bg-gray-800">
             <div class="list-sale-data border-t">
-                <table mat-table [dataSource]="dataSource">
+
+                <table mat-table [dataSource]=" dataSource ">
 
                     <ng-container matColumnDef="no">
                         <th mat-header-cell *matHeaderCellDef class="w-10">ល.រ</th>
@@ -92,9 +93,12 @@
                             </mat-menu>
                         </td>
                     </ng-container>
+
                     <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
                 </table>
+
             </div>
         </div>
     </div>

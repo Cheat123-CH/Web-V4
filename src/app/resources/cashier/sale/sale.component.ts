@@ -78,12 +78,12 @@ export class SaleComponent implements OnInit {
     setup: { id: number, name: string }[] = [];
     // Lifecycle hook: ngOnInit, called after the component is initialized
     ngOnInit(): void {
-        this.list(this.page, this.limit);
+        this.getData(this.page, this.limit);
         this.initSetup();
     }
 
     // Method to retrieve a list of sales based on provided parameters
-    list(
+    getData(
         _page: number = 1,
         _page_size: number = 10,
         filter_data: { timeType?: string; platform?: string; cashier?: number; startDate?: string; endDate?: string } = {}
@@ -109,7 +109,7 @@ export class SaleComponent implements OnInit {
 
         this.isLoading = true;
 
-        this.saleService.list(params).subscribe({
+        this.saleService.getData(params).subscribe({
             next: (res: List) => {
                 this.dataSource.data = res.data ?? [];
                 this.total = res.pagination.totalItems;
@@ -132,7 +132,7 @@ export class SaleComponent implements OnInit {
         if (event && event.pageSize) {
             this.limit = event.pageSize;
             this.page = event.pageIndex + 1;
-            this.list(this.page, this.limit);
+            this.getData(this.page, this.limit);
         }
     }
 
@@ -189,7 +189,7 @@ export class SaleComponent implements OnInit {
                 this.filter_data = result;
                 console.log(this.filter_data)
                 this.cdr.detectChanges();
-                this.list(1, 10, this.filter_data);
+                this.getData(1, 10, this.filter_data);
             }
         });
     }
@@ -240,7 +240,7 @@ export class SaleComponent implements OnInit {
                         // Update the data source to reflect the deletion
                         this.dataSource.data = this.dataSource.data.filter((v: Data) => v.id != sale.id);
                         this.snackBarService.openSnackBar(response.message, GlobalConstants.success);
-                        this.list()
+                        this.getData()
                     },
                     error: (err: HttpErrorResponse) => {
                         this.snackBarService.openSnackBar(err?.error?.message || GlobalConstants.genericError, GlobalConstants.error);

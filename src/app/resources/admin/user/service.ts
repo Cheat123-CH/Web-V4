@@ -39,7 +39,7 @@ export class UserService {
         return this.httpClient.get<{ roles: { id: number; name: string }[] }>(`${env.API_BASE_URL}/admin/users/setup`);
     }
 
-    list(params?: {
+    getData(params?: {
         page: number; page_size: number; key?: string, type?: number;
         startDate?: string;
         endDate?: string;

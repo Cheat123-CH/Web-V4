@@ -27,7 +27,7 @@ import { PortraitComponent } from 'helper/components/portrait/portrait.component
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { Subject } from 'rxjs';
-import { ProductsTypeService } from '../type.service';
+import { ProductTypeService } from '../type.service';
 import { Data } from '../type.types';
 @Component({
     selector: 'create-car-type-component-seletor',
@@ -57,7 +57,7 @@ import { Data } from '../type.types';
         PortraitComponent
     ]
 })
-export class ProductsTypeDialogComponent implements OnInit, OnDestroy {
+export class ProductTypeDialogComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     // EventEmitter to emit response data after create or update operations
     ResponseData = new EventEmitter<Data>();
@@ -70,10 +70,10 @@ export class ProductsTypeDialogComponent implements OnInit, OnDestroy {
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: { title: string, type: Data },
 
-        private dialogRef: MatDialogRef<ProductsTypeDialogComponent>,
+        private dialogRef: MatDialogRef<ProductTypeDialogComponent>,
         private formBuilder: UntypedFormBuilder,
         private snackBarService: SnackbarService,
-        private _service: ProductsTypeService,
+        private _service: ProductTypeService,
     ) { }
 
     // Lifecycle hook: ngOnInit

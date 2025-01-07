@@ -18,7 +18,7 @@ export class OrderService {
 
 
     // Method to fetch a list of products from the POS system
-    list(): Observable<List> {
+    getData(): Observable<List> {
         return this.httpClient.get<List>(`${env.API_BASE_URL}/cashier/ordering/products`, {
             headers: new HttpHeaders().set('Content-Type', 'application/json'),
         }).pipe(

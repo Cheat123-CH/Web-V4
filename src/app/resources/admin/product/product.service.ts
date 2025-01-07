@@ -22,7 +22,7 @@ export class ProductService {
         return this.httpClient.get<SetupResponse>(`${env.API_BASE_URL}/admin/products/setup`);
     }
 
-    list(params?: {
+    getData(params?: {
         page: number;
         page_size: number;
         key?: string;

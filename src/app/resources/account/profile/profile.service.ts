@@ -38,7 +38,7 @@ export class ProfileService {
         this._sharedVariable.next(newValue);
     }
 
-    list(params?: {
+    getData(params?: {
         page: number;
         page_size: number;
     }): Observable<List> {

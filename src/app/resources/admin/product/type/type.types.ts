@@ -4,9 +4,9 @@ export interface List {
 }
 
 export interface Data {
-    id: number,
-    name: string,
-    image: string,
-    created_at: Date
-    n_of_products: number,
+    id              : number,
+    name            : string,
+    image           : string,
+    created_at      : Date
+    n_of_products   : number,
 }

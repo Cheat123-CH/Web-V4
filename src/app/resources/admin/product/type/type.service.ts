@@ -7,23 +7,24 @@ import { Observable, catchError, of, switchMap, tap } from 'rxjs';
 
 // ================================================================>> Custom Library
 import { env } from 'envs/env';
-import { Data, List } from './type.types';
+import { Data} from './type.types';
 
 // Injectable decorator is used to define the service as a provider
 @Injectable({
     providedIn: 'root',
 })
 
-export class ProductsTypeService {
+export class ProductTypeService {
 
     constructor(private httpClient: HttpClient) { }
 
     // Method to retrieve a list of product types from the backend
-    list(): Observable<List> {
-        return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/products/types/data`, {
+    getData(){
+
+        return this.httpClient.get(`${env.API_BASE_URL}/admin/products/types/data`, {
             headers: new HttpHeaders().set('Content-Type', 'application/json')
         }).pipe(
-            switchMap((response: List) => {
+            switchMap((response) => {
                 return of(response);
             }),
 
@@ -34,7 +35,7 @@ export class ProductsTypeService {
                 });
             }),
 
-            tap((_response: List) => {
+            tap((_response) => {
             })
         );
     }

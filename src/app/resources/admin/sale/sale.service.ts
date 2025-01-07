@@ -23,7 +23,7 @@ export class SaleService {
         return this.httpClient.get<{ data: { id: number, name: string }[] }>(`${env.API_BASE_URL}/admin/sales/setup`);
     }
 
-    list(params?: {
+    getData(params?: {
         page: number;
         page_size: number;
         key?: string;

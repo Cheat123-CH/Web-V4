@@ -77,7 +77,7 @@ export class UserComponent implements OnInit, OnDestroy {
     roles: { id: number; name: string }[] = [];
     constructor(private route: ActivatedRoute, private cdr: ChangeDetectorRef, private dialog: MatDialog) { }
     ngOnInit(): void {
-        this.list(this.page, this.limit);
+        this.getData(this.page, this.limit);
         this._setUp()
     }
 
@@ -91,7 +91,7 @@ export class UserComponent implements OnInit, OnDestroy {
         });
     }
 
-    list(
+    getData(
         _page: number = 1,
         _page_size: number = 10,
         filter_data: { timeType?: string; platform?: string; type?: number; startDate?: string; endDate?: string } = {}
@@ -114,7 +114,7 @@ export class UserComponent implements OnInit, OnDestroy {
         }
 
         this.isLoading = true;
-        this.userService.list(params).subscribe({
+        this.userService.getData(params).subscribe({
             next: res => {
                 this.dataSource.data = res.data ?? [];
                 this.total = res.pagination.totalItems;
@@ -146,7 +146,7 @@ export class UserComponent implements OnInit, OnDestroy {
             if (result) {
                 this.filter_data = result;
                 this.cdr.detectChanges();
-                this.list(1, 10, this.filter_data);
+                this.getData(1, 10, this.filter_data);
             }
         });
     }
@@ -163,7 +163,7 @@ export class UserComponent implements OnInit, OnDestroy {
         dialogConfig.autoFocus = false;
         const dialogRef = this.matDialog.open(CreateUserComponent, dialogConfig);
         dialogRef.afterClosed().subscribe((user: User | null) => {
-            this.list();
+            this.getData();
         });
     }
 
@@ -179,7 +179,7 @@ export class UserComponent implements OnInit, OnDestroy {
         dialogConfig.enterAnimationDuration = '0s';
         const dialogRef = this.matDialog.open(ViewUserComponent, dialogConfig);
         dialogRef.afterClosed().subscribe((user: User | null) => {
-            this.list();
+            this.getData();
         });
     }
 
@@ -202,7 +202,7 @@ export class UserComponent implements OnInit, OnDestroy {
         if (event && event.pageSize) {
             this.limit = event.pageSize;
             this.page = event.pageIndex + 1;
-            this.list(this.page, this.limit);
+            this.getData(this.page, this.limit);
         }
     }
 

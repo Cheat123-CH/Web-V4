@@ -92,7 +92,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         this.isLoading = true;
 
         // Subscribe to the list method of the orderService
-        this._service.list().subscribe({
+        this._service.getData().subscribe({
             next: (response) => {
                 this.data = response.data;
 

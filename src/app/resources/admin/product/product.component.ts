@@ -76,7 +76,7 @@ export class ProductComponent implements OnInit {
     // Initialization logic
     ngOnInit(): void {
         this.initSetup();
-        this.list(this.page, this.limit);
+        this.getData(this.page, this.limit);
     }
 
     // Fetches initial setup data for products
@@ -94,7 +94,7 @@ export class ProductComponent implements OnInit {
     }
 
     // Fetches the list of products based on parameters
-    list(_page: number = 1,
+    getData(_page: number = 1,
         _page_size: number = 10,
         filter_data: { timeType?: string; platform?: string; cashier?: number; startDate?: string; endDate?: string } = {}): void {
         const params: {
@@ -116,7 +116,7 @@ export class ProductComponent implements OnInit {
             params.key = this.key;
         }
         this.isLoading = true;
-        this.productService.list(params).subscribe({
+        this.productService.getData(params).subscribe({
             next: (res: List) => {
                 this.dataSource.data = res.data;
                 this.total = res.pagination.totalItems;
@@ -151,7 +151,7 @@ export class ProductComponent implements OnInit {
             if (result) {
                 this.filter_data = result;
                 this.cdr.detectChanges();
-                this.list(1, 10, this.filter_data);
+                this.getData(1, 10, this.filter_data);
             }
         });
     }
@@ -162,7 +162,7 @@ export class ProductComponent implements OnInit {
 
             this.limit = event.pageSize;
             this.page = event.pageIndex + 1;
-            this.list(this.page, this.limit);
+            this.getData(this.page, this.limit);
         }
     }
 
@@ -189,7 +189,7 @@ export class ProductComponent implements OnInit {
         dialogRef.componentInstance.ResponseData.subscribe((product: Data) => {
             const data = this.dataSource.data;
             data.unshift(product);
-            this.list();
+            this.getData();
             this.dataSource.data = data;
         });
     }
@@ -232,7 +232,7 @@ export class ProductComponent implements OnInit {
             const index = this.dataSource.data.indexOf(row);
             const data = this.dataSource.data;
             data[index] = product;
-            this.list()
+            this.getData()
             this.dataSource.data = data;
         });
     }
@@ -332,7 +332,7 @@ export class ProductComponent implements OnInit {
 
                         // Update the data source by filtering out the deleted product
                         this.dataSource.data = this.dataSource.data.filter((v: Data) => v.id != product.id);
-                        this.list()
+                        this.getData()
                         // Show a success message using the SnackbarService
                         this.snackBarService.openSnackBar(response.message, GlobalConstants.success);
                     },

@@ -22,7 +22,7 @@ export class SaleService {
         return this.httpClient.get<{ data: { id: number, name: string }[] }>(`${env.API_BASE_URL}/cashier/sales/setup`);
     }
     private loadingSpinner = inject(LoadingSpinnerService);
-    list(params?: {
+    getData(params?: {
         page: number;
         page_size: number;
         key?: string;

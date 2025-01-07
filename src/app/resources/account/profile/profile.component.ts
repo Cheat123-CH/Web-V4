@@ -72,9 +72,9 @@ export class ProfileComponent implements OnInit {
             // Mark for check
             this._changeDetectorRef.markForCheck();
         });
-        this.list(this.page, this.limit)
+        this.getData(this.page, this.limit)
     }
-    list(_page: number = 1, _page_size: number = 10,): void {
+    getData(_page: number = 1, _page_size: number = 10,): void {
         const params: {
             page: number;
             page_size: number;
@@ -83,7 +83,7 @@ export class ProfileComponent implements OnInit {
             page_size: _page_size,
         };
         this.isLoading = true;
-        this.profileService.list(params).subscribe({
+        this.profileService.getData(params).subscribe({
             next: (res: List) => {
                 this.dataSource.data = res.data;
                 this.total = res.pagination.totalItems;
@@ -105,7 +105,7 @@ export class ProfileComponent implements OnInit {
         if (event && event.pageSize) {
             this.limit = event.pageSize;
             this.page = event.pageIndex + 1;
-            this.list(this.page, this.limit);
+            this.getData(this.page, this.limit);
         }
     }
     openUpdateProfileDialog(): void {
