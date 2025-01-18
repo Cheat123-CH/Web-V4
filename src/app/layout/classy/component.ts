@@ -10,14 +10,14 @@ import { NavigationService } from 'app/core/navigation/navigation.service';
 import { UserService } from 'app/core/user/user.service';
 import { Role, User } from 'app/core/user/user.types';
 import { LanguagesComponent } from 'app/layout/common/languages/component';
-import { NotificationsComponent } from 'app/layout/common/notifications/component';
 import { UserComponent } from 'app/layout/common/user/component';
 import { Subject, takeUntil } from 'rxjs';
 import { SchemeComponent } from 'app/layout/common/scheme/component';
+import { NotificationsComponent } from '../common/notifications/component';
 
 @Component({
     selector: 'classy-layout',
-    templateUrl: './classy.component.html',
+    templateUrl: './template.html',
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [

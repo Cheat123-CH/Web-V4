@@ -1,6 +1,6 @@
 import { Routes } from "@angular/router";
-import { OrderComponent } from "./order/component";
-import { SaleComponent } from "./sale/component";
+import { OrderComponent } from "./a1-order/component";
+import { SaleComponent } from "./a2-sale/component";
 
 export default [
     {

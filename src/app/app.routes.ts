@@ -40,7 +40,7 @@ export const appRoutes: Route[] = [
         data: {
             layout: 'empty'
         },
-        loadChildren: () => import('app/resources/r1-account/auth/auth.routes')
+        loadChildren: () => import('app/resources/r1-account/a1-auth/auth.routes')
     },
     
     // Admin routes
@@ -71,7 +71,7 @@ export const appRoutes: Route[] = [
 
             {
                 path: 'profile',
-                loadChildren: () => import('app/resources/r1-account/profile/profile.routes')
+                loadChildren: () => import('app/resources/r1-account/a2-profile/profile.routes')
             },
             // 404
             {

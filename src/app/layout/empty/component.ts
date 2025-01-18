@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 
 @Component({
     selector: 'empty-layout',
-    templateUrl: './empty.component.html',
+    templateUrl: './template.html',
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [HelperLoadingBarComponent, RouterOutlet],

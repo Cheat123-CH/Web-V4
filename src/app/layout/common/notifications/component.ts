@@ -23,7 +23,7 @@ import { Subject, takeUntil } from 'rxjs';
 
 @Component({
     selector: 'notifications',
-    templateUrl: './notifications.component.html',
+    templateUrl: './template.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     exportAs: 'notifications',

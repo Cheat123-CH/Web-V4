@@ -5,6 +5,7 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
+
 // ================================================================>> Third-Party Library
 // angular party
 import { MatButtonModule } from '@angular/material/button';
@@ -19,7 +20,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import FileSaver from 'file-saver';
 
 // ================================================================>> Custom Library
-
+import { SharedDetailsComponent } from 'app/shared/details/component';
 import { DetailsService } from 'app/shared/details/service';
 import { ViewDetailSaleComponent } from 'app/shared/view/component';
 import { env } from 'envs/env';
@@ -32,7 +33,7 @@ import { Data, List } from './interface';
 
 // Component decorator specifying metadata for the component
 @Component({
-    selector: 'app-sale-admin',
+    selector: 'app-sale',
     standalone: true,
     templateUrl: './template.html',
     styleUrl: './style.scss',
@@ -55,9 +56,6 @@ import { Data, List } from './interface';
 })
 export class SaleComponent implements OnInit {
 
-    // Injecting the MatDialog service
-    private matDialog = inject(MatDialog)
-
     constructor(
         private saleService: SaleService,
         private snackBarService: SnackbarService,
@@ -77,7 +75,6 @@ export class SaleComponent implements OnInit {
     receipt_number: string = '';
     isLoading: boolean = false;
     key: string = '';
-    downloading: boolean = false;
     setup: { id: number, name: string }[] = [];
     // Lifecycle hook: ngOnInit, called after the component is initialized
     ngOnInit(): void {
@@ -85,7 +82,7 @@ export class SaleComponent implements OnInit {
         this.initSetup();
     }
 
-    // Method to retrieve a list of sales based on provided parameters and filters
+    // Method to retrieve a list of sales based on provided parameters
     getData(
         _page: number = 1,
         _page_size: number = 10,
@@ -130,6 +127,42 @@ export class SaleComponent implements OnInit {
         });
     }
 
+    // Method to handle page changes in the data table paginator
+    onPageChanged(event: PageEvent): void {
+        if (event && event.pageSize) {
+            this.limit = event.pageSize;
+            this.page = event.pageIndex + 1;
+            this.getData(this.page, this.limit);
+        }
+    }
+
+    // Injecting the MatDialog service
+    private matDialog = inject(MatDialog)
+
+    // Method to open a dialog to view details of a sale
+    view(row: Data): void {
+
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.data = row;
+        dialogConfig.width = "650px";
+        dialogConfig.minHeight = "200px";
+        dialogConfig.autoFocus = false;
+        this.matDialog.open(SharedDetailsComponent, dialogConfig);
+    }
+
+    viewDetail(row: Data): void {
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.autoFocus = false;
+        dialogConfig.position = { right: '0px' };
+        dialogConfig.height = '100dvh';
+        dialogConfig.width = '100dvw';
+        dialogConfig.maxWidth = '550px';
+        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+        dialogConfig.enterAnimationDuration = '0s';
+        dialogConfig.data = row
+        const dialogRef = this.matDialog.open(ViewDetailSaleComponent, dialogConfig);
+    }
+
     filter_data: { timeType: string; platform: string; cashier: number; startDate: string; endDate: string };
     initSetup(): void {
         this.saleService.setup().subscribe({
@@ -137,7 +170,6 @@ export class SaleComponent implements OnInit {
         });
     }
 
-    // Method to open the filter dialog and update the list with the selected filters
     openFilterDialog(): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.autoFocus = false;
@@ -155,32 +187,11 @@ export class SaleComponent implements OnInit {
         dialogRef.afterClosed().subscribe((result) => {
             if (result) {
                 this.filter_data = result;
+                console.log(this.filter_data)
                 this.cdr.detectChanges();
                 this.getData(1, 10, this.filter_data);
             }
         });
-    }
-
-    // Method to handle page changes in the data table paginator
-    onPageChanged(event: PageEvent): void {
-        if (event && event.pageSize) {
-            this.limit = event.pageSize;
-            this.page = event.pageIndex + 1;
-            this.getData(this.page, this.limit);
-        }
-    }
-
-    viewDetail(row: Data): void {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.autoFocus = false;
-        dialogConfig.position = { right: '0px' };
-        dialogConfig.height = '100dvh';
-        dialogConfig.width = '100dvw';
-        dialogConfig.maxWidth = '550px';
-        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-        dialogConfig.enterAnimationDuration = '0s';
-        dialogConfig.data = row
-        const dialogRef = this.matDialog.open(ViewDetailSaleComponent, dialogConfig);
     }
 
     private helpersConfirmationService = inject(HelperConfirmationService)
@@ -238,6 +249,9 @@ export class SaleComponent implements OnInit {
             }
         });
     }
+
+    // Property to track the state of downloading
+    downloading: boolean = false;
 
     // Method to initiate the download of a sale invoice
     print(row: Data) {
