@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { CanActivate, Route, Router } from '@angular/router';
 import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
-import { LayoutComponent } from 'app/layout/layout.component';
+import { LayoutComponent } from 'app/layout/component';
 import { RoleEnum } from '../helper/enums/role.enum';
 import { initialDataResolver } from './app.resolver';
 import { roleResolver } from './core/auth/resolvers/role.resolver';
@@ -40,7 +40,7 @@ export const appRoutes: Route[] = [
         data: {
             layout: 'empty'
         },
-        loadChildren: () => import('app/resources/account/auth/auth.routes')
+        loadChildren: () => import('app/resources/r1-account/auth/auth.routes')
     },
     
     // Admin routes
@@ -57,7 +57,7 @@ export const appRoutes: Route[] = [
                 resolve: {
                     role: roleResolver([RoleEnum.ADMIN])
                 },
-                loadChildren: () => import('app/resources/admin/admin.routes')
+                loadChildren: () => import('app/resources/r3-admin/admin.routes')
             },
 
             // Role user
@@ -66,12 +66,12 @@ export const appRoutes: Route[] = [
                 resolve: {
                     role: roleResolver([RoleEnum.CASHIER])
                 },
-                loadChildren: () => import('app/resources/cashier/cashier.routes')
+                loadChildren: () => import('app/resources/r2-cashier/cashier.routes')
             },
 
             {
                 path: 'profile',
-                loadChildren: () => import('app/resources/account/profile/profile.routes')
+                loadChildren: () => import('app/resources/r1-account/profile/profile.routes')
             },
             // 404
             {
