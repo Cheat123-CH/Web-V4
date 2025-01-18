@@ -26,7 +26,7 @@ import { env } from 'envs/env';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-import { FilterSaleComponent } from './filter/component';
+import { FilterSaleComponent } from './filter-dialog/component';
 import { SaleService } from './service';
 import { Data, List } from './interface';
 
@@ -87,9 +87,9 @@ export class SaleComponent implements OnInit {
 
     // Method to retrieve a list of sales based on provided parameters and filters
     getData(
-        _page: number = 1,
-        _page_size: number = 10,
-        filter_data: { timeType?: string; platform?: string; cashier?: number; startDate?: string; endDate?: string } = {}
+        _page       : number = 1,
+        _page_size  : number = 10,
+        filter_data : { timeType?: string; platform?: string; cashier?: number; from?: string; to?: string } = {}
     ): void {
         const params: {
             page: number;
@@ -98,8 +98,8 @@ export class SaleComponent implements OnInit {
             timeType?: string;
             platform?: string;
             cashier?: number;
-            startDate?: string;
-            endDate?: string;
+            from?: string;
+            to?: string;
         } = {
             page: _page,
             page_size: _page_size,
@@ -130,7 +130,7 @@ export class SaleComponent implements OnInit {
         });
     }
 
-    filter_data: { timeType: string; platform: string; cashier: number; startDate: string; endDate: string };
+    filter_data: { timeType: string; platform: string; cashier: number; from: string; to: string };
     initSetup(): void {
         this.saleService.setup().subscribe({
             next: response => this.setup = response.data,

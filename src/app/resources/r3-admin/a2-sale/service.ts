@@ -30,9 +30,10 @@ export class SaleService {
         timeType?: string;
         platform?: string;
         cashier?: number;
-        startDate?: string;
-        endDate?: string;
+        from?: string;
+        to?: string;
     }): Observable<List> {
+
         // Filter out null or undefined parameters
         const filteredParams: { [key: string]: any } = {};
         Object.keys(params || {}).forEach(key => {

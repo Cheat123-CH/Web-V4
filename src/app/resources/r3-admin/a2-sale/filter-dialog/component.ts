@@ -81,16 +81,16 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
     buildForm(): void {
         this.filterForm = this.formBuilder.group({
             timeType: ['today', Validators.required],
-            startDate: [{ value: null, disabled: true }],
-            endDate: [{ value: null, disabled: true }],
+            from: [{ value: null, disabled: true }],
+            to: [{ value: null, disabled: true }],
             cashier: [null],
             platform: [null]
         });
     }
 
     setDefaultToday(): void {
-        const { startDate, endDate } = this.calculateDateRange('today');
-        this.filterForm.patchValue({ startDate, endDate });
+        const { from, to } = this.calculateDateRange('today');
+        this.filterForm.patchValue({ from, to });
     }
 
     setPlatform(value: string): void {
@@ -108,13 +108,13 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe((value) => {
                 if (value === 'startandend') {
-                    this.filterForm.get('startDate')!.enable();
-                    this.filterForm.get('endDate')!.enable();
+                    this.filterForm.get('from')!.enable();
+                    this.filterForm.get('to')!.enable();
                 } else {
-                    const { startDate, endDate } = this.calculateDateRange(value);
-                    this.filterForm.patchValue({ startDate, endDate });
-                    this.filterForm.get('startDate')!.disable();
-                    this.filterForm.get('endDate')!.disable();
+                    const { from, to } = this.calculateDateRange(value);
+                    this.filterForm.patchValue({ from, to });
+                    this.filterForm.get('from')!.disable();
+                    this.filterForm.get('to')!.disable();
                 }
                 this.cdr.markForCheck(); // Notify Angular of the change
             });
@@ -127,32 +127,32 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
     }
 
 
-    calculateDateRange(type: string): { startDate: Date; endDate: Date } {
+    calculateDateRange(type: string): { from: Date; to: Date } {
         const now = new Date();
-        let startDate = new Date();
-        let endDate = new Date();
+        let from = new Date();
+        let to = new Date();
 
         switch (type) {
             case 'thisMonth':
-                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
-                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                from = new Date(now.getFullYear(), now.getMonth(), 1);
+                to = new Date(now.getFullYear(), now.getMonth() + 1, 0);
                 break;
             case 'lastMonth':
-                startDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+                from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                to = new Date(now.getFullYear(), now.getMonth(), 0);
                 break;
             case '3MonthAgo':
-                startDate = new Date(now.getFullYear(), now.getMonth() - 3, 1);
-                endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+                from = new Date(now.getFullYear(), now.getMonth() - 3, 1);
+                to = new Date(now.getFullYear(), now.getMonth(), 0);
                 break;
             case '6MonthAgo':
-                startDate = new Date(now.getFullYear(), now.getMonth() - 6, 1);
-                endDate = new Date(now.getFullYear(), now.getMonth(), 0);
+                from = new Date(now.getFullYear(), now.getMonth() - 6, 1);
+                to = new Date(now.getFullYear(), now.getMonth(), 0);
                 break;
             default:
-                startDate = endDate = now;
+                from = to = now;
         }
-        return { startDate, endDate };
+        return { from, to };
     }
 
     submit(): void {
@@ -161,12 +161,12 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
 
             // Format the start and end dates to ISO string
             if (formValue.timeType !== 'startandend') {
-                const { startDate, endDate } = this.calculateDateRange(formValue.timeType);
-                formValue.startDate = this.formatDateToISOString(startDate);
-                formValue.endDate = this.formatDateToISOString(endDate);
+                const { from, to } = this.calculateDateRange(formValue.timeType);
+                formValue.from = this.formatDateToISOString(from);
+                formValue.to = this.formatDateToISOString(to);
             } else {
-                formValue.startDate = this.formatDateToISOString(formValue.startDate);
-                formValue.endDate = this.formatDateToISOString(formValue.endDate);
+                formValue.from = this.formatDateToISOString(formValue.from);
+                formValue.to = this.formatDateToISOString(formValue.to);
             }
 
             this.dialogRef.close(formValue);
