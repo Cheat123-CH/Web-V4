@@ -35,8 +35,8 @@ import { ReportComponent } from './report/component';
 @Component({
     selector: 'admin-dashboard',
     standalone: true,
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.scss'],
+    templateUrl: './template.html',
+    styleUrls: ['./style.scss'],
     imports: [
         CommonModule,
         RouterModule,

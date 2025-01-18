@@ -18,8 +18,8 @@ import { ClassyLayoutComponent } from './classy/component';
 
 @Component({
     selector: 'layout',
-    templateUrl: './layout.component.html',
-    styleUrls: ['./layout.component.scss'],
+    templateUrl: './template.html',
+    styleUrls: ['./style.scss'],
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [

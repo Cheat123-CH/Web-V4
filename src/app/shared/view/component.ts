@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { SaleService } from 'app/resources/r2-cashier/sale/service';
+import { SaleService } from 'app/resources/r2-cashier/a2-sale/service';
 import { env } from 'envs/env';
 import FileSaver from 'file-saver';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
@@ -18,8 +18,8 @@ import { Subject } from 'rxjs';
 import { DetailsService } from '../details/service';
 @Component({
     selector: 'dashboard-gm-fast-view-customer',
-    templateUrl: './view.template.html',
-    styleUrls: ['./view.style.scss'],
+    templateUrl: './template.html',
+    styleUrls: ['./style.scss'],
     standalone: true,
     imports: [
         CommonModule,

@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
     selector: 'not-found',
-    templateUrl: './not-found.component.html',
+    templateUrl: './template.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,

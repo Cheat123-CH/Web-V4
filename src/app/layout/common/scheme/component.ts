@@ -6,7 +6,7 @@ import { HelperConfigService, Scheme } from 'helper/services/config';
 
 @Component({
     selector: 'scheme',
-    templateUrl: './scheme.component.html',
+    templateUrl: './template.html',
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [

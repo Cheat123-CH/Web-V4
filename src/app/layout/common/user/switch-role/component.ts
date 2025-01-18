@@ -24,8 +24,8 @@ import { NotificationsService } from '../../notifications/service';
 
 @Component({
     selector: 'user-switch-role',
-    templateUrl: './switch-role.component.html',
-    styleUrls: ['./switch-role.component.scss'],
+    templateUrl: './template.html',
+    styleUrls: ['./style.scss'],
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [

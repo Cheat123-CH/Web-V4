@@ -18,7 +18,7 @@ import { take } from 'rxjs';
 
 @Component({
     selector: 'languages',
-    templateUrl: './languages.component.html',
+    templateUrl: './template.html',
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     exportAs: 'languages',

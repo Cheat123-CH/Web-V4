@@ -14,7 +14,7 @@ import { SwitchRoleComponent } from './switch-role/component';
 
 @Component({
     selector: 'user',
-    templateUrl: './user.component.html',
+    templateUrl: './template.html',
     standalone: true,
     imports: [
         RouterLink,

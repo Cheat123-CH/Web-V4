@@ -9,12 +9,12 @@ import { DetailsService } from './service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-import { Data, Detail } from 'app/resources/r2-cashier/sale/interface';
+import { Data, Detail } from 'app/resources/r2-cashier/a2-sale/interface';
 @Component({
     selector: 'shared-details',
     standalone: true,
-    templateUrl: './details.component.html',
-    styleUrl: './details.component.scss',
+    templateUrl: './template.html',
+    styleUrl: './style.scss',
     imports: [
         CommonModule,
         MatDialogModule,
