@@ -2,10 +2,10 @@
 export interface List {
     data: Data[],
     pagination: {
-        currentPage: number,
-        perPage: number,
-        totalItems: number,
-        totalPages: number
+        page: number,
+        limit: number,
+        total: number,
+        totalPage: number
     }
 }
 

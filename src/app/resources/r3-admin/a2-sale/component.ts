@@ -114,11 +114,13 @@ export class SaleComponent implements OnInit {
 
         this.saleService.getData(params).subscribe({
             next: (res: List) => {
-                this.dataSource.data = res.data ?? [];
-                this.total = res.pagination.totalItems;
-                this.limit = res.pagination.perPage;
-                this.page = res.pagination.currentPage;
-                this.isLoading = false;
+
+                this.dataSource.data    = res.data ?? [];
+
+                this.total              = res.pagination.total;
+                this.limit              = res.pagination.limit;
+                this.page               = res.pagination.page;
+                this.isLoading          = false;
             },
             error: (err) => {
                 this.isLoading = false;
