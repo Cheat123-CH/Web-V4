@@ -96,7 +96,7 @@ export class SaleComponent implements OnInit {
 
     // ===>> Pagination
     public page                 : number = 1;
-    public limit                : number = 1;
+    public limit                : number = 20;
     public total                : number = 0;
 
 
