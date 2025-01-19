@@ -22,19 +22,19 @@ export class NotificationsService implements OnDestroy {
         this._userService.user$.pipe(take(1)).subscribe((user: User) => {
             this._user = user;
             if (user) {
-                this.connect();
+                // this.connect();
             }
         });
     }
 
-    get notifications$(): Observable<Notification[]> {
-        return this._notifications.asObservable();
-    }
+    // get notifications$(): Observable<Notification[]> {
+    //     return this._notifications.asObservable();
+    // }
 
-    set notifications(value: Notification[]) {
-        this._notificationsCache = value;
-        this._notifications.next(value);
-    }
+    // set notifications(value: Notification[]) {
+    //     this._notificationsCache = value;
+    //     this._notifications.next(value);
+    // }
 
     connect(): void {
         // if (!this._socket) {
@@ -69,82 +69,82 @@ export class NotificationsService implements OnDestroy {
         // }
     }
 
-    register(): void {
-        if (this._user && this._user.id) {
-            this._socket?.emit('register', this._user.id);
-        } else {
-            console.error('User ID not found for registration');
-        }
-    }
+    // register(): void {
+    //     if (this._user && this._user.id) {
+    //         this._socket?.emit('register', this._user.id);
+    //     } else {
+    //         console.error('User ID not found for registration');
+    //     }
+    // }
 
-    disconnect(): void {
-        if (this._socket) {
-            this._socket.disconnect();
-            this._socket = undefined; // Clear socket reference
-        }
-    }
+    // disconnect(): void {
+    //     if (this._socket) {
+    //         this._socket.disconnect();
+    //         this._socket = undefined; // Clear socket reference
+    //     }
+    // }
 
-    getAll(): Observable<Notification[]> {
-        const apiUrl = `${env.API_BASE_URL}/share/notifications`;
+    // getAll(): Observable<Notification[]> {
+    //     const apiUrl = `${env.API_BASE_URL}/share/notifications`;
 
-        return this._httpClient.get<{ data: Notification[] }>(apiUrl).pipe(
-            map(response => {
-                const notifications = response.data;
-                this.notifications = notifications;
-                return notifications;
-            })
-        );
-    }
+    //     return this._httpClient.get<{ data: Notification[] }>(apiUrl).pipe(
+    //         map(response => {
+    //             const notifications = response.data;
+    //             this.notifications = notifications;
+    //             return notifications;
+    //         })
+    //     );
+    // }
 
-    markAllAsRead(): Observable<boolean> {
-        return this.notifications$.pipe(
-            take(1),
-            switchMap(notifications =>
-                this._httpClient.get<boolean>('api/common/notifications/mark-all-as-read').pipe(
-                    map((isUpdated: boolean) => {
-                        if (isUpdated) {
-                            const updatedNotifications = notifications.map(notification => ({
-                                ...notification,
-                                read: true,
-                            }));
-                            this._notificationsCache = updatedNotifications;
-                            this._notifications.next(updatedNotifications);
-                        }
-                        return isUpdated;
-                    })
-                )
-            )
-        );
-    }
+    // markAllAsRead(): Observable<boolean> {
+    //     return this.notifications$.pipe(
+    //         take(1),
+    //         switchMap(notifications =>
+    //             this._httpClient.get<boolean>('api/common/notifications/mark-all-as-read').pipe(
+    //                 map((isUpdated: boolean) => {
+    //                     if (isUpdated) {
+    //                         const updatedNotifications = notifications.map(notification => ({
+    //                             ...notification,
+    //                             read: true,
+    //                         }));
+    //                         this._notificationsCache = updatedNotifications;
+    //                         this._notifications.next(updatedNotifications);
+    //                     }
+    //                     return isUpdated;
+    //                 })
+    //             )
+    //         )
+    //     );
+    // }
 
-    update(id: number, notification: Notification): Observable<Notification> {
-        return this._httpClient.patch<Notification>(
-            `${env.API_BASE_URL}/share/notifications/${id}/read`,
-            { read: notification.read }
-        );
-    }
+    // update(id: number, notification: Notification): Observable<Notification> {
+    //     return this._httpClient.patch<Notification>(
+    //         `${env.API_BASE_URL}/share/notifications/${id}/read`,
+    //         { read: notification.read }
+    //     );
+    // }
 
-    delete(id: number): Observable<boolean> {
-        return this.notifications$.pipe(
-            take(1),
-            switchMap(notifications =>
-                this._httpClient.delete<boolean>(
-                    `${env.API_BASE_URL}/share/notifications/${id}`,
-                    { params: { id: id.toString() } }
-                ).pipe(
-                    map((isDeleted: boolean) => {
-                        if (isDeleted) {
-                            const updatedNotifications = notifications.filter(item => item.id !== id);
-                            this._notifications.next(updatedNotifications);
-                        }
-                        return isDeleted;
-                    })
-                )
-            )
-        );
-    }
+    // delete(id: number): Observable<boolean> {
+    //     return this.notifications$.pipe(
+    //         take(1),
+    //         switchMap(notifications =>
+    //             this._httpClient.delete<boolean>(
+    //                 `${env.API_BASE_URL}/share/notifications/${id}`,
+    //                 { params: { id: id.toString() } }
+    //             ).pipe(
+    //                 map((isDeleted: boolean) => {
+    //                     if (isDeleted) {
+    //                         const updatedNotifications = notifications.filter(item => item.id !== id);
+    //                         this._notifications.next(updatedNotifications);
+    //                     }
+    //                     return isDeleted;
+    //                 })
+    //             )
+    //         )
+    //     );
+    // }
 
     ngOnDestroy(): void {
-        this.disconnect(); // Ensure socket is cleaned up on destroy
+        // this.disconnect(); // Ensure socket is cleaned up on destroy
     }
 }

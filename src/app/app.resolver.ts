@@ -21,7 +21,7 @@ export const initialDataResolver = () => {
         return router.navigateByUrl('');
     }
     navigationService.navigations = role;
-    const notificationsObservable = notificationsService.getAll();
+    // const notificationsObservable = notificationsService.getAll();
     // Fork join multiple API endpoint calls to wait all of them to finish
-    return forkJoin({ notificationsObservable });
+    return forkJoin();
 };
