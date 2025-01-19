@@ -36,6 +36,7 @@ export class NotificationsService implements OnDestroy {
         this._notifications.next(value);
     }
 
+    // delete code
     connect(): void {
         // if (!this._socket) {
         //     // this._socket = io(env.SOCKET_URL + '/notifications-getway', {
