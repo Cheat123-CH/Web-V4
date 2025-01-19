@@ -59,13 +59,14 @@
                     <mat-icon
                         [svgIcon]="shortedOrder == 'desc' ? 'heroicons_outline:bars-arrow-down' : 'heroicons_outline:bars-arrow-up'"></mat-icon>
                 </button>
+
+
+
             </div>
 
-            <!-- Download Report -->
-            <!-- <button class="px-2" mat-stroked-button (click)="downloadReport()">
-                <mat-icon *ngIf = " !isDownloadingReport " svgIcon="mdi:printer-outline" />
-                <mat-spinner *ngIf = " isDownloadingReport " [diameter]="24" class="text-blue-500" />
-            </button> -->
+            <button class="helpers-mat-button-sm w-6 " mat-stroked-button [matMenuTriggerFor]="menu">
+                <mat-icon class="icon-size-6 text-slate-500" svgIcon="mat_outline:more_vert"></mat-icon>
+            </button>
             <mat-menu #menu="matMenu">
                 <button mat-menu-item (click)="create()">
                     <mat-icon class="icon-size-6" svgIcon="mdi:plus"></mat-icon>
@@ -77,14 +78,7 @@
                 </button>
             </mat-menu>
 
-            <!-- Download Report -->
-            <!-- Uncomment the following block to include the download report button -->
-            <!--
-            <button class="px-2" mat-stroked-button (click)="downloadReport()">
-                <mat-icon *ngIf="!isDownloadingReport" svgIcon="mdi:printer-outline"></mat-icon>
-                <mat-spinner *ngIf="isDownloadingReport" [diameter]="24" class="text-blue-500"></mat-spinner>
-            </button>
-            -->
+           
         </div>
 
         <!-- <div class="flex items-center gap-2">
@@ -114,6 +108,7 @@
                 </button>
             </mat-menu>
         </div> -->
+       
 
     </div>
 

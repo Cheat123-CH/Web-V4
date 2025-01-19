@@ -9,7 +9,7 @@ import { DetailsService } from './service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-import { Data, Detail } from 'app/resources/r2-cashier/a2-sale/interface';
+import { Data, Detail } from 'app/resources/r2-cashier/c2-sale/interface';
 @Component({
     selector: 'shared-details',
     standalone: true,
