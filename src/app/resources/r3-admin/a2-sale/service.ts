@@ -1,14 +1,14 @@
 // ================================================================>> Core Library (Angular)
-import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { HttpClient }           from '@angular/common/http';
+import { inject, Injectable }   from '@angular/core';
 
 // ================================================================>> Third-Party Library (RxJS)
 import { catchError, Observable, of, switchMap, tap } from 'rxjs';
 
 // ================================================================>> Custom Library
-import { env } from 'envs/env';
-import { LoadingSpinnerService } from 'helper/shared/loading/service';
-import { List } from './interface';
+import { env }                          from 'envs/env';
+import { LoadingSpinnerService }        from 'helper/shared/loading/service';
+import { List }                         from './interface';
 
 
 @Injectable({
@@ -19,10 +19,13 @@ export class SaleService {
     constructor(private httpClient: HttpClient) { }
     private loadingSpinner = inject(LoadingSpinnerService);
 
+
+    //Method to get setup data
     getSetupData(): Observable<{ data: { id: number, name: string }[] }> {
         return this.httpClient.get<{ data: { id: number, name: string }[] }>(`${env.API_BASE_URL}/admin/sales/setup`);
     }
 
+    //Method to get data
     getData(params?: {
         page: number;
         page_size: number;
@@ -60,6 +63,7 @@ export class SaleService {
         );
     }
 
+    //Method to delete data
     delete(id: number = 0): Observable<{ status_code: number, message: string }> {
         return this.httpClient.delete<{ status_code: number, message: string }>(`${env.API_BASE_URL}/admin/sales/${id}`);
     }

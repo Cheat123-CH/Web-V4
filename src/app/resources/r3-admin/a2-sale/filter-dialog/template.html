@@ -70,6 +70,13 @@
 
     <mat-dialog-actions>
         <div class="w-full flex justify-end px-1">
+
+            <button class="text-slate-800 gap-1" mat-stroked-button (click)="reset()">
+                <mat-icon mat-icon-button [svgIcon]="'mdi:refresh'"/>
+                <span>សម្អាត</span>
+            </button>
+
+            
             <button class="helpers-mat-button-md bg-[#264497] text-white" mat-flat-button (click)="submit()"
                 [disabled]="filterForm.invalid || saving">
                 <span *ngIf="!saving">ស្វែងរក</span>

@@ -1,15 +1,15 @@
 // ================================================================>> Core Library (Angular)
-import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams } from '@angular/common/http';
-import * as core from '@angular/core';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams }   from '@angular/common/http';
+import * as core                                                    from '@angular/core';
 
 // ================================================================>> Third party Library
-import { Observable, catchError, of, switchMap, throwError } from 'rxjs';
+import { Observable, catchError, of, switchMap, throwError }        from 'rxjs';
 
 // ================================================================>> Custom Library (Application-specific)
 import { env } from 'envs/env';
 
 
-import { DataSaleResponse } from '../../../a1-dashboard/interface';
+import { DataSaleResponse }          from '../../../a1-dashboard/interface';
 import { Data, List, SetupResponse } from '../../interface';
 
 @core.Injectable({
@@ -17,6 +17,7 @@ import { Data, List, SetupResponse } from '../../interface';
 })
 
 export class ProductService {
+
     private _httpOptions = {
         headers: new HttpHeaders({
             'Content-type': 'application/json',
@@ -25,42 +26,13 @@ export class ProductService {
     };
 
     constructor(private httpClient: HttpClient) { };
-    // Method to fetch initial setup data for products
-    // setup(): Observable<SetupResponse> {
-    //     return this.httpClient.get<SetupResponse>(`${env.API_BASE_URL}/admin/products/setup`);
-    // }
 
+    // Method to fetch setup data
     getSetupData(){
         return this.httpClient.get<SetupResponse>(`${env.API_BASE_URL}/admin/products/setup-data`, this._httpOptions);
     }
 
-    // getData(params?: {
-    //     page: number;
-    //     page_size: number;
-    //     key?: string;
-    //     timeType?: string;
-    //     creator_id?: number;
-    //     type_id?: number;
-    //     startDate?: string;
-    //     endDate?: string
-    // }): Observable<List> {
-    //     // Filter out null or undefined parameters
-    //     const filteredParams: { [key: string]: any } = {};
-    //     Object.keys(params || {}).forEach(key => {
-    //         if (params![key] !== null && params![key] !== undefined) {
-    //             filteredParams[key] = params![key];
-    //         }
-    //     });
-
-    //     return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/products`, { params: filteredParams }).pipe(
-    //         switchMap((response: List) => of(response)),
-    //         catchError((error: HttpErrorResponse) => {
-    //             // Rethrow the error while maintaining the Observable<List> type
-    //             return throwError(() => error);
-    //         })
-    //     );
-    // }
-    
+    // Method to fetch all products
     getData(params = null){
         return this.httpClient.get<List>(`${env.API_BASE_URL}/admin/products`, { headers: this._httpOptions.headers, params });
     }
@@ -84,11 +56,13 @@ export class ProductService {
         return this.httpClient.delete<{ status_code: number, message: string }>(`${env.API_BASE_URL}/admin/products/${id}`);
     }
 
+    // Method to fetch product report
     getDataProductReport(): Observable<any> {
         const params = new HttpParams()
         return this.httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/product`, { params });
     }
 
+    // Method to fetch product by ID
     view(id: number): Observable<any> {
         return this.httpClient.get<any>(`${env.API_BASE_URL}/admin/products/${id}`);
     }

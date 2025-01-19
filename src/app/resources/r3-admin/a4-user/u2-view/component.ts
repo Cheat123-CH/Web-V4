@@ -15,7 +15,7 @@ import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatTabsModule } from "@angular/material/tabs";
 import { env } from 'envs/env';
 import { User } from "../interface";
-import { UpdateUserComponent } from "../5-update/component";
+import { UpdateUserComponent } from "../u5-update/component";
 import { Data } from "./interface";
 @Component({
     selector: 'shared-view-user',

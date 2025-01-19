@@ -1,6 +1,6 @@
 // ================================================================================>> Core Library
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
@@ -54,6 +54,7 @@ import { Subject, takeUntil } from 'rxjs';
     ]
 })
 export class FilterDialogComponent implements OnInit, OnDestroy {
+    @Output() filterSubmitted = new EventEmitter<any>();
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     saving: boolean = false;
     filterForm: FormGroup;
@@ -72,6 +73,7 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
         @Inject(MAT_DIALOG_DATA) public data : any,
         private dialogRef: MatDialogRef<FilterDialogComponent>,
         private formBuilder: FormBuilder,
+        
         private snackBarService: SnackbarService,
         private cdr: ChangeDetectorRef
     ) { }
@@ -90,8 +92,8 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
             timeType: ['today', Validators.required],
             from: [{ value: null, disabled: true }],
             to: [{ value: null, disabled: true }],
-            cashier: [null],
-            platform: [null]
+            cashier: [this.data.filter.cashier ?? ''],
+            platform: [this.data.filter.platform ?? '']
         });
     }
 
@@ -163,25 +165,44 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
     }
 
     submit(): void {
-        if (this.filterForm.valid) {
-            const formValue = { ...this.filterForm.value };
-
-            // Format the start and end dates to ISO string
-            if (formValue.timeType !== 'startandend') {
-                const { from, to } = this.calculateDateRange(formValue.timeType);
-                formValue.from = this.formatDateToISOString(from);
-                formValue.to = this.formatDateToISOString(to);
-            } else {
-                formValue.from = this.formatDateToISOString(formValue.from);
-                formValue.to = this.formatDateToISOString(formValue.to);
-            }
-
-            this.dialogRef.close(formValue);
-            this.saving = true;
-        } else {
-            this.snackBarService.openSnackBar('Please fill in the required fields.', 'Error');
-        }
+        this.filterSubmitted.emit({
+            ...this.filterForm.value, // Emit all form values
+            // type: this.form.value.productTypes, // Pass the selected product type ID as 'type'
+            // creator: this.form.value.users, // Pass the selected user ID as 'creator'
+        });
+        this.dialogRef.close();
     }
+
+    reset(): void {
+        this.filterForm.reset();
+        
+    }
+
+    closeDialog(): void {
+        this.filterForm.reset();
+        this.dialogRef.close();
+    }
+
+    // submit(): void {
+    //     if (this.filterForm.valid) {
+    //         const formValue = { ...this.filterForm.value };
+
+    //         // Format the start and end dates to ISO string
+    //         if (formValue.timeType !== 'startandend') {
+    //             const { from, to } = this.calculateDateRange(formValue.timeType);
+    //             formValue.from = this.formatDateToISOString(from);
+    //             formValue.to = this.formatDateToISOString(to);
+    //         } else {
+    //             formValue.from = this.formatDateToISOString(formValue.from);
+    //             formValue.to = this.formatDateToISOString(formValue.to);
+    //         }
+
+    //         this.dialogRef.close(formValue);
+    //         this.saving = true;
+    //     } else {
+    //         this.snackBarService.openSnackBar('Please fill in the required fields.', 'Error');
+    //     }
+    // }
 
     // Utility function to format date to 'yyyy-MM-dd' in Cambodia's timezone (UTC+7)
     formatDateToISOString(date: Date | string): string {
@@ -206,7 +227,7 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
-    closeDialog(): void {
-        this.dialogRef.close();
-    }
+    // closeDialog(): void {
+    //     this.dialogRef.close();
+    // }
 }

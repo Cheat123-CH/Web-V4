@@ -40,3 +40,9 @@ export interface Product {
 export interface ProductType {
     name: string
 }
+
+export interface SetupResponse {
+    cashiers: { id: number, name: string }[],
+    shortItems: { key: string, display: string }[],
+    platform: { key: string, display: string }[]
+}
