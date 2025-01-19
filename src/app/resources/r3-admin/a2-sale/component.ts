@@ -3,7 +3,6 @@ import { DatePipe, DecimalPipe, NgClass, NgIf } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 
 // ================================================================>> Third-Party Library
 // angular party
@@ -38,7 +37,6 @@ import { Data, List } from './interface';
     styleUrl: './style.scss',
     imports: [
         MatTableModule,
-        NgClass,
         NgIf,
         DatePipe,
         DecimalPipe,
@@ -49,8 +47,7 @@ import { Data, List } from './interface';
         MatIconModule,
         MatButtonModule,
         MatPaginatorModule,
-        MatMenuModule,
-        RouterLink
+        MatMenuModule
     ]
 })
 export class SaleComponent implements OnInit {
