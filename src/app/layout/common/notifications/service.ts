@@ -37,36 +37,36 @@ export class NotificationsService implements OnDestroy {
     }
 
     connect(): void {
-        if (!this._socket) {
-            this._socket = io(env.SOCKET_URL + '/notifications-getway', {
-                transports: ['websocket'],
-            });
+        // if (!this._socket) {
+        //     // this._socket = io(env.SOCKET_URL + '/notifications-getway', {
+        //     //     transports: ['websocket'],
+        //     // });
 
-            this._socket.on('connect', () => {
-                console.log('WebSocket connected');
-                this.register();
-            });
+        //     this._socket.on('connect', () => {
+        //         console.log('WebSocket connected');
+        //         this.register();
+        //     });
 
-            this._socket.on('new-order-notification', (data: { data: Notification[] }) => {
-                const newNotifications = data.data;
-                this._notificationsCache = [...newNotifications];
-                this._notifications.next(this._notificationsCache);
-            });
+        //     this._socket.on('new-order-notification', (data: { data: Notification[] }) => {
+        //         const newNotifications = data.data;
+        //         this._notificationsCache = [...newNotifications];
+        //         this._notifications.next(this._notificationsCache);
+        //     });
 
-            this._socket.on('notification-update', (data: { data: Notification[] }) => {
-                const updatedNotifications = data.data;
-                this._notificationsCache = [...updatedNotifications];
-                this._notifications.next(this._notificationsCache);
-            });
+        //     this._socket.on('notification-update', (data: { data: Notification[] }) => {
+        //         const updatedNotifications = data.data;
+        //         this._notificationsCache = [...updatedNotifications];
+        //         this._notifications.next(this._notificationsCache);
+        //     });
 
-            this._socket.on('disconnect', () => {
-                console.log('WebSocket disconnected');
-            });
+        //     this._socket.on('disconnect', () => {
+        //         console.log('WebSocket disconnected');
+        //     });
 
-            this._socket.on('connect_error', (error: any) => {
-                console.error(`WebSocket connection error: ${error.message}`, error);
-            });
-        }
+        //     this._socket.on('connect_error', (error: any) => {
+        //         console.error(`WebSocket connection error: ${error.message}`, error);
+        //     });
+        // }
     }
 
     register(): void {
