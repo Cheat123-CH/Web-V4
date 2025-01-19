@@ -53,10 +53,12 @@ import { Subject, takeUntil } from 'rxjs';
         MatButtonToggleModule
     ]
 })
-export class FilterSaleComponent implements OnInit, OnDestroy {
+export class FilterDialogComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     saving: boolean = false;
     filterForm: FormGroup;
+
+    public setup  : any = null;
 
     public dateType = [
         { id: 'today', name: 'ថ្ងៃនេះ' },
@@ -67,16 +69,21 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
         { id: 'startandend', name: 'ជ្រើសរើសអំឡុងពេល' }
     ];
     constructor(
-        @Inject(MAT_DIALOG_DATA) public setup: any,
-        private dialogRef: MatDialogRef<FilterSaleComponent>,
+        @Inject(MAT_DIALOG_DATA) public data : any,
+        private dialogRef: MatDialogRef<FilterDialogComponent>,
         private formBuilder: FormBuilder,
         private snackBarService: SnackbarService,
         private cdr: ChangeDetectorRef
     ) { }
     ngOnInit(): void {
+
+        this.setup = this.data.setup;
+
         this.buildForm();
         this.handleTimeTypeChanges();
         this.setDefaultToday();
+        
+        console.log(this.setup);
     }
     buildForm(): void {
         this.filterForm = this.formBuilder.group({

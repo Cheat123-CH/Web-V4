@@ -1,5 +1,18 @@
-.header-section {
-    @apply flex min-h-14 max-h-14 items-center justify-between pl-4 pr-2.5 #{'!important'};
+.shared-header-section {
+    @apply flex min-h-14 max-h-14 border-b items-center justify-between pl-4 pr-2 #{'!important'};
+
+    .custom-icon-button {
+        height: 34px !important;
+        min-height: 34px !important;
+        max-height: 34px !important;
+        width: 34px !important;
+        min-width: 34px !important;
+        max-width: 34px !important;
+    }
+}
+
+.shared-input-filter {
+    @apply flex items-center h-10 border border-slate-300 hover:bg-zinc-50 rounded-[0.65rem] overflow-hidden #{'!important'};
 }
 
 .side-bar-header {
@@ -50,8 +63,32 @@
     .mat-mdc-tab {
         flex-grow: 1 !important;
     }
+    .mat-mdc-tab-header {
+        border-bottom: 1px solid #e2e8f0;
+    }
+    .mat-mdc-tab-body-wrapper {
+        height: 100%;
+        overflow-y: auto;
+    }
 }
 
 .custom-tab-group .mat-mdc-tab .mdc-tab__text-label {
     font-size: 17px !important;
+}
+
+.sm-avatar{
+    @apply rounded-full border min-w-[36px] max-w-[36px] min-h-[36px] max-h-[36px] object-cover #{'!important'};
+}
+
+.side-dialog {
+    .mat-mdc-dialog-surface.mdc-dialog__surface {
+        border-radius: 0 !important;
+        padding: 0px;
+
+        .mat-mdc-dialog-component-host{
+            .mat-mdc-dialog-title {
+                padding-right: 8px;
+            }
+        }
+    }
 }

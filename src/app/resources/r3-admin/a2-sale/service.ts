@@ -19,7 +19,7 @@ export class SaleService {
     constructor(private httpClient: HttpClient) { }
     private loadingSpinner = inject(LoadingSpinnerService);
 
-    setup(): Observable<{ data: { id: number, name: string }[] }> {
+    getSetupData(): Observable<{ data: { id: number, name: string }[] }> {
         return this.httpClient.get<{ data: { id: number, name: string }[] }>(`${env.API_BASE_URL}/admin/sales/setup`);
     }
 
