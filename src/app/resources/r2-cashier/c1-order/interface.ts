@@ -1,5 +1,5 @@
 // ================================================================>> Custom Library
-import { Data as DataSale } from "../a2-sale/interface";
+import { Data as DataSale } from "../c2-sale/interface";
 
 // Interface for the list of sales orders
 export interface List {
