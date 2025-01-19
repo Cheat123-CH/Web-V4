@@ -30,6 +30,7 @@ import { ErrorHandleService } from 'app/shared/error-handle.service';
 import { MatBadgeModule } from '@angular/material/badge';
 import { FilterProductComponent } from './filter/component';
 import { ProductService } from './service';
+import { FilterDialogComponent } from './filter-dialog/component';
 
 @Component({
     selector: 'app-product',
@@ -102,8 +103,9 @@ export class ProductComponent implements OnInit {
     public type_id                 :   number         = 0; // Product type ID
     public name                    :   string         = '';
     public shortedItems: any[] = [
-        { name: 'ប្រភេទផលិតផល', value: 'type_id' },
-        { name: 'ឈ្មោះផលិតផល', value: 'name' },
+        { name: 'ឈ្មោះផលិតផល' , value: 'name' },
+        { name: 'តម្លៃ(រៀល)'   , value: 'unit_price' },
+        { name: 'តម្លៃលក់(រៀល)' , value: 'total_sale' },
     ];
     public selectedShortedItem     :  any             = this.shortedItems[0];
     public shortedOrder            :  string          = 'desc';
@@ -299,57 +301,57 @@ export class ProductComponent implements OnInit {
 
 
 
-    // // filter_data: any;
-    openFilterDialog(): void {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.autoFocus = false;
-        dialogConfig.data = this.setup
-        dialogConfig.restoreFocus = false; // Avoids focus issues
-        dialogConfig.position = { right: '0px' };
-        dialogConfig.height = '100dvh';
-        dialogConfig.width = '100dvw';
-        dialogConfig.maxWidth = '550px';
-        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-        dialogConfig.enterAnimationDuration = '0s';
-        const dialogRef = this._matDialog.open(FilterProductComponent, dialogConfig);
+    // // // filter_data: any;
+    // openFilterDialog(): void {
+    //     const dialogConfig = new MatDialogConfig();
+    //     dialogConfig.autoFocus = false;
+    //     dialogConfig.data = this.setup
+    //     dialogConfig.restoreFocus = false; // Avoids focus issues
+    //     dialogConfig.position = { right: '0px' };
+    //     dialogConfig.height = '100dvh';
+    //     dialogConfig.width = '100dvw';
+    //     dialogConfig.maxWidth = '550px';
+    //     dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
+    //     dialogConfig.enterAnimationDuration = '0s';
+    //     const dialogRef = this._matDialog.open(FilterProductComponent, dialogConfig);
         
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                // this.filter_data = result;
-                this.cdr.detectChanges();
-                this.getData();
-            }
-        });
-    }
+    //     dialogRef.afterClosed().subscribe((result) => {
+    //         if (result) {
+    //             // this.filter_data = result;
+    //             this.cdr.detectChanges();
+    //             this.getData();
+    //         }
+    //     });
+    // }
     
     // ====================================================================>> Open Filter Dialog
 
-    // openFilterDialog(): void {
+    openFilterDialog(): void {
         
-    //     const dialogConfig = this._dialogConfigService.getDialogConfig({
-    //         setup: this.setupData,
-    //         filter: {
-    //             type_id             : this.type_id,
-    //             name                : this.name,
-    //         }
-    //     });
+        const dialogConfig = this._dialogConfigService.getDialogConfig({
+            setup: this.setupData,
+            filter: {
+                type_id             : this.type_id,
+                name                : this.name,
+            }
+        });
 
-    //     const dialogRef = this._matDialog.open(FilterDialogComponent, dialogConfig);
+        const dialogRef = this._matDialog.open(FilterDialogComponent, dialogConfig);
 
-    //     dialogRef.componentInstance.filterSubmitted.subscribe((res: any) => {
+        dialogRef.componentInstance.filterSubmitted.subscribe((res: any) => {
 
-    //         // Count filter selected from the Filter Dialog
-    //         const nullOrEmptyCount = Object.values(res).filter(value => value === null || value === 0).length;
-    //         this.badgeValue = Object.keys(res).length - nullOrEmptyCount;
+            // Count filter selected from the Filter Dialog
+            const nullOrEmptyCount = Object.values(res).filter(value => value === null || value === 0).length;
+            this.badgeValue = Object.keys(res).length - nullOrEmptyCount;
 
-    //         // Map Filter
-    //         this.type_id      = res.type_id;
-    //         this.name         = res.name;
+            // Map Filter
+            this.type_id      = res.type_id;
+            this.name         = res.name;
 
-    //         // ===>> Refresh Data
-    //         this.getData();
-    //     });
-    // }
+            // ===>> Refresh Data
+            this.getData();
+        });
+    }
 
      // ====================================================================>> Pagination chagne for Next or Prevous
     onPageChanged(event: PageEvent): void {

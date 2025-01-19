@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
-import { SaleService } from 'app/resources/r2-cashier/a2-sale/service';
+import { SaleService } from 'app/resources/r2-cashier/c2-sale/service';
 import { env } from 'envs/env';
 import FileSaver from 'file-saver';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
