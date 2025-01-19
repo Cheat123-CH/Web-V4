@@ -1,294 +1,354 @@
-// ================================================================>> Core Library
-import { DatePipe, DecimalPipe, NgClass, NgIf } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
+// ================================================================================>> Core Library
+import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
-// ================================================================>> Third-Party Library
-// angular party
+// ================================================================================>> Third Party Library
+// ===>> Material
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDialog } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import FileSaver from 'file-saver';
 
-// ================================================================>> Custom Library
-
-import { DetailsService } from 'app/shared/details/service';
-import { ViewDetailSaleComponent } from 'app/shared/view/component';
+// ================================================================================>> Custom Library
+// ===>> Env
 import { env } from 'envs/env';
-import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants from 'helper/shared/constants';
-import { FilterSaleComponent } from './filter-dialog/component';
-import { SaleService } from './service';
-import { Data, List } from './interface';
 
-// Component decorator specifying metadata for the component
+// ===>> Helper Library
+import { helperAnimations } from 'helper/animations';
+import { savePDFFromBlob } from 'helper/download-report/save-pdf';
+import { HelperConfirmationService } from 'helper/services/confirmation';
+import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
+
+// ===>> Shared
+import { DialogConfigService } from 'app/shared/dialog-config.service';
+import { ErrorHandleService } from 'app/shared/error-handle.service';
+
+// ===>> Local
+import { Data } from './interface';
+import { FilterDialogComponent } from './filter-dialog/component';
+import { SaleService } from './service';
+
 @Component({
-    selector: 'app-sale-admin',
-    standalone: true,
-    templateUrl: './template.html',
-    styleUrl: './style.scss',
-    imports: [
-        MatTableModule,
-        NgClass,
-        NgIf,
-        DatePipe,
-        DecimalPipe,
+    selector    : 'student-listing',
+    standalone  : true,
+    templateUrl : './template.html',
+    styleUrl    : './style.scss',
+    animations  : helperAnimations,
+    imports     : [
+        CommonModule,
         FormsModule,
-        MatFormFieldModule,
-        MatDatepickerModule,
-        MatInputModule,
-        MatIconModule,
-        MatButtonModule,
+
         MatPaginatorModule,
+        MatTableModule,
+        MatProgressSpinnerModule,
+        MatButtonModule,
+        MatIconModule,
         MatMenuModule,
-        RouterLink
-    ]
+        MatBadgeModule,
+    ],
 })
 export class SaleComponent implements OnInit {
 
-    // Injecting the MatDialog service
-    private matDialog = inject(MatDialog)
+    // ===>> Data
+    public data             : Data[]  = [];
+    public setupData        : any     = {};
+    public isLoading        : boolean = false;
+    public dataSource       : MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
+    public displayedColumns : string[] = [
+        'no', 
+        'receipt', 
+        'price', 
+        'ordered_at', 
+        'device', 
+        'seller', 
+        'action'
+    ];
+
+    // ===>> Search, Sort & Filter
+    public key                  : string = '';
+
+    public cashier              : number = 0;
+    public badgeValue           : any;
+
+    public shortedItems: any[] = [
+        { 
+            value: 'total_price' , 
+            display: 'តម្លៃលក់' 
+        },
+    ];
+    public selectedShortedItem  :any    = this.shortedItems[0];
+    public shortedOrder         :string = 'DESC';
+
+
+    // ===>> Download
+    public isDownloadingReport      : boolean   = false;
+    public isDownloadingCV          : boolean   = false;
+    public selectedCVDownloadIndex  : number    = -1;
+
+    // ===>> File Url
+    public FILE_URL         : string = env.FILE_BASE_URL
+
+    // ===>> Pagination
+    public page                 : number = 1;
+    public limit                : number = 1;
+    public total                : number = 0;
+
 
     constructor(
-        private saleService: SaleService,
-        private snackBarService: SnackbarService,
-        private detailsService: DetailsService,
-        private cdr: ChangeDetectorRef,
-        private dialog: MatDialog
-    ) { }
+        private _service                    : SaleService,
+        private _snackbarService            : SnackbarService,
+        private _router                     : Router,
+        private _matDialog                  : MatDialog,
+        private _errorHandleService         : ErrorHandleService,
+        private _dialogConfigService        : DialogConfigService,
+        private _helpersConfirmationService : HelperConfirmationService
+    ) {}
 
-    // Component properties
-    displayedColumns: string[] = ['no', 'receipt', 'price', 'ordered_at', 'device', 'seller', 'action'];
-    dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
-
-    fileUrl: string = env.FILE_BASE_URL;
-    total: number = 10;
-    limit: number = 10;
-    page: number = 1;
-    receipt_number: string = '';
-    isLoading: boolean = false;
-    key: string = '';
-    downloading: boolean = false;
-    setup: { id: number, name: string }[] = [];
-    // Lifecycle hook: ngOnInit, called after the component is initialized
     ngOnInit(): void {
-        this.getData(this.page, this.limit);
-        this.initSetup();
+
+        this.getSetupData();
+        this.getData();
+
     }
 
-    // Method to retrieve a list of sales based on provided parameters and filters
-    getData(
-        _page       : number = 1,
-        _page_size  : number = 10,
-        filter_data : { timeType?: string; platform?: string; cashier?: number; from?: string; to?: string } = {}
-    ): void {
-        const params: {
-            page: number;
-            page_size: number;
-            key?: string;
-            timeType?: string;
-            platform?: string;
-            cashier?: number;
-            from?: string;
-            to?: string;
-        } = {
-            page: _page,
-            page_size: _page_size,
-            ...filter_data // Spread operator to add filters dynamically
-        };
-
-        if (this.key !== '') {
-            params.key = this.key;
-        }
-
-        this.isLoading = true;
-
-        this.saleService.getData(params).subscribe({
-            next: (res: List) => {
-
-                this.dataSource.data    = res.data ?? [];
-
-                this.total              = res.pagination.total;
-                this.limit              = res.pagination.limit;
-                this.page               = res.pagination.page;
-                this.isLoading          = false;
+    // ====================================================================>> Get Setup Data for Filtering
+    getSetupData(): void {
+        // ===>> Call API
+        this._service.getSetupData().subscribe({
+            next: (res:any) => {
+                this.setupData = res;
+                this.shortedItems = res.shortItems;
+                //this.openFilterDialog();
             },
             error: (err) => {
+                this._errorHandleService.handleHttpError(err);
+            },
+        });
+    }
+
+    // ====================================================================>> Get Data for Listing
+    getData(){;
+
+        // ===>> Set Loading UI
+        this.isLoading = true;
+
+        // ===>> Get Filter
+        const params = this.prepareSearchSortFilterParam();
+        this._service.getData(params).subscribe({
+            next: (res) => {
+
+                // ===>> Maping data & DataSource
+                this.data            =   res.data;
+                this.dataSource.data =   this.data;
+
+                // ===>> Update Pagination Variable
+                this.total           =   res.pagination.total;
+                this.page            =   res.pagination.page;
+                this.limit           =   res.pagination.limit;
+
+                // ===>> Stop Loading UI
+                this.isLoading       =   false;
+
+            },
+            error: (err) => {
+
+                // ===>> Stop Loading UI
                 this.isLoading = false;
-                this.snackBarService.openSnackBar(
-                    err.error?.message ?? GlobalConstants.genericError,
-                    GlobalConstants.error
-                );
-            }
+
+                // ===>> Display Error
+                this._errorHandleService.handleHttpError(err);
+            },
         });
     }
 
-    filter_data: { timeType: string; platform: string; cashier: number; from: string; to: string };
-    initSetup(): void {
-        this.saleService.setup().subscribe({
-            next: response => this.setup = response.data,
-        });
+    // ====================================================================>> Generate Search, Sort & Filter
+    prepareSearchSortFilterParam(){
+        // ===>> Prepare Query Parameter
+        let params:any = { limit: this.limit, page: this.page};
+
+        // ===>> Search
+        if(this.key != ''){
+            params.key = this.key
+        }
+
+        // ===>> Filter
+
+        if(this.cashier != 0 && this.cashier != null){
+            params.cashier = this.cashier
+        }
+
+        // ===>> Sort
+        params.sort         = this.selectedShortedItem.value;
+        params.order        = this.shortedOrder;
+
+        return params;
     }
 
-    // Method to open the filter dialog and update the list with the selected filters
-    openFilterDialog(): void {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.autoFocus = false;
-        dialogConfig.data = this.setup
-        dialogConfig.restoreFocus = false; // Avoids focus issues
-        dialogConfig.position = { right: '0px' };
-        dialogConfig.height = '100dvh';
-        dialogConfig.width = '100dvw';
-        dialogConfig.maxWidth = '550px';
-        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-        dialogConfig.enterAnimationDuration = '0s';
-
-        const dialogRef = this.dialog.open(FilterSaleComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe((result) => {
-            if (result) {
-                this.filter_data = result;
-                this.cdr.detectChanges();
-                this.getData(1, 10, this.filter_data);
-            }
-        });
-    }
-
-    // Method to handle page changes in the data table paginator
+    // ====================================================================>> Pagination chagne for Next or Prevous
     onPageChanged(event: PageEvent): void {
-        if (event && event.pageSize) {
-            this.limit = event.pageSize;
-            this.page = event.pageIndex + 1;
-            this.getData(this.page, this.limit);
-        }
+        this.limit  =   event.pageSize;
+        this.page   =   event.pageIndex + 1;
+        this.getData();
     }
 
-    viewDetail(row: Data): void {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.autoFocus = false;
-        dialogConfig.position = { right: '0px' };
-        dialogConfig.height = '100dvh';
-        dialogConfig.width = '100dvw';
-        dialogConfig.maxWidth = '550px';
-        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-        dialogConfig.enterAnimationDuration = '0s';
-        dialogConfig.data = row
-        const dialogRef = this.matDialog.open(ViewDetailSaleComponent, dialogConfig);
-    }
+    // ====================================================================>> Open Filter Dialog
+    openFilterDialog(): void {
 
-    private helpersConfirmationService = inject(HelperConfirmationService)
-    // Method to handle the deletion of a sale
-    onDelete(sale: Data): void {
-
-        // Building the confirmation dialog configuration
-        const configAction: HelperConfirmationConfig = {
-
-            title: `Remove <strong> ${sale.receipt_number} </strong>`,
-            message: 'Are you sure you want to remove this receipt number permanently? <span class="font-medium">This action cannot be undone!</span>',
-            icon: ({
-                show: true,
-                name: 'heroicons_outline:exclamation-triangle',
-                color: 'warn',
-            }),
-
-            actions: {
-                confirm: {
-                    show: true,
-                    label: 'Remove',
-                    color: 'warn',
-                },
-                cancel: {
-                    show: true,
-                    label: 'Cancel',
-                },
-            },
-            dismissible: true,
-        };
-
-        // Opening the confirmation dialog and saving the reference
-        const dialogRef = this.helpersConfirmationService.open(configAction);
-
-        // Subscribe to afterClosed from the dialog reference
-        dialogRef.afterClosed().subscribe((result: string) => {
-
-            if (result && typeof result === 'string' && result === 'confirmed') {
-                // The user confirmed the action
-
-                this.saleService.delete(sale.id).subscribe({
-
-                    next: (response: { status_code: number, message: string }) => {
-
-                        // Successful deletion
-                        // Update the data source to reflect the deletion
-                        this.dataSource.data = this.dataSource.data.filter((v: Data) => v.id != sale.id);
-                        this.snackBarService.openSnackBar(response.message, GlobalConstants.success);
-                        this.getData()
-                    },
-                    error: (err: HttpErrorResponse) => {
-                        this.snackBarService.openSnackBar(err?.error?.message || GlobalConstants.genericError, GlobalConstants.error);
-                    }
-                });
+        const dialogConfig = this._dialogConfigService.getDialogConfig({
+            setup: this.setupData,
+            filter: {
+                cashier       : this.cashier,
             }
         });
+
+        const dialogRef = this._matDialog.open(FilterDialogComponent, dialogConfig);
+
+        // dialogRef.componentInstance.filterSubmitted.subscribe((res: any) => {
+
+        //     // Count filter selected from the Filter Dialog
+        //     const nullOrEmptyCount = Object.values(res).filter(value => value === null || value === 0).length;
+        //     this.badgeValue = Object.keys(res).length - nullOrEmptyCount;
+
+        //     // Map Filter
+        //     this.working_group      = res.working_group;
+        //     this.school             = res.school;
+        //     this.province           = res.province;
+        //     this.tracking_status    = res.tracking_status;
+        //     this.scholarship_status = res.scholarship_status;
+
+        //     // ===>> Refresh Data
+        //     this.getData();
+        // });
     }
 
-    // Method to initiate the download of a sale invoice
-    print(row: Data) {
-
-        this.downloading = true;
-
-        // Calling the details service to download the invoice
-        this.detailsService.download(row.receipt_number).subscribe({
-
-            next: res => {
-
-                this.downloading = false;
-                let blob = this.b64toBlob(res.data, 'application/pdf');
-                FileSaver.saveAs(blob, 'Invoice-' + row.receipt_number + '.pdf');
-            },
-            error: (err: HttpErrorResponse) => {
-                this.snackBarService.openSnackBar(err.error?.message || GlobalConstants.genericError, GlobalConstants.error);
-            }
-        });
+    // ====================================================================>> Select Short Item
+    selectShortedItem(item = {}){
+        this.selectedShortedItem = item;
+        this.getData();
     }
 
-    // =================================>> // Method to convert base64 data to a blob
-    b64toBlob(b64Data: string, contentType: string, sliceSize?: number) {
+    // ====================================================================>> Select Short Order
+    selectShortOrder(){
 
-        // Set default values for optional parameters
-        contentType = contentType || '';
-        sliceSize = sliceSize || 512;
+        // Mapping the data
+        this.shortedOrder = this.shortedOrder == 'DESC' ? 'ASC' : 'DESC';
 
-        var byteCharacters = atob(b64Data);         // Decode the base64 string into binary data
-        var byteArrays = [];                    // Initialize an array to hold Uint8Arrays
+        // refresh data
+        this.getData();
 
-        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+    }
 
-            // Extract a chunk of data
-            var slice = byteCharacters.slice(offset, offset + sliceSize);
+    // ====================================================================>> Clear Short Filter
+    clearFilter(): void{
 
-            // Convert the binary data to an array of numeric byte values
-            var byteNumbers = new Array(slice.length);
-            for (var i = 0; i < slice.length; i++) {
-                byteNumbers[i] = slice.charCodeAt(i);
-            }
+        // Set all filters to 0
+        this.cashier      = 0;
 
-            // Create a Uint8Array from the numeric byte values
-            var byteArray = new Uint8Array(byteNumbers);
-            byteArrays.push(byteArray);               // Add the Uint8Array to the array of arrays
-        }
+        // Refresh Data
+        this.getData();
+    }
 
-        // Create a Blob object from the array of Uint8Arrays
-        var blob = new Blob(byteArrays, { type: contentType });
-        return blob;
+    // ====================================================================>> Get Data for Listing
+    view(id: number): void {
+        this._router.navigateByUrl( `/admin/student/view/${id}`);
+    }
+
+    // ====================================================================>> Delete
+    delete(data:Data): void {
+
+        // ===>> Open Confirmation Dialog
+        //const dialogRef = this._helpersConfirmationService.open('delete');
+
+        // dialogRef.afterClosed().subscribe((result: string | undefined) => {
+
+        //     if (result === 'confirmed') {
+
+        //         this.isLoading = true;
+
+        //         this._service.delete('students', data.id).subscribe({
+
+        //             next: (res) => {
+        //                 this.getData();
+        //                 this._snackbarService.openSnackBar(res.message, '');
+        //                 this.isLoading = false;
+        //             },
+
+        //             error: (err) => {
+        //                 this._errorHandleService.handleHttpError(err);
+        //                 this.isLoading = false;
+        //             },
+
+        //         });
+        //     }
+        // });
+    }
+
+    // ====================================================================>> Upgrade to Member
+    
+
+    // ====================================================================>> Download CV
+    downloadInvoice(cvId: number, index:number = 0): void {
+
+
+        this.selectedCVDownloadIndex  = index;
+        this.isDownloadingCV          =   true; // Indicate the download process is ongoing
+
+        // Call the service to fetch the Base64-encoded PDF
+        // this._service.downloadInvoice(cvId).subscribe({
+        //     next: (response:any) => {
+
+        //         if (response.result) {
+
+        //             savePDFFromBlob(`CV-${response.name}-`, response.result);
+
+        //         } else {
+        //             this._snackbarService.openSnackBar('No data available for the report.', 'Close');
+        //         }
+
+        //         this.selectedCVDownloadIndex    = -1
+        //         this.isDownloadingCV            = false;
+        //     },
+        //     error: (err) => {
+
+        //         this.selectedCVDownloadIndex    = -1;
+        //         this.isDownloadingCV            = false;
+        //         this._errorHandleService.handleHttpError(err);
+
+        //     },
+        //);
+    }
+
+    // ====================================================================>> Download Report
+    downloadReport(): void {
+
+        // ===>> Get Filter
+        const params = this.prepareSearchSortFilterParam();
+
+        // ===>> Set Loading
+        this.isDownloadingReport = true;
+
+        // ===>> Call API
+        // this._service.downloadReport(params).subscribe({
+        //     next: (res:any) => {
+
+        //         savePDFFromBlob('student-list-', res.result);
+        //         // Display Message
+        //         this._snackbarService.openSnackBar('របាយការណ័ត្រូវបានទាញយកដោយជោគជ័យ', '');
+
+        //         // Stop the spinner
+        //         this.isDownloadingReport       =   false;
+        //     },
+        //     error: (err) => {
+
+        //         this.isDownloadingReport = false;
+        //         this._errorHandleService.handleHttpError(err);
+        //     },
+        // });
     }
 }
