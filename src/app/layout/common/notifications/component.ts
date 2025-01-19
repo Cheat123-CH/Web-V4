@@ -50,20 +50,20 @@ export class NotificationsComponent implements OnInit, OnDestroy {
 
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
-        private _notificationsService: NotificationsService,
+        // private _notificationsService: NotificationsService,
         private _overlay: Overlay,
         private _viewContainerRef: ViewContainerRef
     ) { }
 
     ngOnInit(): void {
-        this._notificationsService.notifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((data: Notification[]) => {
-            this.notifications = data;
-            this._calculateUnreadCount(); // Recalculate unread count
-            this._changeDetectorRef.markForCheck(); // Trigger view update
-        });
+        // this._notificationsService.notifications$.pipe(takeUntil(this._unsubscribeAll)).subscribe((data: Notification[]) => {
+        //     this.notifications = data;
+        //     this._calculateUnreadCount(); // Recalculate unread count
+        //     this._changeDetectorRef.markForCheck(); // Trigger view update
+        // });
 
-        // Connect to the WebSocket server
-        this._notificationsService.connect();
+        // // Connect to the WebSocket server
+        // this._notificationsService.connect();
     }
 
     ngOnDestroy(): void {
@@ -71,7 +71,7 @@ export class NotificationsComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
 
         // Disconnect from the WebSocket server
-        this._notificationsService.disconnect();
+        // this._notificationsService.disconnect();
 
         if (this._overlayRef) {
             this._overlayRef.dispose();
@@ -95,16 +95,16 @@ export class NotificationsComponent implements OnInit, OnDestroy {
     }
 
     markAllAsRead(): void {
-        this._notificationsService.markAllAsRead().subscribe();
+        // this._notificationsService.markAllAsRead().subscribe();
     }
 
     toggleRead(notification: Notification): void {
         notification.read = !notification.read;
-        this._notificationsService.update(notification.id, notification).subscribe();
+        // this._notificationsService.update(notification.id, notification).subscribe();
     }
 
     delete(notification: Notification): void {
-        this._notificationsService.delete(notification.id).subscribe();
+        // this._notificationsService.delete(notification.id).subscribe();
     }
 
     trackByFn(index: number, item: any): any {

@@ -7,7 +7,6 @@ module.exports = {
         new EnvironmentPlugin([
             'API_BASE_URL',
             'FILE_BASE_URL',
-            'SOCKET_URL'
         ])
     ]
 }
