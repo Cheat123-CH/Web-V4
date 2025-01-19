@@ -33,8 +33,7 @@ export interface User {
 
 // Interface for Setup Response
 export interface SetupResponse {
-    data: {
-        productTypes: ProductType[];
-        users: User[];
-    };
+   
+    productTypes: ProductType[];
+    users: User[];
 }

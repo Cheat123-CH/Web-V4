@@ -17,13 +17,23 @@
                     {{ item?.name }}
                 </mat-option>
             </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+            <mat-label>គ្រឹះស្ថានសិក្សា</mat-label>
+            <mat-icon class="icon-size-5" matPrefix [svgIcon]="'mdi:building-line'"></mat-icon>
+            <mat-select formControlName="school" placeholder="ជ្រើសរើសគ្រឹះស្ថានសិក្សា">
+                <mat-option *ngFor=" let item of setup?.schools" [value]=" item.id ">
+                    {{ item.name_in_khmer }}
+                </mat-option>
+            </mat-select>
         </mat-form-field> -->
 
         <mat-form-field appearance="outline" class="w-full">
             <mat-label>ប្រភេទផលិតផល</mat-label>
-            <mat-icon class="icon-size-5" matPrefix [svgIcon]="'mdi:building-line'"></mat-icon>
-            <mat-select formControlName="type_id" placeholder="ជ្រើសរើសប្រភេទផលិតផល">
-                <mat-option *ngFor=" let item of setup?.type_id" [value]=" item.id ">
+            <!-- <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:map-pin'"></mat-icon> -->
+            <mat-select formControlName="productTypes" placeholder="ជ្រើសរើសប្រភេទផលិតផល">
+                <mat-option *ngFor=" let item of setup?.productTypes" [value]=" item.id ">
                     {{ item.name }}
                 </mat-option>
             </mat-select>
@@ -31,25 +41,15 @@
 
         <mat-form-field appearance="outline" class="w-full">
             <mat-label>អ្នកបញ្ចូលទិន្នន័យ</mat-label>
-            <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:map-pin'"></mat-icon>
-            <mat-select formControlName="user" placeholder="ជ្រើសរើសអ្នកបញ្ចូលទិន្នន័យ">
-                <mat-option *ngFor=" let item of setup?.users" [value]=" item.id ">
+            <!-- <mat-icon class="icon-size-5" matPrefix [svgIcon]="'feather:check-square'"></mat-icon> -->
+            <mat-select formControlName="users" placeholder="ជ្រើសរើសអ្នកបញ្ចូលទិន្នន័យ">
+                <mat-option *ngFor=" let item of setup?.users " [value]=" item.id ">
                     {{ item.name }}
                 </mat-option>
             </mat-select>
         </mat-form-field>
 
         <!-- <mat-form-field appearance="outline" class="w-full">
-            <mat-label>ស្ថានភាពពាក្យសុំ</mat-label>
-            <mat-icon class="icon-size-5" matPrefix [svgIcon]="'feather:check-square'"></mat-icon>
-            <mat-select formControlName="tracking_status" placeholder="ជ្រើសរើសស្ថានភាពពាក្យសំុ">
-                <mat-option *ngFor=" let item of setup?.tracking_statuses " [value]=" item.id ">
-                    {{ item.name }}
-                </mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="w-full">
             <mat-label>ស្ថានភាពសិក្សា</mat-label>
             <mat-icon class="icon-size-5" matPrefix [svgIcon]="'feather:user-check'"></mat-icon>
             <mat-select formControlName="scholarship_status" placeholder="ជ្រើសរើសស្ថានភាពសិក្សា">

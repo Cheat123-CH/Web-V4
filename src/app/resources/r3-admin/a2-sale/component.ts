@@ -1,38 +1,37 @@
 // ================================================================================>> Core Library
-import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { CommonModule }             from '@angular/common';
+import { Component, OnInit }        from '@angular/core';
+import { FormsModule }              from '@angular/forms';
+import { Router }                   from '@angular/router';
 
 // ================================================================================>> Third Party Library
 // ===>> Material
-import { MatBadgeModule } from '@angular/material/badge';
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatBadgeModule }                       from '@angular/material/badge';
+import { MatButtonModule }                      from '@angular/material/button';
+import { MatDialog }                            from '@angular/material/dialog';
+import { MatIconModule }                        from '@angular/material/icon';
+import { MatMenuModule }                        from '@angular/material/menu';
+import { MatPaginatorModule, PageEvent }        from '@angular/material/paginator';
+import { MatProgressSpinnerModule }             from '@angular/material/progress-spinner';
+import { MatTableDataSource, MatTableModule }   from '@angular/material/table';
 
 // ================================================================================>> Custom Library
 // ===>> Env
 import { env } from 'envs/env';
 
 // ===>> Helper Library
-import { helperAnimations } from 'helper/animations';
-import { savePDFFromBlob } from 'helper/download-report/save-pdf';
-import { HelperConfirmationService } from 'helper/services/confirmation';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
+import { helperAnimations }             from 'helper/animations';
+import { HelperConfirmationService }    from 'helper/services/confirmation';
+import { SnackbarService }              from 'helper/services/snack-bar/snack-bar.service';
 
 // ===>> Shared
-import { DialogConfigService } from 'app/shared/dialog-config.service';
-import { ErrorHandleService } from 'app/shared/error-handle.service';
+import { DialogConfigService }          from 'app/shared/dialog-config.service';
+import { ErrorHandleService }           from 'app/shared/error-handle.service';
 
 // ===>> Local
-import { Data } from './interface';
-import { FilterDialogComponent } from './filter-dialog/component';
-import { SaleService } from './service';
+import { Data }                         from './interface';
+import { FilterDialogComponent }        from './filter-dialog/component';
+import { SaleService }                  from './service';
 
 @Component({
     selector    : 'student-listing',
@@ -74,6 +73,10 @@ export class SaleComponent implements OnInit {
     public key                  : string = '';
 
     public cashier              : number = 0;
+    public platform             : number = 0;
+    public fromDate             : string = '';
+    public toDate               : string = '';
+
     public badgeValue           : any;
 
     public shortedItems: any[] = [
@@ -124,6 +127,7 @@ export class SaleComponent implements OnInit {
             next: (res:any) => {
                 this.setupData = res;
                 this.shortedItems = res.shortItems;
+                this.platform = res.platform;
                 //this.openFilterDialog();
             },
             error: (err) => {
@@ -183,6 +187,19 @@ export class SaleComponent implements OnInit {
             params.cashier = this.cashier
         }
 
+        if (this.platform != 0 && this.platform != null) {
+            params.platform = this.platform
+        }
+
+        if(this.fromDate != ''){
+            params.from = this.fromDate
+        }
+
+        if(this.toDate != ''){
+            params.to = this.toDate
+        }
+
+
         // ===>> Sort
         params.sort         = this.selectedShortedItem.value;
         params.order        = this.shortedOrder;
@@ -204,27 +221,31 @@ export class SaleComponent implements OnInit {
             setup: this.setupData,
             filter: {
                 cashier       : this.cashier,
+                from          : this.fromDate,
+                to            : this.toDate,
+                platform      : this.platform,
             }
         });
 
         const dialogRef = this._matDialog.open(FilterDialogComponent, dialogConfig);
 
-        // dialogRef.componentInstance.filterSubmitted.subscribe((res: any) => {
+        dialogRef.componentInstance.filterSubmitted.subscribe((res: any) => {
 
-        //     // Count filter selected from the Filter Dialog
-        //     const nullOrEmptyCount = Object.values(res).filter(value => value === null || value === 0).length;
-        //     this.badgeValue = Object.keys(res).length - nullOrEmptyCount;
+            // Count filter selected from the Filter Dialog
+            const nullOrEmptyCount = Object.values(res).filter(value => value === null || value === 0).length;
+            this.badgeValue = Object.keys(res).length - nullOrEmptyCount;
 
-        //     // Map Filter
-        //     this.working_group      = res.working_group;
-        //     this.school             = res.school;
-        //     this.province           = res.province;
-        //     this.tracking_status    = res.tracking_status;
-        //     this.scholarship_status = res.scholarship_status;
+            // Map Filter
+            this.cashier      = res.cashier;
+            this.fromDate     = res.from;
+            this.toDate       = res.to;
+            this.platform     = res.platform;
 
-        //     // ===>> Refresh Data
-        //     this.getData();
-        // });
+            
+
+            // ===>> Refresh Data
+            this.getData();
+        });
     }
 
     // ====================================================================>> Select Short Item
@@ -248,7 +269,11 @@ export class SaleComponent implements OnInit {
     clearFilter(): void{
 
         // Set all filters to 0
-        this.cashier      = 0;
+        // this.cashier      = 0;
+        // this.fromDate     = '';
+        // this.toDate       = '';
+        this.platform     = 0;
+        this.badgeValue   = 0;
 
         // Refresh Data
         this.getData();

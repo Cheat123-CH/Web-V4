@@ -29,12 +29,12 @@ import { CapitalizePipe } from 'helper/pipes/capitalize.pipe';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-import { ChangePasswordUserComponent } from '../6-change-password/component';
-import { CreateUserComponent } from '../4-create/component';
-import { FilterUserComponent } from '../3-filter/component';
+import { ChangePasswordUserComponent } from '../u6-change-password/component';
+import { CreateUserComponent } from '../u4-create/component';
+import { FilterUserComponent } from '../u3-filter/component';
 import { List, ResponseUser, User } from '../interface';
 import { UserService } from '../service';
-import { ViewUserComponent } from '../2-view/component';
+import { ViewUserComponent } from '../u2-view/component';
 import { SkeletonComponent } from './skeleton';
 @Component({
     selector: 'shared-list-user',

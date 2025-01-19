@@ -1,36 +1,33 @@
 // ================================================================>> Core Library (Angular)
-import { CommonModule, DatePipe, DecimalPipe, NgClass, NgIf } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { CommonModule, DatePipe, DecimalPipe, NgClass, NgIf }  from '@angular/common';
+import { HttpErrorResponse }                                   from '@angular/common/http';
+import { ChangeDetectorRef, Component, OnInit, inject }        from '@angular/core';
+import { FormsModule }                                         from '@angular/forms';
 
 // ================================================================>> Angular Material Modules
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatButtonModule }                                     from '@angular/material/button';
+import { MatDialog, MatDialogConfig }                          from '@angular/material/dialog';
+import { MatFormFieldModule }                                  from '@angular/material/form-field';
+import { MatIconModule }                                       from '@angular/material/icon';
+import { MatMenuModule }                                       from '@angular/material/menu';
+import { MatPaginatorModule, PageEvent }                       from '@angular/material/paginator';
+import { MatSelectModule }                                     from '@angular/material/select';
+import { MatTableDataSource, MatTableModule }                  from '@angular/material/table';
 
 // ================================================================>> Custom Library (Application-specific)
-import { env } from 'envs/env';
-import FileSaver from 'file-saver';
-import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants from 'helper/shared/constants';
-import { ProductsDialogComponent } from './dialog/component';
-// import { FilterProductComponent } from './filter/component';
-import { Data, List, ProductType, User } from '../../interface';
-import { ViewDetailProductComponent } from '../view/component';
-// import { Dialog } from '@angular/cdk/dialog';
-import { DialogConfigService } from 'app/shared/dialog-config.service';
-import { ErrorHandleService } from 'app/shared/error-handle.service';
-import { MatBadgeModule } from '@angular/material/badge';
-import { FilterProductComponent } from './filter/component';
-import { ProductService } from './service';
-import { FilterDialogComponent } from './filter-dialog/component';
+import { env }                                                  from 'envs/env';
+import FileSaver                                                from 'file-saver';
+import { HelperConfirmationConfig, HelperConfirmationService }  from 'helper/services/confirmation';
+import { SnackbarService }                                      from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants                                          from 'helper/shared/constants';
+import { ProductsDialogComponent }                              from './dialog/component';
+import { Data, List, }                                          from '../../interface';
+import { ViewDetailProductComponent }                           from '../view/component';
+import { DialogConfigService }                                  from 'app/shared/dialog-config.service';
+import { ErrorHandleService }                                   from 'app/shared/error-handle.service';
+import { MatBadgeModule }                                       from '@angular/material/badge';
+import { ProductService }                                       from './service';
+import { FilterDialogComponent }                                from './filter-dialog/component';
 
 @Component({
     selector: 'app-product',
@@ -59,10 +56,12 @@ export class ProductComponent implements OnInit {
 
     // Injecting necessary services
     private _service = inject(ProductService);
+
     private snackBarService = inject(SnackbarService);
     // Creating a product using a dialog
     private matDialog = inject(MatDialog);
     public data: Data[] = [];
+    public setupData        : any     = {};
     // Component properties
     displayedColumns: string[] = [
         'no',
@@ -77,39 +76,33 @@ export class ProductComponent implements OnInit {
 
 
     dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
+
     fileUrl: string = env.FILE_BASE_URL;
-    setup: {
 
-        productTypes: ProductType[]; users: User[]
-
-    } = {
-
-        productTypes: [], users: []
-
-    };
-
-    public productTypes            :   ProductType[]  = [];
-    public users                   :   User[]         = [];
     public total                   :   number         = 0;
     public limit                   :   number         = 20;
     public page                    :   number         = 1;
     public isLoading               :   boolean        = false;
-    public setupData               :   any            = {};
-
 
     // Search,sort and filter
-
     public key                     :   string         = '';
-    public type_id                 :   number         = 0; // Product type ID
+    public type_id                 :   number         = 0; 
     public name                    :   string         = '';
+    public users                   :   number         = 0;
+    public productTypes            :   number         = 0;
+    public creator                 :   number         = 0;
+
+
     public shortedItems: any[] = [
         { name: 'ឈ្មោះផលិតផល' , value: 'name' },
         { name: 'តម្លៃ(រៀល)'   , value: 'unit_price' },
         { name: 'តម្លៃលក់(រៀល)' , value: 'total_sale' },
     ];
+
     public selectedShortedItem     :  any             = this.shortedItems[0];
     public shortedOrder            :  string          = 'desc';
-    public _dialogConfigService    :   DialogConfigService;
+    
+
     badgeValue: any;
 
     // Constructor
@@ -117,83 +110,33 @@ export class ProductComponent implements OnInit {
         private cdr                         : ChangeDetectorRef,
         private _matDialog                  : MatDialog,
         private _errorHandleService         : ErrorHandleService,
+        private _dialogConfigService        : DialogConfigService,
 
     ) { }
 
     // Initialization logic
+
     ngOnInit(): void {
         this.getSetupData();
         this.getData();
     }
 
-    // // Fetches initial setup data for products
-    // initSetup(): void {
-    //     this._service.setup().subscribe({
-    //         next: (response) => {
-    //             this.setup = response.data; // Store the setup data
-    //             this.productTypes = response.data.productTypes;
-    //             this.users = response.data.users;
-    //         },
-    //         error: (err) => {
-    //             console.error('Error fetching setup data:', err); // Handle errors
-    //         },
-    //     });
-    // }
-    // ====================================================================>> Get Setup Data for Filtering
+    // ===>> Get Setup Data for Filtering
     getSetupData(): void {
         // ===>> Call API
         this._service.getSetupData().subscribe({
             next: (res:any) => {
                 this.setupData = res;
+                console.log(this.setupData);
             },
             error: (err) => {
                 this._errorHandleService.handleHttpError(err);
             },
         });
     }
-    // // Fetches the list of products based on parameters
-    // getData(_page: number = 1,
-    //     _page_size: number = 10,
-    //     filter_data: { timeType?: string; platform?: string; cashier?: number; startDate?: string; endDate?: string } = {}): void {
-    //     const params: {
-    //         page: number;
-    //         page_size: number;
-    //         key?: string;
-    //         timeType?: string;
-    //         creator_id?: number;
-    //         type_id?: number;
-    //         startDate?: string;
-    //         endDate?: string;
-    //     } = {
-    //         page: _page,
-    //         page_size: _page_size,
-    //         ...filter_data // Spread operator to add filters dynamically
-    //     };
-
-    //     if (this.key !== '') {
-    //         params.key = this.key;
-    //     }
-    //     this.isLoading = true;
-    //     this._service.getData(params).subscribe({
-    //         next: (res: List) => {
-    //             this.dataSource.data = res.data;
-    //             this.total = res.pagination.totalItems;
-    //             this.limit = res.pagination.perPage;
-    //             this.page = res.pagination.currentPage;
-    //             this.isLoading = false; // Set loading state to false once data is loaded
-    //         },
-    //         error: (err: HttpErrorResponse) => {
-    //             this.isLoading = false; // Ensure loading state is false even on error
-    //             this.snackBarService.openSnackBar(
-    //                 err?.error?.message ?? GlobalConstants.genericError,
-    //                 GlobalConstants.error
-    //             );
-    //         }
-    //     });
-    // }
 
 
-    // ====================================================================>> Get Data for Listing
+    // ===>> Get Data for Listing
     getData(){;
 
         // ===>> Set Loading UI
@@ -201,32 +144,7 @@ export class ProductComponent implements OnInit {
 
         // ===>> Get Filter
         const params = this.prepareSearchSortFilterParam();
-        console.log(params)
-        // this._service.getData(params).subscribe({
-        //     next: (res) => {
 
-        //         // ===>> Maping data & DataSource
-        //         this.data            =   res.data;
-        //         this.dataSource.data =   this.data;
-
-        //         // ===>> Update Pagination Variable
-        //         this.total           =   res.pagination.total;
-        //         this.page            =   res.pagination.page;
-        //         this.limit           =   res.pagination.limit;
-
-        //         // ===>> Stop Loading UI
-        //         this.isLoading       =   false;
-
-        //     },
-        //     error: (err) => {
-
-        //         // ===>> Stop Loading UI
-        //         this.isLoading = false;
-
-        //         // ===>> Display Error
-        //         this._errorHandleService.handleHttpError(err);
-        //     },
-        // });
         this._service.getData(params).subscribe({
             next: (res: List) => {
                 this.dataSource.data = res.data;
@@ -247,35 +165,41 @@ export class ProductComponent implements OnInit {
     }
     
     prepareSearchSortFilterParam(): any {
-        const params: any = { limit: this.limit, page: this.page };
+        const params: any = {
+            limit: this.limit,
+            page: this.page > 0 ? this.page : 1, // Ensure page starts from 1
+            sort_by: this.selectedShortedItem.value,
+            order: this.shortedOrder,
+        };
     
-        if (this.key) {
-            params.key = this.key; // Add search key if available
-        }
-        if (this.type_id && this.type_id !== 0) {
-            params.type_id = this.type_id; // Add type filter if set
-        }
-        if (this.name && this.name !== '') {
-            params.name = this.name; // Add name filter if provided
+        if (this.key != '') {
+            params.key = this.key; // Search keyword
         }
     
-       // ===>> Sort
-       params.sort_by      = this.selectedShortedItem.value;
-       params.order        = this.shortedOrder;
+        if (this.productTypes) {
+            params.type = this.productTypes; // Product type filter
+        }
+    
+        if (this.users) {
+            params.creator = this.users; // Use only creator
+        }
+        
+    
+        // Sort options
+        params.sort_by = this.selectedShortedItem.value;
+        params.order = this.shortedOrder;
     
         return params;
     }
     
-
-
-    // ====================================================================>> Select Short Item
-    //Item
+    
+    // ===>> Select Short Item
     selectShortedItem(item = {}){
         this.selectedShortedItem = item;
         this.getData();
     }
 
-    // ====================================================================>> Select Short Order
+    // ===>> Select Short Order
     selectShortOrder(){
 
         // Mapping the data
@@ -287,52 +211,27 @@ export class ProductComponent implements OnInit {
     }
     
 
-     // ====================================================================>> Clear Short Filter
+     // ===>> Clear Short Filter
      clearFilter(): void{
 
         // Set all filters to 0
-        this.type_id            = 0;
-        this.name               = '';
+        // this.users              = 0;
+        // this.productTypes       = 0;
         this.badgeValue         = 0;
 
         // Refresh Data
         this.getData();
     }
 
-
-
-    // // // filter_data: any;
-    // openFilterDialog(): void {
-    //     const dialogConfig = new MatDialogConfig();
-    //     dialogConfig.autoFocus = false;
-    //     dialogConfig.data = this.setup
-    //     dialogConfig.restoreFocus = false; // Avoids focus issues
-    //     dialogConfig.position = { right: '0px' };
-    //     dialogConfig.height = '100dvh';
-    //     dialogConfig.width = '100dvw';
-    //     dialogConfig.maxWidth = '550px';
-    //     dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-    //     dialogConfig.enterAnimationDuration = '0s';
-    //     const dialogRef = this._matDialog.open(FilterProductComponent, dialogConfig);
-        
-    //     dialogRef.afterClosed().subscribe((result) => {
-    //         if (result) {
-    //             // this.filter_data = result;
-    //             this.cdr.detectChanges();
-    //             this.getData();
-    //         }
-    //     });
-    // }
-    
-    // ====================================================================>> Open Filter Dialog
+    // ===>> Open Filter Dialog
 
     openFilterDialog(): void {
         
         const dialogConfig = this._dialogConfigService.getDialogConfig({
             setup: this.setupData,
             filter: {
-                type_id             : this.type_id,
-                name                : this.name,
+                productTypes             : this.productTypes,
+                users                    : this.users  ,
             }
         });
 
@@ -345,21 +244,26 @@ export class ProductComponent implements OnInit {
             this.badgeValue = Object.keys(res).length - nullOrEmptyCount;
 
             // Map Filter
-            this.type_id      = res.type_id;
-            this.name         = res.name;
+            this.productTypes      = res.productTypes;
+            this.users             = res.users;
 
             // ===>> Refresh Data
             this.getData();
         });
     }
+    
 
-     // ====================================================================>> Pagination chagne for Next or Prevous
+     // ===>> Pagination chagne for Next or Prevous
     onPageChanged(event: PageEvent): void {
+
         this.limit  =   event.pageSize;
         this.page   =   event.pageIndex + 1;
+
+
         this.getData();
     }
 
+    // ===>> Method create new product
     create(): void {
 
         const dialogConfig = new MatDialogConfig();
@@ -368,7 +272,7 @@ export class ProductComponent implements OnInit {
 
             title: 'បង្កើតផលិតផល',
             product: null,
-            setup: this.setup.productTypes
+            setup: this.setupData.productTypes
         };
 
         dialogConfig.autoFocus = false;
@@ -388,6 +292,7 @@ export class ProductComponent implements OnInit {
         });
     }
 
+    // Viewing a product using a dialog
     view(element: Data) {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.autoFocus = false;
@@ -409,7 +314,7 @@ export class ProductComponent implements OnInit {
 
             title: 'កែប្រែផលិតផល',
             product: row,
-            setup: this.setup.productTypes
+            setup: this.setupData.productTypes
         };
 
         dialogConfig.autoFocus = false;
@@ -431,6 +336,7 @@ export class ProductComponent implements OnInit {
         });
     }
 
+    // Downloading a product report
     saving: boolean = false;
     getReport() {
         this.saving = true;
@@ -459,6 +365,7 @@ export class ProductComponent implements OnInit {
         });
     }
 
+    // Convert base64 to blob
     b64toBlob(b64Data: string, contentType: string, sliceSize?: number) {
         contentType = contentType || '';
         sliceSize = sliceSize || 512;
@@ -476,8 +383,10 @@ export class ProductComponent implements OnInit {
         var blob = new Blob(byteArrays, { type: contentType });
         return blob;
     }
+
     // Deleting a product with confirmation
     private helpersConfirmationService = inject(HelperConfirmationService)
+
     onDelete(product: Data): void {
 
         // Build the config form
@@ -510,6 +419,7 @@ export class ProductComponent implements OnInit {
 
             dismissible: true,
         };
+
         // Open the dialog and save the reference of it
         const dialogRef = this.helpersConfirmationService.open(configAction);
 
