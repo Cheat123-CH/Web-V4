@@ -15,7 +15,7 @@ import { env } from 'envs/env';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
-import { ProductTypeDialogComponent } from './dialog/component';
+import { ProductTypeDialogComponent } from './view-dialog/component';
 import { ProductTypeService } from './service';
 import { Data, List } from './interface';
 

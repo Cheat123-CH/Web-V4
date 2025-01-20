@@ -13,7 +13,8 @@ import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { Subject } from 'rxjs';
 
 import { Data } from './interface';
-import { ProductService } from '../listing/service';
+import { ProductService } from '../service';
+
 @Component({
     selector: 'dashboard-gm-fast-view-customer',
     templateUrl: './template.html',
@@ -32,7 +33,7 @@ import { ProductService } from '../listing/service';
         DatePipe,
     ]
 })
-export class ViewDetailProductComponent implements OnInit, OnDestroy {
+export class ViewDialogComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     displayedColumns: string[] = ['no', 'receipt', 'price', 'ordered_at', 'ordered_at_time', 'seller'];
     dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
@@ -41,7 +42,7 @@ export class ViewDetailProductComponent implements OnInit, OnDestroy {
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public element: any,
-        private _dialogRef: MatDialogRef<ViewDetailProductComponent>,
+        private _dialogRef: MatDialogRef<ViewDialogComponent>,
         private cdr: ChangeDetectorRef,
         private _snackbar: SnackbarService,
         private productService: ProductService,

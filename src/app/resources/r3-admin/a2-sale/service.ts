@@ -68,4 +68,8 @@ export class SaleService {
         return this.httpClient.delete<{ status_code: number, message: string }>(`${env.API_BASE_URL}/admin/sales/${id}`);
     }
 
+    downloadReport(){
+        return this.httpClient.get(`${env.API_BASE_URL}/share/report/sale`, { responseType: 'blob' });
+    }
+
 }
