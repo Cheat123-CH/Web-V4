@@ -20,14 +20,15 @@ import FileSaver                                                from 'file-saver
 import { HelperConfirmationConfig, HelperConfirmationService }  from 'helper/services/confirmation';
 import { SnackbarService }                                      from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants                                          from 'helper/shared/constants';
-import { ProductsDialogComponent }                              from './dialog/component';
-import { Data, List, }                                          from '../../interface';
-import { ViewDetailProductComponent }                           from '../view/component';
+
 import { DialogConfigService }                                  from 'app/shared/dialog-config.service';
 import { ErrorHandleService }                                   from 'app/shared/error-handle.service';
 import { MatBadgeModule }                                       from '@angular/material/badge';
-import { ProductService }                                       from './service';
-import { FilterDialogComponent }                                from './filter-dialog/component';
+import { ProductService } from './service';
+import { Data, List } from '../interface';
+import { FilterDialogComponent } from './filter-dialog/component';
+import { ViewDialogComponent } from './view-dialog/component';
+import { ProductsDialogComponent } from './create-dialog/component';
 
 @Component({
     selector: 'app-product',
@@ -303,7 +304,7 @@ export class ProductComponent implements OnInit {
         dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
         dialogConfig.enterAnimationDuration = '0s';
         dialogConfig.data = element
-        const dialogRef = this.matDialog.open(ViewDetailProductComponent, dialogConfig);
+        const dialogRef = this.matDialog.open(ViewDialogComponent, dialogConfig);
     }
 
     // Updating a product using a dialog

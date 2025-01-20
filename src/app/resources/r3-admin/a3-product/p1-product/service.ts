@@ -9,8 +9,8 @@ import { Observable, catchError, of, switchMap, throwError }        from 'rxjs';
 import { env } from 'envs/env';
 
 
-import { DataSaleResponse }          from '../../../a1-dashboard/interface';
-import { Data, List, SetupResponse } from '../../interface';
+import { DataSaleResponse }          from '../../a1-dashboard/interface';
+import { Data, List, SetupResponse } from '../interface';
 
 @core.Injectable({
     providedIn: 'root',

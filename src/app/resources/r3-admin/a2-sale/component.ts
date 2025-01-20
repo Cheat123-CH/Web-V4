@@ -32,6 +32,7 @@ import { ErrorHandleService }           from 'app/shared/error-handle.service';
 import { Data }                         from './interface';
 import { FilterDialogComponent }        from './filter-dialog/component';
 import { SaleService }                  from './service';
+import { savePDFFromBlob } from 'helper/download-report/save-pdf';
 
 @Component({
     selector    : 'student-listing',
@@ -82,11 +83,15 @@ export class SaleComponent implements OnInit {
     public shortedItems: any[] = [
         { 
             value: 'total_price' , 
-            display: 'តម្លៃលក់' 
+            name: 'តម្លៃលក់' 
         },
+        {
+            value: 'ordered_at', 
+            name: 'ថ្ងៃបញ្ជាទិញ',
+        }
     ];
     public selectedShortedItem  :any    = this.shortedItems[0];
-    public shortedOrder         :string = 'DESC';
+    public shortedOrder         :string = 'desc';
 
 
     // ===>> Download
@@ -174,7 +179,14 @@ export class SaleComponent implements OnInit {
     // ====================================================================>> Generate Search, Sort & Filter
     prepareSearchSortFilterParam(){
         // ===>> Prepare Query Parameter
-        let params:any = { limit: this.limit, page: this.page};
+        // let params:any = { limit: this.limit, page: this.page};
+
+        const params: any = {
+            limit: this.limit,
+            page: this.page > 0 ? this.page : 1, // Ensure page starts from 1
+            sort_by: this.selectedShortedItem.value,
+            order: this.shortedOrder,
+        };
 
         // ===>> Search
         if(this.key != ''){
@@ -258,7 +270,7 @@ export class SaleComponent implements OnInit {
     selectShortOrder(){
 
         // Mapping the data
-        this.shortedOrder = this.shortedOrder == 'DESC' ? 'ASC' : 'DESC';
+        this.shortedOrder = this.shortedOrder == 'desc' ? 'asc' : 'desc';
 
         // refresh data
         this.getData();
@@ -359,21 +371,21 @@ export class SaleComponent implements OnInit {
         this.isDownloadingReport = true;
 
         // ===>> Call API
-        // this._service.downloadReport(params).subscribe({
-        //     next: (res:any) => {
+        this._service.downloadReport().subscribe({
+            next: (res:any) => {
 
-        //         savePDFFromBlob('student-list-', res.result);
-        //         // Display Message
-        //         this._snackbarService.openSnackBar('របាយការណ័ត្រូវបានទាញយកដោយជោគជ័យ', '');
+                savePDFFromBlob('របាយការណ៍លក់', res.result);
+                // Display Message
+                this._snackbarService.openSnackBar('របាយការណ័ត្រូវបានទាញយកដោយជោគជ័យ', '');
 
-        //         // Stop the spinner
-        //         this.isDownloadingReport       =   false;
-        //     },
-        //     error: (err) => {
+                // Stop the spinner
+                this.isDownloadingReport       =   false;
+            },
+            error: (err) => {
 
-        //         this.isDownloadingReport = false;
-        //         this._errorHandleService.handleHttpError(err);
-        //     },
-        // });
+                this.isDownloadingReport = false;
+                this._errorHandleService.handleHttpError(err);
+            },
+        });
     }
 }
