@@ -33,6 +33,9 @@ import { Data }                         from './interface';
 import { FilterDialogComponent }        from './filter-dialog/component';
 import { SaleService }                  from './service';
 import { savePDFFromBlob } from 'helper/download-report/save-pdf';
+import FileSaver from 'file-saver';
+import GlobalConstants from 'helper/shared/constants';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
     selector    : 'student-listing',
@@ -75,21 +78,23 @@ export class SaleComponent implements OnInit {
 
     public cashier              : number = 0;
     public platform             : number = 0;
-    public fromDate             : string = '';
-    public toDate               : string = '';
+    public from                 : string = '';
+    public to                   : string = '';
+    public name                 : string = '';
 
     public badgeValue           : any;
 
     public shortedItems: any[] = [
         { 
-            value: 'total_price' , 
-            name: 'តម្លៃលក់' 
+            value: 'total_price', 
+            name: 'តម្លៃលក់',
         },
         {
             value: 'ordered_at', 
             name: 'ថ្ងៃបញ្ជាទិញ',
         }
     ];
+
     public selectedShortedItem  :any    = this.shortedItems[0];
     public shortedOrder         :string = 'desc';
 
@@ -106,6 +111,7 @@ export class SaleComponent implements OnInit {
     public page                 : number = 1;
     public limit                : number = 20;
     public total                : number = 0;
+    snackBarService: any;
 
 
     constructor(
@@ -132,7 +138,7 @@ export class SaleComponent implements OnInit {
             next: (res:any) => {
                 this.setupData = res;
                 this.shortedItems = res.shortItems;
-                this.platform = res.platform;
+                // this.platform = res.platform;
                 //this.openFilterDialog();
             },
             error: (err) => {
@@ -179,47 +185,41 @@ export class SaleComponent implements OnInit {
     // ====================================================================>> Generate Search, Sort & Filter
     prepareSearchSortFilterParam(){
         // ===>> Prepare Query Parameter
-        // let params:any = { limit: this.limit, page: this.page};
-
         const params: any = {
             limit: this.limit,
             page: this.page > 0 ? this.page : 1, // Ensure page starts from 1
-            sort_by: this.selectedShortedItem.value,
+            sort: this.selectedShortedItem.value,
             order: this.shortedOrder,
         };
 
         // ===>> Search
         if(this.key != ''){
-            params.key = this.key
+            params.key = this.key;
         }
 
         // ===>> Filter
-
         if(this.cashier != 0 && this.cashier != null){
-            params.cashier = this.cashier
+            params.cashier = this.cashier;
         }
 
         if (this.platform != 0 && this.platform != null) {
-            params.platform = this.platform
+            params.platform = this.platform;
         }
 
-        if(this.fromDate != ''){
-            params.from = this.fromDate
+        if(this.from != ''){
+            params.from = this.from;
         }
 
-        if(this.toDate != ''){
-            params.to = this.toDate
+        if(this.to != ''){
+            params.to = this.to;
         }
 
-
-        // ===>> Sort
-        params.sort         = this.selectedShortedItem.value;
-        params.order        = this.shortedOrder;
+        console.log(params);
 
         return params;
     }
 
-    // ====================================================================>> Pagination chagne for Next or Prevous
+    // ====================================================================>> Pagination change for Next or Previous
     onPageChanged(event: PageEvent): void {
         this.limit  =   event.pageSize;
         this.page   =   event.pageIndex + 1;
@@ -233,8 +233,8 @@ export class SaleComponent implements OnInit {
             setup: this.setupData,
             filter: {
                 cashier       : this.cashier,
-                from          : this.fromDate,
-                to            : this.toDate,
+                from          : this.from,
+                to            : this.to,
                 platform      : this.platform,
             }
         });
@@ -244,16 +244,14 @@ export class SaleComponent implements OnInit {
         dialogRef.componentInstance.filterSubmitted.subscribe((res: any) => {
 
             // Count filter selected from the Filter Dialog
-            const nullOrEmptyCount = Object.values(res).filter(value => value === null || value === 0).length;
+            const nullOrEmptyCount = Object.values(res).filter(value => value === null || value === 0 || value === '').length;
             this.badgeValue = Object.keys(res).length - nullOrEmptyCount;
 
             // Map Filter
             this.cashier      = res.cashier;
-            this.fromDate     = res.from;
-            this.toDate       = res.to;
+            this.from         = res.from;
+            this.to           = res.to;
             this.platform     = res.platform;
-
-            
 
             // ===>> Refresh Data
             this.getData();
@@ -361,31 +359,79 @@ export class SaleComponent implements OnInit {
         //);
     }
 
-    // ====================================================================>> Download Report
-    downloadReport(): void {
+    // // ====================================================================>> Download Report
+    // downloadReport(): void {
 
-        // ===>> Get Filter
-        const params = this.prepareSearchSortFilterParam();
+    //     // ===>> Get Filter
+    //     const params = this.prepareSearchSortFilterParam();
 
-        // ===>> Set Loading
-        this.isDownloadingReport = true;
+    //     // ===>> Set Loading
+    //     this.isDownloadingReport = true;
 
-        // ===>> Call API
+    //     // ===>> Call API
+    //     this._service.downloadReport().subscribe({
+    //         next: (res:any) => {
+
+    //             savePDFFromBlob('របាយការណ៍លក់', res.result);
+    //             // Display Message
+    //             this._snackbarService.openSnackBar('របាយការណ័ត្រូវបានទាញយកដោយជោគជ័យ', '');
+
+    //             // Stop the spinner
+    //             this.isDownloadingReport       =   false;
+    //         },
+    //         error: (err) => {
+
+    //             this.isDownloadingReport = false;
+    //             this._errorHandleService.handleHttpError(err);
+    //         },
+    //     });
+    // }
+
+    // Downloading a product report
+    saving: boolean = false;
+    getReport() {
+        this.saving = true;
         this._service.downloadReport().subscribe({
-            next: (res:any) => {
-
-                savePDFFromBlob('របាយការណ៍លក់', res.result);
-                // Display Message
-                this._snackbarService.openSnackBar('របាយការណ័ត្រូវបានទាញយកដោយជោគជ័យ', '');
-
-                // Stop the spinner
-                this.isDownloadingReport       =   false;
+            next: (response) => {
+                this.saving = false;
+                let blob = this.b64toBlob(response.data, 'application/pdf');
+                FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមការលក់' + '.pdf');
+                // Show a success message using the snackBarService
+                this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
             },
-            error: (err) => {
+            error: (err: HttpErrorResponse) => {
+                // Set saving to false to indicate the operation is completed (even if it failed)
+                this.saving = false;
+                // Extract error information from the response
+                const errors: { type: string; message: string }[] | undefined = err.error?.errors;
+                let message: string = err.error?.message ?? GlobalConstants.genericError;
 
-                this.isDownloadingReport = false;
-                this._errorHandleService.handleHttpError(err);
+                // If there are field-specific errors, join them into a single message
+                if (errors && errors.length > 0) {
+                    message = errors.map((obj) => obj.message).join(', ');
+                }
+                // Show an error message using the snackBarService
+                this.snackBarService.openSnackBar(message, GlobalConstants.error);
             },
         });
+    }
+
+    // Convert base64 to blob
+    b64toBlob(b64Data: string, contentType: string, sliceSize?: number) {
+        contentType = contentType || '';
+        sliceSize = sliceSize || 512;
+        var byteCharacters = atob(b64Data);
+        var byteArrays = [];
+        for (var offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+            var slice = byteCharacters.slice(offset, offset + sliceSize);
+            var byteNumbers = new Array(slice.length);
+            for (var i = 0; i < slice.length; i++) {
+                byteNumbers[i] = slice.charCodeAt(i);
+            }
+            var byteArray = new Uint8Array(byteNumbers);
+            byteArrays.push(byteArray);
+        }
+        var blob = new Blob(byteArrays, { type: contentType });
+        return blob;
     }
 }

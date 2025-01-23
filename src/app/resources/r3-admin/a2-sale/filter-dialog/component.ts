@@ -164,14 +164,14 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
         return { from, to };
     }
 
-    submit(): void {
-        this.filterSubmitted.emit({
-            ...this.filterForm.value, // Emit all form values
-            // type: this.form.value.productTypes, // Pass the selected product type ID as 'type'
-            // creator: this.form.value.users, // Pass the selected user ID as 'creator'
-        });
-        this.dialogRef.close();
-    }
+    // submit(): void {
+    //     this.filterSubmitted.emit({
+    //         ...this.filterForm.value, // Emit all form values
+    //         // type: this.form.value.productTypes, // Pass the selected product type ID as 'type'
+    //         // creator: this.form.value.users, // Pass the selected user ID as 'creator'
+    //     });
+    //     this.dialogRef.close();
+    // }
 
     reset(): void {
         this.filterForm.reset();
@@ -183,26 +183,35 @@ export class FilterDialogComponent implements OnInit, OnDestroy {
         this.dialogRef.close();
     }
 
-    // submit(): void {
-    //     if (this.filterForm.valid) {
-    //         const formValue = { ...this.filterForm.value };
+    submit(): void {
+        if (this.filterForm.valid) {
+            const formValue = { ...this.filterForm.value };
 
-    //         // Format the start and end dates to ISO string
-    //         if (formValue.timeType !== 'startandend') {
-    //             const { from, to } = this.calculateDateRange(formValue.timeType);
-    //             formValue.from = this.formatDateToISOString(from);
-    //             formValue.to = this.formatDateToISOString(to);
-    //         } else {
-    //             formValue.from = this.formatDateToISOString(formValue.from);
-    //             formValue.to = this.formatDateToISOString(formValue.to);
-    //         }
+            // Format the start and end dates to ISO string
+            if (formValue.timeType !== 'startandend') {
+                const { from, to } = this.calculateDateRange(formValue.timeType);
+                formValue.from = this.formatDateToISOString(from);
+                formValue.to = this.formatDateToISOString(to);
+            } else {
+                formValue.from = this.formatDateToISOString(formValue.from);
+                formValue.to = this.formatDateToISOString(formValue.to);
+            }
+            this.filterSubmitted.emit({
+                ...this.filterForm.value, // Emit all form values
+                // type: this.form.value.productTypes, // Pass the selected product type ID as 'type'
+                // creator: this.form.value.users, // Pass the selected user ID as 'creator'
+            });
+            
+            console.log('Emitted data:', this.filterSubmitted); // Console the emitted data
 
-    //         this.dialogRef.close(formValue);
-    //         this.saving = true;
-    //     } else {
-    //         this.snackBarService.openSnackBar('Please fill in the required fields.', 'Error');
-    //     }
-    // }
+            console.log('Emitted data:', formValue); // Console the emitted data
+
+            this.dialogRef.close(formValue);
+            this.saving = true;
+        } else {
+            this.snackBarService.openSnackBar('Please fill in the required fields.', 'Error');
+        }
+    }
 
     // Utility function to format date to 'yyyy-MM-dd' in Cambodia's timezone (UTC+7)
     formatDateToISOString(date: Date | string): string {
