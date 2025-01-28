@@ -105,6 +105,8 @@ export class ProductComponent implements OnInit {
     
 
     badgeValue: any;
+      // ===>> Download Report Type
+    public report_type          : string = '';
 
     // Constructor
     constructor(
@@ -183,6 +185,10 @@ export class ProductComponent implements OnInit {
     
         if (this.users) {
             params.creator = this.users; // Use only creator
+        }
+
+        if(this.report_type != ''){
+            params.report_type = this.report_type
         }
         
     
@@ -337,21 +343,25 @@ export class ProductComponent implements OnInit {
         });
     }
 
-    // Downloading a product report
-    saving: boolean = false;
-    getReport() {
-        this.saving = true;
-        this._service.getDataProductReport().subscribe({
+    // // Downloading a product report
+    isaving: boolean = false;
+    getReport(type:string = 'PDF') {
+        this.report_type = type;
+        const params = this.prepareSearchSortFilterParam();
+        this.isaving = true;
+        this._service.getDataProductReport(params).subscribe({
             next: (response) => {
-                this.saving = false;
+                this.isaving = false;
                 let blob = this.b64toBlob(response.data, 'application/pdf');
                 FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមផលិតផល' + '.pdf');
+                // Reset Filter
+                this.report_type = '';
                 // Show a success message using the snackBarService
                 this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
             },
             error: (err: HttpErrorResponse) => {
                 // Set saving to false to indicate the operation is completed (even if it failed)
-                this.saving = false;
+                this.isaving = false;
                 // Extract error information from the response
                 const errors: { type: string; message: string }[] | undefined = err.error?.errors;
                 let message: string = err.error?.message ?? GlobalConstants.genericError;
@@ -365,6 +375,46 @@ export class ProductComponent implements OnInit {
             },
         });
     }
+    // // ====================================================================>> Download Report
+    // downloadReport(type:string = 'PDF'): void {
+
+    //     this.report_type = type;
+
+    //     // ===>> Get Filter
+    //     const params = this.prepareSearchSortFilterParam();
+
+    //     // ===>> Set Loading
+    //     this.isDownloadingReport = true;
+
+    //     // ===>> Call API
+    //     this._service.downloadReport(params).subscribe({
+    //         next: (res:any) => {
+
+    //             if(res.base64) {
+
+    //                 // Save the file to local Machine
+    //                 saveFile('student-report-', res.base64, type);
+
+    //                 // Display Message
+    //                 this._snackbarService.openSnackBar('របាយការណ័ត្រូវបានទាញយកដោយជោគជ័យ', '');
+    //             } else {
+    //                 this._snackbarService.openSnackBar(res.message, 'error');
+    //             }
+
+
+    //             // Stop the spinner
+    //             this.isDownloadingReport =   false;
+
+    //             // Reset Filter
+    //             this.report_type = '';
+    //         },
+    //         error: (err) => {
+
+    //             this.isDownloadingReport = false;
+    //             this._errorHandleService.handleHttpError(err);
+    //         },
+    //     });
+    // }
 
     // Convert base64 to blob
     b64toBlob(b64Data: string, contentType: string, sliceSize?: number) {

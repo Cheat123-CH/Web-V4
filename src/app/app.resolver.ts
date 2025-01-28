@@ -15,11 +15,18 @@ export const initialDataResolver = () => {
     const notificationsService = inject(NotificationsService);
     const tokenPayload: UserPayload = jwt_decode(token);
     const user = inject(UserService).user = tokenPayload.user;
+    
+    if (!user.roles) {
+        localStorage.clear();
+        return router.navigateByUrl('');
+    }
+    
     const role = user.roles.find(role => role.is_default);
     if (!role) {
         localStorage.clear();
         return router.navigateByUrl('');
     }
+    
     navigationService.navigations = role;
     const notificationsObservable = notificationsService.getAll();
     // Fork join multiple API endpoint calls to wait all of them to finish

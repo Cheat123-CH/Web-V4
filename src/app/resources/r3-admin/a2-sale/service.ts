@@ -81,9 +81,9 @@ export class SaleService {
     }
 
     // Method to fetch product report
-    downloadReport(): Observable<any> {
-        const params = new HttpParams()
-        return this.httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/sale`, { params });
+    downloadReport(params): Observable<any> {
+        // const params = new HttpParams()
+        return this.httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/generate-sale-report`, { params });
     }
 
 }
