@@ -83,6 +83,8 @@ export class SaleComponent implements OnInit {
     public name                 : string = '';
 
     public badgeValue           : any;
+    // ===>> Report Type for Download
+    public report_type           : string = '';
 
     public shortedItems: any[] = [
         { 
@@ -148,7 +150,7 @@ export class SaleComponent implements OnInit {
     }
 
     // ====================================================================>> Get Data for Listing
-    getData(){;
+    getData(){
 
         // ===>> Set Loading UI
         this.isLoading = true;
@@ -214,7 +216,11 @@ export class SaleComponent implements OnInit {
             params.to = this.to;
         }
 
-        console.log(params);
+        if(this.report_type != ''){
+            params.report_type = this.report_type
+        }
+
+        // console.log(params);
 
         return params;
     }
@@ -388,20 +394,22 @@ export class SaleComponent implements OnInit {
     // }
 
     // Downloading a product report
-    saving: boolean = false;
-    getReport() {
-        this.saving = true;
-        this._service.downloadReport().subscribe({
+    isaving: boolean = false;
+    getReport(type: string= 'PDF') {
+        this.isaving = true;
+        this.report_type = type;
+        const params = this.prepareSearchSortFilterParam();
+        this._service.downloadReport(params).subscribe({
             next: (response) => {
-                this.saving = false;
+                this.isaving = false;
                 let blob = this.b64toBlob(response.data, 'application/pdf');
                 FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមការលក់' + '.pdf');
                 // Show a success message using the snackBarService
                 this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
             },
             error: (err: HttpErrorResponse) => {
-                // Set saving to false to indicate the operation is completed (even if it failed)
-                this.saving = false;
+                // Set isaving to false to indicate the operation is completed (even if it failed)
+                this.isaving = false;
                 // Extract error information from the response
                 const errors: { type: string; message: string }[] | undefined = err.error?.errors;
                 let message: string = err.error?.message ?? GlobalConstants.genericError;

@@ -38,6 +38,8 @@
                             <mat-icon class="text-red-500" svgIcon="mdi:tune" />
                         </button>
 
+                        
+
                     </div>
 
                     <!-- Sort -->
@@ -66,10 +68,31 @@
                     </div>
 
                     <!-- Download Report -->
-                    <button class="px-2" mat-stroked-button (click)="getReport()">
+
+                    <button class="px-2" [matMenuTriggerFor]="menu" [disabled]="isaving" mat-stroked-button>
+                        <mat-icon *ngIf=" !isaving " svgIcon="heroicons_outline:arrow-down-tray" />
+                        <mat-spinner *ngIf="isaving" [diameter]="24" class="text-blue-500" />
+                    </button>
+
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item (click)="getReport('PDF')">
+                            <mat-icon svgIcon="mdi:pdf" />
+                            <span> PDF </span>
+                        </button>
+                        <button mat-menu-item (click)="getReport('EXCEL')">
+                            <mat-icon svgIcon="mdi:excel" />
+                            <span> Excel </span>
+                        </button>
+
+
+
+                    </mat-menu>
+
+                    <!-- Download Report -->
+                    <!-- <button class="px-2" mat-stroked-button (click)="getReport()">
                         <mat-icon *ngIf=" !isDownloadingReport " svgIcon="mdi:printer-outline" />
                         <mat-spinner *ngIf=" isDownloadingReport " [diameter]="24" class="text-blue-500" />
-                    </button>
+                    </button> -->
 
                 </div>
 

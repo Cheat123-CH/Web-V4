@@ -57,10 +57,15 @@ export class ProductService {
     }
 
     // Method to fetch product report
-    getDataProductReport(): Observable<any> {
-        const params = new HttpParams()
-        return this.httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/product`, { params });
+    getDataProductReport(params = {}): Observable<any> {
+        // const params = new HttpParams()
+        return this.httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/generate-product-report`, { params });
     }
+
+    // downloadReportExcel(): Observable<any> {
+    //     const params = new HttpParams()
+    //     return this.httpClient.get(`${env.API_BASE_URL}/share/report/product-excel`, { params});
+    // }
 
     // Method to fetch product by ID
     view(id: number): Observable<any> {
