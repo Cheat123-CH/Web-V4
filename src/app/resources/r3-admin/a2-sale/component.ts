@@ -393,17 +393,27 @@ export class SaleComponent implements OnInit {
     //     });
     // }
 
-    // Downloading a product report
+    // Downloading a sale report
     isaving: boolean = false;
-    getReport(type: string= 'PDF') {
+    getReport(type: string = 'PDF') {
         this.isaving = true;
         this.report_type = type;
+        console.log(this.report_type);
         const params = this.prepareSearchSortFilterParam();
         this._service.downloadReport(params).subscribe({
             next: (response) => {
                 this.isaving = false;
-                let blob = this.b64toBlob(response.data, 'application/pdf');
-                FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមការលក់' + '.pdf');
+                let blob;
+                let fileName;
+                const dateTime = new Date().toISOString().replace(/[:.]/g, '-');
+                if (type === 'PDF') {
+                    blob = this.b64toBlob(response.data, 'application/pdf');
+                    fileName = `របាយការណ៍លក់តាមការលក់-${dateTime}.pdf`;
+                } else if (type === 'EXCEL') {
+                    blob = this.b64toBlob(response.data, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                    fileName = `របាយការណ៍លក់តាមការលក់-${dateTime}.xlsx`;
+                }
+                FileSaver.saveAs(blob, fileName);
                 // Show a success message using the snackBarService
                 this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
             },
