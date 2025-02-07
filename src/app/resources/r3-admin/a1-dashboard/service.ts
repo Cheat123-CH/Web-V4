@@ -72,7 +72,7 @@ export class DashbordService {
         const params = new HttpParams()
             .set('startDate', startDate)
             .set('endDate', endDate);
-        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/sale`, { params });
+        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/generate-sale`, { params });
     }
 
     getDataCashierReport(startDate?: string, endDate?: string): Observable<any> {

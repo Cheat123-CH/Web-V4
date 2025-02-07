@@ -344,23 +344,81 @@ export class ProductComponent implements OnInit {
     }
 
     // // Downloading a product report
+    // isaving: boolean = false;
+    // // Download product report
+    // getReport(type: string = 'PDF') {
+    //     this.report_type = type;
+
+    //     const params = this.prepareSearchSortFilterParam();
+    //     this.isaving = true;
+
+    //     this._service.getDataProductReport(params).subscribe({
+    //         next: (response) => {
+    //             this.isaving = false;
+
+    //             let fileName: string;
+    //             let blob: Blob | null;
+
+    //             if (type === 'PDF') {
+    //                 blob = this.b64toBlob(response.data, 'application/pdf');
+    //                 fileName = 'របាយការណ៍លក់តាមការផលិតផល.pdf';
+    //             } else if (type === 'EXCEL') {
+    //                 blob = this.b64toBlob(response.data, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    //                 fileName = 'របាយការណ៍លក់តាមផលិតផល.xlsx';
+    //             } else {
+    //                 console.error('Invalid report type:', type);
+    //                 return;
+    //             }
+
+    //             if (blob) {
+    //                 FileSaver.saveAs(blob, fileName);
+    //                 this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
+    //             } else {
+    //                 this.snackBarService.openSnackBar('Failed to process the report file', GlobalConstants.error);
+    //             }
+
+    //             // Reset filter
+    //             this.report_type = '';
+    //         },
+    //         error: (err: HttpErrorResponse) => {
+    //             this.isaving = false;
+
+    //             const errors: { type: string; message: string }[] | undefined = err.error?.errors;
+    //             let message: string = err.error?.message ?? GlobalConstants.genericError;
+
+    //             if (errors && errors.length > 0) {
+    //                 message = errors.map((obj) => obj.message).join(', ');
+    //             }
+
+    //             this.snackBarService.openSnackBar(message, GlobalConstants.error);
+    //         },
+    //     });
+    // }
     isaving: boolean = false;
-    getReport(type:string = 'PDF') {
-        this.report_type = type;
-        const params = this.prepareSearchSortFilterParam();
+    getReport(type: string = 'PDF') {
         this.isaving = true;
+        this.report_type = type;
+        console.log(this.report_type);
+        const params = this.prepareSearchSortFilterParam();
         this._service.getDataProductReport(params).subscribe({
             next: (response) => {
                 this.isaving = false;
-                let blob = this.b64toBlob(response.data, 'application/pdf');
-                FileSaver.saveAs(blob, 'របាយការណ៍លក់តាមផលិតផល' + '.pdf');
-                // Reset Filter
-                this.report_type = '';
+                let blob;
+                let fileName;
+                const dateTime = new Date().toISOString().replace(/[:.]/g, '-');
+                if (type === 'PDF') {
+                    blob = this.b64toBlob(response.data, 'application/pdf');
+                    fileName = `របាយការណ៍លក់តាមផលិតផល-${dateTime}.pdf`;
+                } else if (type === 'EXCEL') {
+                    blob = this.b64toBlob(response.data, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+                    fileName = `របាយការណ៍លក់តាមផលិតផល-${dateTime}.xlsx`;
+                }
+                FileSaver.saveAs(blob, fileName);
                 // Show a success message using the snackBarService
                 this.snackBarService.openSnackBar('របាយការណ៍ទាញយកបានជោគជ័យ', GlobalConstants.success);
             },
             error: (err: HttpErrorResponse) => {
-                // Set saving to false to indicate the operation is completed (even if it failed)
+                // Set isaving to false to indicate the operation is completed (even if it failed)
                 this.isaving = false;
                 // Extract error information from the response
                 const errors: { type: string; message: string }[] | undefined = err.error?.errors;
@@ -375,6 +433,8 @@ export class ProductComponent implements OnInit {
             },
         });
     }
+
+
     // // ====================================================================>> Download Report
     // downloadReport(type:string = 'PDF'): void {
 
