@@ -71,22 +71,25 @@ export class DashbordService {
     getDataSaleReport(startDate?: string, endDate?: string): Observable<any> {
         const params = new HttpParams()
             .set('startDate', startDate)
+            .set('report_type', 'PDF')
             .set('endDate', endDate);
-        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/generate-sale`, { params });
+        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/generate-sale-report`, { params });
     }
 
     getDataCashierReport(startDate?: string, endDate?: string): Observable<any> {
         const params = new HttpParams()
             .set('startDate', startDate)
+            .set('report_type', 'PDF')
             .set('endDate', endDate);
-        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/cashier`, { params });
+        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/generate-cashier-report`, { params });
     }
 
     getDataProductReport(startDate?: string, endDate?: string): Observable<any> {
         const params = new HttpParams()
             .set('startDate', startDate)
+            .set('report_type', 'PDF')
             .set('endDate', endDate);
-        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/product`, { params });
+        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/generate-product-report`, { params });
     }
 
 }
