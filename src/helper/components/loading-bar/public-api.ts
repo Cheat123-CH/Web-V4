@@ -1,1 +1,1 @@
-export * from 'helper/components/loading-bar/loading-bar.component';
+export * from 'helper/components/loading-bar/component';

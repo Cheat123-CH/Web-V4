@@ -27,6 +27,8 @@ export class CicleChartComponent implements OnInit, OnChanges {
         private _cashierService: DashbordService
     ) { }
 
+
+    // Fetch data on initialization
     ngOnInit(): void {
         if (this.selectedDate) {
             this._fetchProductData(
@@ -40,6 +42,7 @@ export class CicleChartComponent implements OnInit, OnChanges {
         }
     }
 
+    // Fetch data on changes
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['selectedDate'] && this.selectedDate) {
             this._fetchProductData(
@@ -51,6 +54,7 @@ export class CicleChartComponent implements OnInit, OnChanges {
         }
     }
 
+    // Fetch data from the server
     private _fetchProductData(
         thisWeek?: string,
         thisMonth?: string,
@@ -81,6 +85,7 @@ export class CicleChartComponent implements OnInit, OnChanges {
         });
     }
 
+    // Update the chart with new data
     private _updateChart(labels: string[], data: number[]): void {
         const totalSum = data.map(Number).reduce((a, b) => a + b, 0);
         this.chartOptions = {

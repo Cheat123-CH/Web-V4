@@ -28,6 +28,7 @@ export class ItemComponent {
     @Output() result = new EventEmitter<Product>;
     public fileUrl: string = env.FILE_BASE_URL;
 
+    // ===> Method to emit the data to the parent component
     onOutput() {
         this.result.emit(this.data);
     }

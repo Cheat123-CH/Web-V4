@@ -1,3 +1,3 @@
-export * from 'helper/components/navigation/navigation.service';
-export * from 'helper/components/navigation/navigation.types';
-export * from 'helper/components/navigation/navigation.component';
+export * from 'helper/components/navigation/service';
+export * from 'helper/components/navigation/interface';
+export * from 'helper/components/navigation/component';

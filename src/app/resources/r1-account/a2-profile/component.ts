@@ -4,28 +4,27 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 
 // ================================================================================>> Thrid Party Library
 // Material
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule }  from '@angular/material/button';
+import { MatIconModule }    from '@angular/material/icon';
 
 // RxJS
 import { Subject, takeUntil } from 'rxjs';
 
-// ================================================================================>> Custom Library
-// Env
+// ===>> Custom Library
 import { env } from 'envs/env';
 
 // Core
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatDialog, MatDialogConfig, MatDialogModule } from '@angular/material/dialog';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.types';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants from 'helper/shared/constants';
-import { ChangePasswordComponent } from './change-password/component';
-import { ProfileService } from './service';
-import { Data, List } from './interface';
+import { HttpErrorResponse }                            from '@angular/common/http';
+import { MatDialog, MatDialogConfig, MatDialogModule }  from '@angular/material/dialog';
+import { MatPaginatorModule, PageEvent }                from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule }           from '@angular/material/table';
+import { UserService }      from 'app/core/user/service';
+import { User }             from 'app/core/user/interface';
+import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants      from 'helper/shared/constants';
+import { ChangePasswordComponent }  from './change-password/component';
+import { ProfileService }           from './service';
+import { Data, List }               from './interface';
 import { UpdateProfileDialogComponent } from './update-dialog/component';
 
 @Component({
@@ -64,6 +63,7 @@ export class ProfileComponent implements OnInit {
         private _dialog: MatDialog,
     ) { }
 
+    // ===> onInit method to initialize the component
     ngOnInit(): void {
         // ===>> Get Data from Global User Service
         this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: User) => {
@@ -74,6 +74,8 @@ export class ProfileComponent implements OnInit {
         });
         this.getData(this.page, this.limit)
     }
+
+    // ===> Method to get data
     getData(_page: number = 1, _page_size: number = 10,): void {
         const params: {
             page: number;
@@ -101,6 +103,7 @@ export class ProfileComponent implements OnInit {
         });
     }
 
+    // ===> Method to handle page change event
     onPageChanged(event: PageEvent): void {
         if (event && event.pageSize) {
             this.limit = event.pageSize;
@@ -108,6 +111,8 @@ export class ProfileComponent implements OnInit {
             this.getData(this.page, this.limit);
         }
     }
+
+    // ===> Method to handle search event
     openUpdateProfileDialog(): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = this.user;
@@ -123,7 +128,8 @@ export class ProfileComponent implements OnInit {
         dialogRef.afterClosed().subscribe(result => {
         });
     }
-
+    
+    // ===> Method to handle search event
     updatePassword(): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = this.user;

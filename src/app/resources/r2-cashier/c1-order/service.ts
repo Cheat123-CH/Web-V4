@@ -31,6 +31,7 @@ export class OrderService {
         );
     }
 
+    // Method to create an order
     create(body: { cart: string; platform?: string }): Observable<ResponseOrder> {
         // Set default platform to "Web" if not provided
         const { cart, platform = 'Web' } = body;

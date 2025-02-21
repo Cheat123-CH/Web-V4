@@ -1,29 +1,28 @@
-// ================================================================================>> Core Library
-import { AsyncPipe, CommonModule } from '@angular/common';
-import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
+// ===>> Core Library
+import { AsyncPipe, CommonModule }                                  from '@angular/common';
+import { ChangeDetectorRef, Component, Inject, OnDestroy, OnInit }  from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-// ================================================================================>> Thrid Party Library
-// Material
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatButtonToggleModule } from '@angular/material/button-toggle';
-import { MatOptionModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+// ===>> Thrid Party Library
+import { MatAutocompleteModule }    from '@angular/material/autocomplete';
+import { MatButtonModule }          from '@angular/material/button';
+import { MatButtonToggleModule }    from '@angular/material/button-toggle';
+import { MatOptionModule }          from '@angular/material/core';
+import { MatDatepickerModule }      from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule }         from '@angular/material/divider';
+import { MatFormFieldModule }       from '@angular/material/form-field';
+import { MatIconModule }            from '@angular/material/icon';
+import { MatInputModule }           from '@angular/material/input';
+import { MatMenuModule }            from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { PortraitComponent } from 'helper/components/portrait/portrait.component';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import { Subject, takeUntil } from 'rxjs';
+import { MatRadioModule }           from '@angular/material/radio';
+import { MatSelectModule }          from '@angular/material/select';
+import { MatTooltipModule }         from '@angular/material/tooltip';
+import { PortraitComponent }        from 'helper/components/portrait/component';
+import { SnackbarService }          from 'helper/services/snack-bar/snack-bar.service';
+import { Subject, takeUntil }       from 'rxjs';
 @Component({
     selector: 'app-filter-sale-cashier',
     templateUrl: './template.html',
@@ -73,11 +72,15 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
         private snackBarService: SnackbarService,
         private cdr: ChangeDetectorRef
     ) { }
+
+    // ===> onInit method to initialize the component
     ngOnInit(): void {
         this.buildForm();
         this.handleTimeTypeChanges();
         this.setDefaultToday();
     }
+
+    // ===> Method to build the form
     buildForm(): void {
         this.filterForm = this.formBuilder.group({
             timeType: ['today', Validators.required],
@@ -87,22 +90,25 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
             platform: [null]
         });
     }
-
+    /// ===> Method to set the default date to today
     setDefaultToday(): void {
         const { startDate, endDate } = this.calculateDateRange('today');
         this.filterForm.patchValue({ startDate, endDate });
     }
 
+    // ===> Method to set the platform
     setPlatform(value: string): void {
         const currentValue = this.filterForm.get('platform')!.value;
         // Toggle the value: if already selected, unselect (set to null)
         this.filterForm.get('platform')!.setValue(currentValue === value ? null : value);
     }
 
+    // ===> Method to check if the platform is selected
     isSelected(platform: string): boolean {
         return this.filterForm.get('platform')!.value === platform;
     }
 
+    // ===> Method to handle the time type changes
     handleTimeTypeChanges(): void {
         this.filterForm.get('timeType')!.valueChanges
             .pipe(takeUntil(this._unsubscribeAll))
@@ -121,12 +127,13 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
     }
 
 
+    // ===> Method to set the default date to today
     ngAfterViewInit(): void {
         this.setDefaultToday();
         this.cdr.detectChanges(); // Ensures changes are detected after the view is initialized
     }
 
-
+    // ===> Method to calculate the date range
     calculateDateRange(type: string): { startDate: Date; endDate: Date } {
         const now = new Date();
         let startDate = new Date();
@@ -155,6 +162,7 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
         return { startDate, endDate };
     }
 
+    // ===> Method to submit the form
     submit(): void {
         if (this.filterForm.valid) {
             const formValue = { ...this.filterForm.value };
@@ -193,12 +201,13 @@ export class FilterSaleComponent implements OnInit, OnDestroy {
         return `${year}-${month}-${day}`;
     }
 
-
+    // ===> Method to close the dialog
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
 
+    // ===> Method to close the dialog
     closeDialog(): void {
         this.dialogRef.close();
     }

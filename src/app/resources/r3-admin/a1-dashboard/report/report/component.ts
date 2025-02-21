@@ -1,35 +1,35 @@
 
 // ================================================================================>> Core Library
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe, CommonModule }              from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule }             from '@angular/router';
 
 // ================================================================================>> Thrid Party Library
 // Material
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatButtonModule } from '@angular/material/button';
-import { MatOptionModule } from '@angular/material/core';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatAutocompleteModule }    from '@angular/material/autocomplete';
+import { MatButtonModule }          from '@angular/material/button';
+import { MatOptionModule }          from '@angular/material/core';
+import { MatDatepickerModule }      from '@angular/material/datepicker';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
+import { MatDividerModule }         from '@angular/material/divider';
+import { MatFormFieldModule }       from '@angular/material/form-field';
+import { MatIconModule }            from '@angular/material/icon';
+import { MatInputModule }           from '@angular/material/input';
+import { MatMenuModule }            from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatRadioModule } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
-import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatRadioModule }           from '@angular/material/radio';
+import { MatSelectModule }          from '@angular/material/select';
+import { MatTooltipModule }         from '@angular/material/tooltip';
 
-import { HttpErrorResponse } from '@angular/common/http';
-import { format } from 'date-fns-tz';
-import FileSaver from 'file-saver';
-import { PortraitComponent } from 'helper/components/portrait/portrait.component';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants from 'helper/shared/constants';
-import { Subject } from 'rxjs';
-import { DashbordService } from '../../service';
+import { HttpErrorResponse }        from '@angular/common/http';
+import { format }                   from 'date-fns-tz';
+import FileSaver                    from 'file-saver';
+import { PortraitComponent }        from 'helper/components/portrait/component';
+import { SnackbarService }          from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants              from 'helper/shared/constants';
+import { Subject }                  from 'rxjs';
+import { DashbordService }          from '../../service';
 @Component({
     selector: 'app-report-generate',
     templateUrl: './template.html',
@@ -80,12 +80,15 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         private _service: DashbordService
     ) { }
 
+    // ===> onInit method to initialize the component
     ngOnInit(): void {
         this.ngBuilderForm();
         this.updateShowDate();
         this.handleTimeTypeChanges();
     }
 
+
+    // ===> Method to initialize the form
     ngBuilderForm(): void {
         const today = this.getTodayInCambodia();
         this.filterForm = this.formBuilder.group({
@@ -95,6 +98,8 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         });
     }
 
+
+    // ===> Method to handle the timeType changes
     handleTimeTypeChanges(): void {
         this.filterForm.get('timeType')!.valueChanges.subscribe((value) => {
             this.updateShowDate();
@@ -112,12 +117,15 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         });
     }
 
+    // ===> Method to update the showDate property of each dateType
     updateShowDate(): void {
         this.dateType.forEach((type) => {
             type.showDate = this.getDisplayDate(type.id);
         });
     }
 
+
+    // ===> Method to get the display date
     getDisplayDate(type: string): string {
         const now = new Date();
         //const formatDate = (date: Date) => date.toISOString().split('T')[0];
@@ -139,6 +147,8 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         return `(${formatDate(startDate)} - ${formatDate(endDate)})`;
     }
 
+
+    // ===> Method to calculate the date range
     calculateDateRange(type: string): { startDate: Date; endDate: Date } {
         const now = new Date();
         let startDate = new Date();
@@ -188,7 +198,9 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         }
 
         return { startDate, endDate };
-    }
+    }   
+
+    // ===> Method to submit the form
     submit(): void {
         if (this.filterForm.valid) {
             const formValue = this.filterForm.value;
@@ -288,11 +300,14 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         }
     }
 
+    // ===> Method to format the date
     formatDate(date: Date | string): string {
         const d = new Date(date);
         return d.toISOString().split('T')[0];
     }
 
+
+    // ===> Method to get the formatted date and time
     getFormattedDateTime(): string {
         const now = new Date();
 
@@ -330,6 +345,7 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
     }
 
 
+    // ===> Method to get today's date in Cambodia timezone
     getTodayInCambodia(): Date {
         const now = new Date();
         const timeZone = 'Asia/Phnom_Penh';
@@ -337,11 +353,13 @@ export class ReportGenerateComponent implements OnInit, OnDestroy {
         return new Date(formattedDate);
     }
 
+    // ===> Method to get the display date
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
     }
 
+    // ===> Method to close the dialog
     closeDialog(): void {
         this.dialogRef.close();
     }

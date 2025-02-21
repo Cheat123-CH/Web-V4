@@ -17,7 +17,7 @@ import { MatSelectModule } from '@angular/material/select';
 
 // Local
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { PortraitComponent } from 'helper/components/portrait/portrait.component';
+import { PortraitComponent } from 'helper/components/portrait/component';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { User } from '../interface';

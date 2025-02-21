@@ -1,1 +1,1 @@
-export * from 'helper/components/fullscreen/fullscreen.component';
+export * from 'helper/components/fullscreen/component';

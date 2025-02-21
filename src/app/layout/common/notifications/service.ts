@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, OnDestroy } from '@angular/core';
-import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.types';
+import { UserService } from 'app/core/user/service';
+import { User } from 'app/core/user/interface';
 import { Notification } from 'app/layout/common/notifications/interface';
 import { env } from 'envs/env';
 import { map, Observable, ReplaySubject, switchMap, take } from 'rxjs';

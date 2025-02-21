@@ -1,1 +1,1 @@
-export * from 'helper/directives/scrollbar/scrollbar.directive';
+export * from 'helper/directives/scrollbar/component';

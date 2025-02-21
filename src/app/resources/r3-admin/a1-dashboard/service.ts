@@ -14,6 +14,8 @@ export class DashbordService {
         headers: new HttpHeaders().set('Content-Type', 'application/json'),
     }
 
+
+    // Method to fetch a list of products from the POS system
     getStaticData(
         today?: string,
         yesterday?: string,
@@ -31,6 +33,7 @@ export class DashbordService {
         return this._httpClient.get<DashboardResponse>(`${env.API_BASE_URL}/admin/dashboard`, { params });
     }
 
+    // Method to fetch a list of products from the POS system
     getCashier(
         today?: string,
         yesterday?: string,
@@ -48,6 +51,8 @@ export class DashbordService {
         return this._httpClient.get<DataCashierResponse>(`${env.API_BASE_URL}/admin/dashboard/cashier`, { params });
     }
 
+
+    // Method to fetch a list of products from the POS system
     getProductType(params: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string }): Observable<any> {
         // Filter out undefined or empty values
         const filteredParams = Object.fromEntries(
@@ -57,7 +62,7 @@ export class DashbordService {
         return this._httpClient.get<any>(`${env.API_BASE_URL}/admin/dashboard/product-type`, { params: filteredParams });
     }
 
-
+    // Method to fetch a list of products from the POS system
     getDataSale(params: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string }): Observable<DataSaleResponse> {
         // Filter out undefined or empty values
         const filteredParams = Object.fromEntries(
@@ -67,7 +72,7 @@ export class DashbordService {
         return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/admin/dashboard/data-sale`, { params: filteredParams });
     }
 
-
+    // Method to fetch a list of products from the POS system
     getDataSaleReport(startDate?: string, endDate?: string): Observable<any> {
         const params = new HttpParams()
             .set('startDate', startDate)
@@ -76,6 +81,8 @@ export class DashbordService {
         return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/generate-sale-report`, { params });
     }
 
+
+    // Method to fetch a list of products from the POS system
     getDataCashierReport(startDate?: string, endDate?: string): Observable<any> {
         const params = new HttpParams()
             .set('startDate', startDate)
@@ -84,6 +91,8 @@ export class DashbordService {
         return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/share/report/generate-cashier-report`, { params });
     }
 
+
+    // Method to fetch a list of products from the POS system
     getDataProductReport(startDate?: string, endDate?: string): Observable<any> {
         const params = new HttpParams()
             .set('startDate', startDate)

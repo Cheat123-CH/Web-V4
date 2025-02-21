@@ -47,7 +47,7 @@ export class FilesComponent {
     toggleView() {
         this.isGridView = !this.isGridView;
     }
-
+    // ===>> File Drop
     dropped(files: NgxFileDropEntry[]): void {
         this.files = files;
         for (const droppedFile of files) {
@@ -63,13 +63,14 @@ export class FilesComponent {
 
     }
 
+    // ===>> File Over
     openFileSelectorHandler(event: Event, openFileSelector: Function) {
         event.preventDefault();
         if (!this.sending) {
             openFileSelector();
         }
     }
-
+    // ===>> Preview File
     viewFile(previewFile: { file: File, url: string, type: string }): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = {
@@ -98,7 +99,7 @@ export class FilesComponent {
     }
 
 
-
+    // ===>> Remove File
     removeFile(name: string): void {
         this.previewFiles = this.previewFiles.filter(v => v.file.name != name);
         this.filesChange.emit(this.previewFiles);
