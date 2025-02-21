@@ -1,2 +1,2 @@
-export * from 'helper/services/confirmation/confirmation.service';
-export * from 'helper/services/confirmation/confirmation.types';
+export * from 'helper/services/confirmation/service';
+export * from 'helper/services/confirmation/interface';

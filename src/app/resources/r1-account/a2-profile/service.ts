@@ -1,8 +1,8 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { env } from 'envs/env';
-import { BehaviorSubject, catchError, Observable, of, switchMap, throwError } from 'rxjs';
-import { List, PasswordReq, ProfileUpdate, ResponseProfile } from './interface';
+import { HttpClient, HttpErrorResponse, HttpHeaders }   from '@angular/common/http';
+import { Injectable }                                   from '@angular/core';
+import { env }  from 'envs/env';
+import { BehaviorSubject, catchError, Observable, of, switchMap, throwError }   from 'rxjs';
+import { List, PasswordReq, ProfileUpdate, ResponseProfile }                    from './interface';
 
 @Injectable({
     providedIn: 'root',
@@ -38,6 +38,7 @@ export class ProfileService {
         this._sharedVariable.next(newValue);
     }
 
+    // get data from the server
     getData(params?: {
         page: number;
         page_size: number;

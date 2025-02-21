@@ -24,7 +24,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { env } from 'envs/env';
 
-import { PortraitComponent } from 'helper/components/portrait/portrait.component';
+import { PortraitComponent } from 'helper/components/portrait/component';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { Subject } from 'rxjs';

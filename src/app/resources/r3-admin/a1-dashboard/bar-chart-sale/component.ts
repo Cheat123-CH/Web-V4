@@ -1,11 +1,11 @@
-import { NgIf } from '@angular/common';
+import { NgIf }             from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { env } from 'envs/env';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
+import { MatIconModule }    from '@angular/material/icon';
+import { env }              from 'envs/env';
+import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
-import { DashbordService } from '../service';
-import { CashierData } from '../interface';
+import { DashbordService }  from '../service';
+import { CashierData }      from '../interface';
 @Component({
     selector: 'sup-bar-chart-sale',
     standalone: true,
@@ -24,24 +24,27 @@ export class SaleCashierBarChartComponent implements OnInit, OnChanges {
         private _dashboardService: DashbordService
     ) { }
 
+    // Fetch data on initialization
     ngOnInit(): void {
         if (this.dataSouce) {
             this.processDataAndUpdateChart();
         }
     }
 
+    // Fetch data on changes
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['dataSouce'] && !changes['dataSouce'].firstChange) {
             this.processDataAndUpdateChart();
         }
     }
-
+    // Process data and update the chart
     private processDataAndUpdateChart(): void {
         const labels = this.dataSouce.map(item => item.name); // Extract names
         const data = this.dataSouce.map(item => item.totalAmount); // Extract total amounts
         this.updateChart(labels, data); // Update chart with processed data
     }
 
+    // Update the chart with the processed data
     private updateChart(labels: string[], data: number[]): void {
         this.chartOptions = {
             chart: {
@@ -103,6 +106,7 @@ export class SaleCashierBarChartComponent implements OnInit, OnChanges {
         this._cdr.detectChanges(); // Trigger change detection to update the chart
     }
 
+    // Modify grid lines to remove the dashed lines
     private modifyGridLines(): void {
         const verticalGridLines = this.chartContainer.nativeElement.querySelectorAll('.apexcharts-gridlines-vertical line');
         if (verticalGridLines.length > 0) {

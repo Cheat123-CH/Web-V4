@@ -1,4 +1,4 @@
-import { User } from "app/core/user/user.types";
+import { User } from "app/core/user/interface";
 
 export interface UserPayload {
     exp: number;

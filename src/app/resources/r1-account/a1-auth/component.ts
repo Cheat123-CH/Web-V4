@@ -1,3 +1,4 @@
+// core library
 import { NgIf } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import {
@@ -8,19 +9,21 @@ import {
     UntypedFormGroup,
     Validators,
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule }      from '@angular/material/button';
+import { MatCheckboxModule }    from '@angular/material/checkbox';
+import { MatFormFieldModule }   from '@angular/material/form-field';
+import { MatIconModule }        from '@angular/material/icon';
+import { MatInputModule }       from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router, RouterLink } from '@angular/router';
-import { AuthService } from 'app/core/auth/auth.service';
-import { LanguagesComponent } from 'app/layout/common/languages/component';
-import { helperAnimations } from 'helper/animations';
+import { Router, RouterLink }       from '@angular/router';
+import { helperAnimations }         from 'helper/animations';
+
+// custom library
+import { AuthService }          from 'app/core/auth/service';
+import { LanguagesComponent }   from 'app/layout/common/languages/component';
 import { HelperAlertComponent, HelperAlertType } from 'helper/components/alert';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants from 'helper/shared/constants';
+import { SnackbarService }      from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants          from 'helper/shared/constants';
 import { VerifyOTPAndPasswordComponent } from './verify-otp-password/component';
 
 @Component({
@@ -48,17 +51,19 @@ import { VerifyOTPAndPasswordComponent } from './verify-otp-password/component';
 export class AuthSignInComponent implements OnInit {
     @ViewChild('signInNgForm') signInNgForm: NgForm;
 
+    // alert message
     alert: { type: HelperAlertType; message: string } = {
         type: 'success',
         message: '',
     };
 
+    // Images for the slider
     images: string[] = [
         'images/apps/pos1.png',
         'images/apps/pos1.png',
         'images/apps/pos1.png',
     ];
-
+    // variables for the image slider
     currentImage: string = this.images[0];
     imageIndex: number = 0;
     interval: any;
@@ -187,6 +192,7 @@ export class AuthSignInComponent implements OnInit {
         });
     }
 
+    // image slider function
     startImageSlider() {
         this.interval = setInterval(() => {
             this.imageIndex = (this.imageIndex + 1) % this.images.length;
@@ -194,6 +200,7 @@ export class AuthSignInComponent implements OnInit {
         }, 100000); // 100000 milliseconds = 100 seconds
     }
 
+    // Clear the interval when the component is destroyed
     ngOnDestroy() {
         // Clear the interval when the component is destroyed to prevent memory leaks
         if (this.interval) {

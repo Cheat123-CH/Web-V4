@@ -1,27 +1,23 @@
-// ================================================================================>> Core Library
-import { CommonModule } from '@angular/common';
+// ===>> Core Library
+import { CommonModule }             from '@angular/common';
 import { Component, Inject, Input } from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
-// ================================================================================>> Thrid Party Library
+// ===>> Thrid Party Library
 // Material
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIcon, MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatRadioButton, MatRadioGroup } from '@angular/material/radio';
-import { MatSelectModule } from '@angular/material/select';
+import { MatDividerModule }     from '@angular/material/divider';
+import { MatFormFieldModule }   from '@angular/material/form-field';
+import { MatIcon, MatIconModule }   from '@angular/material/icon';
+import { MatInputModule }           from '@angular/material/input';
+import { MatRadioButton, MatRadioGroup }    from '@angular/material/radio';
+import { MatSelectModule }                  from '@angular/material/select';
 
-// ================================================================================>> Custom Library
-// Core
-import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.types';
-
-// Helper
-import { PortraitComponent } from 'helper/components/portrait/portrait.component';
+// ===>> Custom Library
+import { User } from 'app/core/user/interface';
+import { PortraitComponent } from 'helper/components/portrait/component';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 
 
@@ -29,8 +25,6 @@ import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { env } from 'envs/env';
 
 // Local
-import { Router } from '@angular/router';
-import { AuthService } from 'app/core/auth/auth.service';
 import GlobalConstants from 'helper/shared/constants';
 import { ProfileService } from '../service';
 import { ResponseProfile } from '../interface';
@@ -45,7 +39,7 @@ import { ResponseProfile } from '../interface';
 export class UpdateProfileDialogComponent {
 
     @Input() user: any;
-
+    // Form
     public form: UntypedFormGroup;
     public src: string = 'assets/images/avatars/avatar.jpeg';
     opened: boolean = true;
@@ -59,6 +53,7 @@ export class UpdateProfileDialogComponent {
         private readonly _snackBarService: SnackbarService,
     ) { }
 
+    // ===> onInit method to initialize the component
     ngOnInit(): void {
         // Trim any leading slash from avatar path and ensure base URL ends with one
         const avatarPath = this.data.avatar.replace(/^\/+/, '');
@@ -66,7 +61,7 @@ export class UpdateProfileDialogComponent {
         this.ngBuilderForm();
         console.log(this.form);
     }
-
+    // ===> Method to initialize the form
     ngBuilderForm(): void {
         this.form = this._formBuilder.group({
             avatar: [null],
@@ -75,11 +70,11 @@ export class UpdateProfileDialogComponent {
             phone: [this.data?.phone, [Validators.required, Validators.pattern("^[0-9]*$")]],
         });
     }
-
+    // ===> Method to handle the avatar change event
     srcChange(base64: string): void {
         this.form.get('avatar').setValue(base64);
     }
-
+    // ===> Method to submit the form
     submit(): void {
         this.loading = true;
         this.form.disable();
@@ -127,7 +122,7 @@ export class UpdateProfileDialogComponent {
             }
         });
     }
-
+    // ===> Method to handle the file change event
     onFileChange(event: any): void {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) {
@@ -141,7 +136,7 @@ export class UpdateProfileDialogComponent {
             this._snackBarService.openSnackBar('Please select an image file.', GlobalConstants.error);
         }
     }
-
+    // ===> Method to close the dialog
     close(): void {
         this._dialogRef.close();
         this.opened = false;

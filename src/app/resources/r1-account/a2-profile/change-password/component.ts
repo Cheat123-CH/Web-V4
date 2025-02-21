@@ -1,23 +1,23 @@
-// ================================================================>> Core Library (Angular)
-import { CommonModule } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+// ===> Core Library (Angular)
+import { CommonModule }         from '@angular/common';
+import { HttpErrorResponse }    from '@angular/common/http';
+import { Component, OnInit }    from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 
-// ================================================================>> Third Party Library (material)
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+// ===> Third Party Library (material)
+import { MatButtonModule }      from '@angular/material/button';
+import { MatFormFieldModule }   from '@angular/material/form-field';
+import { MatIconModule }        from '@angular/material/icon';
+import { MatInputModule }       from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
-// ================================================================>> Custom Library (Application-specific)
+// ===> Custom Library (Application-specific)
 import { AbstractControl, ValidationErrors } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
-import { PasswordReq } from 'app/resources/r3-admin/a4-user/interface';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants from 'helper/shared/constants';
-import { ProfileService } from '../service';
+import { PasswordReq }  from 'app/resources/r3-admin/a4-user/interface';
+import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants      from 'helper/shared/constants';
+import { ProfileService }   from '../service';
 
 @Component({
     selector: 'app-profile-change-password',
@@ -46,12 +46,14 @@ export class ChangePasswordComponent implements OnInit {
         private profileService: ProfileService
     ) { }
 
+    // ===> onInit method to initialize the component
     ngOnInit(): void {
 
         // Initialize the form when the component is created
         this.ngBuilderForm();
     }
 
+    // ===> Method to initialize the form
     ngBuilderForm(): void {
         // Add the custom validator to check if new_password and confirm_password match
         this.passwordForm = this.formBuilder.group({
@@ -60,6 +62,7 @@ export class ChangePasswordComponent implements OnInit {
         }, { validator: passwordMatchValidator }); // Add custom validator
     }
 
+    // ===> Method to submit the form
     submit(): void {
         if (this.passwordForm.invalid) {
             return;
@@ -90,11 +93,13 @@ export class ChangePasswordComponent implements OnInit {
         });
     }
 
+    // ===> Method to close the dialog
     close(): void {
         this._dialogRef.close();
     }
 }
 
+// ===> Custom validator to check if new_password and confirm_password match
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
     const newPassword = control.get('new_password')?.value;
     const confirmPassword = control.get('confirm_password')?.value;

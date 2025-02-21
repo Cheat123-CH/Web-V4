@@ -4,7 +4,7 @@ import { MATERIAL_SANITY_CHECKS } from '@angular/material/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { HelperConfig } from 'helper/services/config';
-import { HELPER_CONFIG } from 'helper/services/config/config.constants';
+import { HELPER_CONFIG } from 'helper/services/config/constants';
 import { HelperConfirmationService } from 'helper/services/confirmation';
 import { HelperLoadingService, helperLoadingInterceptor } from 'helper/services/loading';
 import { HelperMediaWatcherService } from 'helper/services/media-watcher';

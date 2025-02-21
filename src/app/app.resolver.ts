@@ -1,11 +1,11 @@
 import { inject } from "@angular/core";
 import { Router } from "@angular/router";
-import { NavigationService } from "app/core/navigation/navigation.service";
-import { UserService } from "app/core/user/user.service";
+import { NavigationService } from "app/core/navigation/service";
+import { UserService } from "app/core/user/service";
 import { NotificationsService } from "app/layout/common/notifications/service";
 import { UserPayload } from 'helper/interfaces/payload.interface';
 import { forkJoin } from "rxjs";
-import { AuthService } from "./core/auth/auth.service";
+import { AuthService } from "./core/auth/service";
 import jwt_decode from 'jwt-decode';
 
 export const initialDataResolver = () => {

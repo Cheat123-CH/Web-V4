@@ -1,13 +1,13 @@
-import { NgIf } from '@angular/common';
+import { NgIf }     from '@angular/common';
 import {
     AfterViewInit,
     ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit,
     SimpleChanges, ViewChild
 } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
+import { MatIconModule }    from '@angular/material/icon';
+import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
-import { DashbordService } from '../service';
+import { DashbordService }  from '../service';
 import { DataSaleResponse } from '../interface';
 
 @Component({
@@ -40,20 +40,23 @@ export class BarChartComponent implements OnInit, OnChanges, AfterViewInit {
         private _dashboardService: DashbordService
     ) { }
 
+    // Fetch data on initialization
     ngOnInit(): void {
         this.fetchData(); // Fetch data on initialization
     }
 
+    // Fetch data on changes
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['selectedDate'] && this.selectedDate) {
             this.fetchData(this.selectedDate);
         }
     }
 
+    // Modify grid lines after view is initialized
     ngAfterViewInit(): void {
         this.modifyGridLines(); // Ensure the element is available
     }
-
+    // Fetch data from the server
     private fetchData(filters: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string } = {}): void {
         this._dashboardService.getDataSale(filters).subscribe({
             next: (response: DataSaleResponse) => {
@@ -73,6 +76,7 @@ export class BarChartComponent implements OnInit, OnChanges, AfterViewInit {
         });
     }
 
+    // Update the chart with new data
     private updateChart(labels: string[], data: number[]): void {
         const maxValue = Math.max(...data) + 10000;
 
@@ -118,6 +122,7 @@ export class BarChartComponent implements OnInit, OnChanges, AfterViewInit {
         this._cdr.detectChanges();
     }
 
+    // Modify grid lines to remove the dashed lines
     private modifyGridLines(): void {
         if (this.chartContainer) {
             const verticalGridLines = this.chartContainer.nativeElement.querySelectorAll('.apexcharts-gridlines-vertical line');

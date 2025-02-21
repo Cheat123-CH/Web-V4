@@ -1,10 +1,10 @@
-import { NgIf } from '@angular/common';
+import { NgIf }             from '@angular/common';
 import { ChangeDetectorRef, Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { MatIconModule } from '@angular/material/icon';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
+import { MatIconModule }    from '@angular/material/icon';
+import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
-import { DashbordService } from '../service';
-import { CashierData } from '../interface';
+import { DashbordService }  from '../service';
+import { CashierData }      from '../interface';
 
 @Component({
     selector: 'cicle-chart-sale',
@@ -24,24 +24,31 @@ export class SaleCicleChartComponent implements OnInit, OnChanges {
         private _cashierService: DashbordService // Inject your service here
     ) { }
 
+    // Fetch data on initialization
     ngOnInit(): void {
         if (this.dataSouce.length) {
             this.processDataAndUpdateChart();
         }
     }
 
+
+    // Fetch data on changes
     ngOnChanges(changes: SimpleChanges): void {
         if (changes['dataSouce'] && !changes['dataSouce'].firstChange) {
             this.processDataAndUpdateChart();
         }
     }
 
+
+    // Process data and update the chart
     private processDataAndUpdateChart(): void {
         const labels = this.dataSouce.map(item => item.name); // Extract names
         const data = this.dataSouce.map(item => item.totalAmount); // Extract total amounts
         this._updateChart(labels, data);
     }
 
+
+    // Update the chart with the processed data
     private _updateChart(labels: string[], data: number[]): void {
         const totalSum = data.reduce((a, b) => a + b, 0);
 

@@ -1,2 +1,2 @@
-export * from 'helper/services/loading/loading.interceptor';
-export * from 'helper/services/loading/loading.service';
+export * from 'helper/services/loading/interceptor';
+export * from 'helper/services/loading/service';

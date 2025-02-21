@@ -1,3 +1,3 @@
-export * from 'helper/components/drawer/drawer.component';
-export * from 'helper/components/drawer/drawer.service';
-export * from 'helper/components/drawer/drawer.types';
+export * from 'helper/components/drawer/component';
+export * from 'helper/components/drawer/service';
+export * from 'helper/components/drawer/interface';

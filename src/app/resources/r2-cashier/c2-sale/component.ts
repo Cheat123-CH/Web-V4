@@ -1,27 +1,27 @@
 // ================================================================>> Core Library
 import { DatePipe, DecimalPipe, NgClass, NgIf } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse }    from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { FormsModule }          from '@angular/forms';
+import { RouterLink }           from '@angular/router';
 
 
-// ================================================================>> Third-Party Library
+// ===>> Third-Party Library
 // angular party
-import { MatButtonModule } from '@angular/material/button';
-import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatButtonModule }      from '@angular/material/button';
+import { MatDatepickerModule }  from '@angular/material/datepicker';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatFormFieldModule }   from '@angular/material/form-field';
+import { MatIconModule }        from '@angular/material/icon';
+import { MatInputModule }       from '@angular/material/input';
+import { MatMenuModule }        from '@angular/material/menu';
+import { MatPaginatorModule, PageEvent }        from '@angular/material/paginator';
+import { MatTableDataSource, MatTableModule }   from '@angular/material/table';
 import FileSaver from 'file-saver';
 
-// ================================================================>> Custom Library
-import { SharedDetailsComponent } from 'app/shared/details/component';
-import { DetailsService } from 'app/shared/details/service';
+// ===>> Custom Library
+import { SharedDetailsComponent } from 'app/shared/dialog/component';
+import { DetailsService } from 'app/shared/dialog/service';
 import { ViewDetailSaleComponent } from 'app/shared/view/component';
 import { env } from 'envs/env';
 import { HelperConfirmationConfig, HelperConfirmationService } from 'helper/services/confirmation';
@@ -76,7 +76,8 @@ export class SaleComponent implements OnInit {
     isLoading: boolean = false;
     key: string = '';
     setup: { id: number, name: string }[] = [];
-    // Lifecycle hook: ngOnInit, called after the component is initialized
+
+    // ngOnInit, called after the component is initialized
     ngOnInit(): void {
         this.getData(this.page, this.limit);
         this.initSetup();
@@ -150,6 +151,7 @@ export class SaleComponent implements OnInit {
         this.matDialog.open(SharedDetailsComponent, dialogConfig);
     }
 
+    // Method to open a dialog to view details of a sale
     viewDetail(row: Data): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.autoFocus = false;
@@ -163,6 +165,7 @@ export class SaleComponent implements OnInit {
         const dialogRef = this.matDialog.open(ViewDetailSaleComponent, dialogConfig);
     }
 
+    // Property to store the filter data
     filter_data: { timeType: string; platform: string; cashier: number; startDate: string; endDate: string };
     initSetup(): void {
         this.saleService.setup().subscribe({
@@ -170,6 +173,7 @@ export class SaleComponent implements OnInit {
         });
     }
 
+    // Method to open the filter dialog
     openFilterDialog(): void {
         const dialogConfig = new MatDialogConfig();
         dialogConfig.autoFocus = false;
@@ -192,8 +196,9 @@ export class SaleComponent implements OnInit {
                 this.getData(1, 10, this.filter_data);
             }
         });
-    }
+    }   
 
+    // Injecting the HelperConfirmationService service
     private helpersConfirmationService = inject(HelperConfirmationService)
     // Method to handle the deletion of a sale
     onDelete(sale: Data): void {
@@ -273,7 +278,7 @@ export class SaleComponent implements OnInit {
         });
     }
 
-    // =================================>> // Method to convert base64 data to a blob
+    // ===>> // Method to convert base64 data to a blob
     b64toBlob(b64Data: string, contentType: string, sliceSize?: number) {
 
         // Set default values for optional parameters

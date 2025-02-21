@@ -1,5 +1,6 @@
-import { CommonModule, NgIf } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
+// core library
+import { CommonModule, NgIf }   from '@angular/common';
+import { HttpErrorResponse }    from '@angular/common/http';
 import { Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
 import {
     FormGroup,
@@ -8,19 +9,23 @@ import {
     UntypedFormBuilder,
     Validators
 } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router, RouterLink } from '@angular/router';
-import { AuthService } from 'app/core/auth/auth.service';
-import { HelperAlertComponent, HelperAlertType } from 'helper/components/alert';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants from 'helper/shared/constants';
-import { Subject } from 'rxjs';
+import { MatButtonModule }      from '@angular/material/button';
+import { MatCheckboxModule }    from '@angular/material/checkbox';
+import { MatFormFieldModule }   from '@angular/material/form-field';
+import { MatIconModule }        from '@angular/material/icon';
+import { MatInputModule }       from '@angular/material/input';
 
+// custom library
+
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { Router, RouterLink }       from '@angular/router';
+import { AuthService }              from 'app/core/auth/service';
+import { HelperAlertComponent, HelperAlertType } from 'helper/components/alert';
+import { SnackbarService }          from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants              from 'helper/shared/constants';
+
+// third party library
+import { Subject }                  from 'rxjs';
 @Component({
     standalone: true,
     imports: [
@@ -56,6 +61,8 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         type: 'success',
         message: '',
     };
+
+    // Properties
     public token: string = '';
     public numStr1: string = '';
     public numStr2: string = '';
@@ -75,6 +82,8 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
     temp2fa: string = '';
     passwordForm: FormGroup;
 
+
+    // Constructor
     constructor(
         private _authService: AuthService,
         private _formBuilder: UntypedFormBuilder,
@@ -82,6 +91,8 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         private _snackbarService: SnackbarService,
     ) { }
 
+
+    // Initialize component
     ngOnInit() {
         this.phone = localStorage.getItem('phone');
         this.remainingTime = 60;
@@ -93,6 +104,8 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         });
     }
 
+
+    // Start countdown
     startCountdown() {
         this.remainingTime -= 1;
         this.countdownInterval = setInterval(() => {
@@ -107,12 +120,15 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         }, 1000);
     }
 
+    // Format time in MM:SS
     formatTime(seconds: number): string {
         const minutes: number = Math.floor(seconds / 60);
         const remainingSeconds: number = seconds % 60;
         return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
     }
 
+
+    // Resend OTP code
     resendOtp(): void {
         this.isLoading = true;
         const credentials = {
@@ -139,18 +155,25 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         });
     }
 
+    // Change to password form
     changeToPassword(): void {
         this.isOtpForm = [false, true, false];
     }
 
+
+    // Change to OTP form
     changeToOtp(): void {
         this.isOtpForm = [true, false, false];
     }
 
+
+    // Change to 2FA form
     changeTo2fa(): void {
         this.isOtpForm = [false, false, true];
     }
 
+
+    // Verify OTP code
     verify(): void {
         this.isLoading = true;
 
@@ -180,6 +203,8 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
             }
         });
     }
+
+    // 2FA verification
     showAlert: boolean = false;
     signIn(): void {
         this.showAlert = false; // Hide previous alert
@@ -206,6 +231,7 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         })
     }
 
+    // Clear all input fields
     clearAllInput() {
         this.numStr1 = '';
         this.numStr2 = '';
@@ -215,6 +241,8 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         this.numStr6 = '';
     }
 
+
+    // Listen for keydown event on the document
     keyDownHandler1(event: KeyboardEvent | any): void {
         if (event.key === 'Backspace') {
             this.numStr1 = '';
@@ -250,6 +278,7 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
 
     }
 
+    // Listen for keydown event on the document
     keyDownHandler2(event: KeyboardEvent | any): void {
         if (event.key === 'Backspace') {
             if (this.numStr2 === '') {
@@ -287,6 +316,7 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         }
     }
 
+    // Listen for keydown event on the document
     keyDownHandler3(event: KeyboardEvent | any): void {
         if (this.numStr3 === '') {
             this.input2.nativeElement.focus();
@@ -324,6 +354,7 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         }
     }
 
+    // Listen for keydown event on the document
     keyDownHandler4(event: KeyboardEvent | any): void {
         if (event.key === 'Backspace') {
             if (this.numStr4 === '') {
@@ -361,6 +392,7 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         }
     }
 
+    // Listen for keydown event on the document
     keyDownHandler5(event: KeyboardEvent | any): void {
         if (event.key === 'Backspace') {
             if (this.numStr5 === '') {
@@ -398,6 +430,7 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         }
     }
 
+    // Listen for keyup event on the document
     keyDownHandler6(event: KeyboardEvent | any): void {
         if (event.key === 'Backspace') {
             if (this.numStr6 === '') {
@@ -442,12 +475,14 @@ export class VerifyOTPAndPasswordComponent implements OnInit {
         }
     }
 
+    // Check if the OTP code is valid
     checkValid(): boolean {
         this.otpCode = this.numStr1 + this.numStr2 + this.numStr3 + this.numStr4 + this.numStr5 + this.numStr6;
         this.canSubmit = this.otpCode.length === 6;
         return this.canSubmit;
     }
 
+    // Unsubscribe from all subscriptions
     ngOnDestroy(): void {
         // Unsubscribe from all subscriptions
         this._unsubscribeAll.next(null);

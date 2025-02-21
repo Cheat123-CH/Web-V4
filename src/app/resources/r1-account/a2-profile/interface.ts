@@ -1,8 +1,9 @@
+// interface for the profile module
 export interface ResponseProfile {
     token: string;
     message: string;
 }
-
+// 
 export interface ProfileUpdate {
     name: string
     phone: string

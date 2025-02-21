@@ -1,3 +1,3 @@
-export * from 'helper/components/alert/alert.component';
-export * from 'helper/components/alert/alert.service';
-export * from 'helper/components/alert/alert.types';
+export * from 'helper/components/alert/component';
+export * from 'helper/components/alert/service';
+export * from 'helper/components/alert/interface';

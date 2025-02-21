@@ -1,29 +1,28 @@
 // ================================================================>> Core Library
-import { DecimalPipe, NgForOf, NgIf } from '@angular/common';
-import { HttpErrorResponse } from '@angular/common/http';
+import { DecimalPipe, NgForOf, NgIf }   from '@angular/common';
+import { HttpErrorResponse }            from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule }                  from '@angular/forms';
 
 // ================================================================>> Third party Library
-import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatTabsModule } from '@angular/material/tabs';
+import { MatButtonModule }              from '@angular/material/button';
+import { MatDialog, MatDialogConfig }   from '@angular/material/dialog';
+import { MatIconModule }                from '@angular/material/icon';
+import { MatProgressSpinnerModule }     from '@angular/material/progress-spinner';
+import { MatTabsModule }                from '@angular/material/tabs';
 
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil }           from 'rxjs';
 
 // ================================================================>> Custom Library
-import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.types';
-import { SharedDetailsComponent } from 'app/shared/details/component';
-import { env } from 'envs/env';
-import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants from 'helper/shared/constants';
-import { ProductType } from '../c2-sale/interface';
-import { ItemComponent } from './item/component';
-import { OrderService } from './service';
-import { Data, Product } from './interface';
+import { UserService }      from 'app/core/user/service';
+import { User }             from 'app/core/user/interface';
+import { env }              from 'envs/env';
+import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants      from 'helper/shared/constants';
+import { ProductType }      from '../c2-sale/interface';
+import { ItemComponent }    from './item/component';
+import { OrderService }     from './service';
+import { Data, Product }    from './interface';
 import { ViewDetailSaleComponent } from 'app/shared/view/component';
 interface CartItem {
 
@@ -59,7 +58,11 @@ interface CartItem {
 })
 
 export class OrderComponent implements OnInit, OnDestroy {
+
+    // Create a private subject to handle unsubscription
     private _unsubscribeAll: Subject<User> = new Subject<User>();
+
+    // Define the base URL for file uploads
     fileUrl: string = env.FILE_BASE_URL;
     data: Data[] = [];
     allProducts: Product[] = [];
@@ -70,6 +73,7 @@ export class OrderComponent implements OnInit, OnDestroy {
     canSubmit: boolean = false;
     totalPrice: number = 0;
     selectedTab: any;
+
     constructor(
         private _changeDetectorRef: ChangeDetectorRef,
         private _userService: UserService,
@@ -86,6 +90,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         });
     }
 
+    // ===> onInit method to initialize the component
     ngOnInit(): void {
 
         // Set isLoading to true to indicate that data is being loaded
@@ -119,12 +124,14 @@ export class OrderComponent implements OnInit, OnDestroy {
         });
 
     }
+
     // Function to handle tab selection
     selectTab(item: any): void {
         this.selectedTab = item;
         this._changeDetectorRef.detectChanges(); // Trigger change detection manually
     }
 
+    // Function to handle the ngOnDestroy
     ngOnDestroy(): void {
 
         // Emit a value through the _unsubscribeAll subject to trigger the unsubscription
@@ -132,6 +139,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         // Complete the subject to release resources
         this._unsubscribeAll.complete();
     }
+    // Function to clear the cart
     clearCartAll(): void {
         this.carts = [];
         this.totalPrice = 0;
@@ -156,7 +164,8 @@ export class OrderComponent implements OnInit, OnDestroy {
             item.qty = item.temp_qty;
             this.getTotalPrice();
         }
-    }
+    }   
+    // Function to add an item to the cart
     addToCart(incomingItem: Product, qty = 0): void {
 
         // Find an existing item in the cart with the same id as the incoming item
@@ -191,12 +200,15 @@ export class OrderComponent implements OnInit, OnDestroy {
         this.getTotalPrice();
     }
 
+
+    // Function to calculate the total price of the items in the cart
     getTotalPrice(): void {
 
         // Calculate the total price by iterating over items in the cart and summing the product of quantity and unit price
         this.totalPrice = this.carts.reduce((total, item) => total + (item.qty * item.unit_price), 0);
     }
 
+    // Function to remove an item from the cart
     remove(value: any, index: number = -1): void {
 
         // If the value is 0, set canSubmit to true
@@ -212,6 +224,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         this.getTotalPrice();
     }
 
+    // Function to handle the blur event on the quantity input field
     blur(event: any, index: number = -1): void {
 
         // Store the current quantity before any changes
@@ -251,6 +264,7 @@ export class OrderComponent implements OnInit, OnDestroy {
         this.getTotalPrice();
     }
 
+    // Function to handle the keydown event on the quantity input field
     private matDialog = inject(MatDialog);
     checkOut(): void {
 
