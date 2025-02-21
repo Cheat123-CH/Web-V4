@@ -1,0 +1,133 @@
+<div class="dialog-container"> 
+    <div class="dialog-header items-center flex flex-col"> 
+        <div 
+            mat-dialog-title 
+            class="w-full flex justify-between px-6 items-center border-b border-slate-300 h-15"> 
+            <span class="text-3xl font-medium text-slate-500 w-full"> 
+                {{viewRenterInterface.code}} 
+            </span> 
+            <button 
+                class="helpers-mat-button-sm" 
+                [mat-dialog-close]="false" 
+                mat-icon-button> 
+                <mat-icon 
+                    class="icon-size-6" 
+                    svgIcon="heroicons_outline:x-mark"/> 
+            </button> 
+        </div> 
+    </div> 
+
+            <div class="out-create-content pt-4 px-4">
+                <!-- Receipt Number -->
+                <div class="flex justify-start items-center gap-2 p-1 w-full bg-[#1E293B0D] dark:bg-gray-800 h-[3rem]">
+                    <div class="flex justify-start items-center gap-2 w-[240px]">
+                        <p class="text-lg md:text-xl leading-8">កូដ</p>
+                    </div>
+                    <div class="flex justify-start items-center gap-2">
+                        <p class="text-lg md:text-xl leading-8">៖</p>
+                        <p class="text-lg md:text-xl leading-8 pl-5 text-gray-600">{{viewRenterInterface.code}}</p>
+                    </div>
+                </div>
+                <!-- Order Date -->
+                <div class="flex justify-start items-center gap-2 p-1 w-full dark:bg-gray-800 h-[3rem]">
+                    <div class="flex justify-start items-center gap-2 w-[240px]">
+                        <p class="text-lg md:text-xl leading-8">ប្រភេទ</p>
+                    </div>
+                    <div class="flex justify-start items-center gap-2">
+                        <p class="text-md md:text-lg leading-8">៖</p>
+                        <p class="text-md md:text-lg leading-8 pl-5 text-gray-500">{{viewRenterInterface.type}}</p>
+                    </div>
+                </div>
+
+                <!-- Cashier By -->
+                <div class="flex justify-start items-center gap-2 p-1 w-full bg-[#1E293B0D] dark:bg-gray-800 h-[3rem]">
+                    <div class="flex justify-start items-center gap-2 w-[240px]">
+                        <p class="text-lg md:text-xl leading-8">តំបន់</p>
+                    </div>
+                    <div class="flex justify-start items-center gap-2">
+                        <p class="text-lg md:text-xl leading-8">៖</p>
+                        <div class="text-lg md:text-xl leading-8 pl-5 text-gray-600">
+                            <div class="flex items-center">
+                                <span>{{viewRenterInterface.zone}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cashier By -->
+                <div class="flex justify-start items-center gap-2 p-1 w-full dark:bg-gray-800 h-[3rem]">
+                    <div class="flex justify-start items-center gap-2 w-[240px]">
+                        <p class="text-lg md:text-xl leading-8">ប្រាក់កក់</p>
+                    </div>
+                    <div class="flex justify-start items-center gap-2">
+                        <p class="text-lg md:text-xl leading-8">៖</p>
+                        <div class="text-lg md:text-xl leading-8 pl-5 text-gray-600">
+                            <div class="flex items-center">
+                                <span>{{viewRenterInterface.bookedPrice}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-start items-center gap-2 p-1 w-full bg-[#1E293B0D] dark:bg-gray-800 h-[3rem]">
+                    <div class="flex justify-start items-center gap-2 w-[240px]">
+                        <p class="text-lg md:text-xl leading-8">តម្លៃ($/ខែ)</p>
+                    </div>
+                    <div class="flex justify-start items-center gap-2">
+                        <p class="text-lg md:text-xl leading-8">៖</p>
+                        <div class="text-lg md:text-xl leading-8 pl-5 text-gray-600">
+                            <div class="flex items-center">
+                                <span>{{viewRenterInterface.price}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-start items-center gap-2 p-1 w-full dark:bg-gray-800 h-[3rem]">
+                    <div class="flex justify-start items-center gap-2 w-[240px]">
+                        <p class="text-lg md:text-xl leading-8">ក្រឡាផ្ទៃជាន់ក្រោម S1 (m2)</p>
+                    </div>
+                    <div class="flex justify-start items-center gap-2">
+                        <p class="text-lg md:text-xl leading-8">៖</p>
+                        <div class="text-lg md:text-xl leading-8 pl-5 text-gray-600">
+                            <div class="flex items-center">
+                                <span>{{viewRenterInterface.s1}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-start items-center gap-2 p-1 w-full bg-[#1E293B0D] dark:bg-gray-800 h-[3rem]">
+                    <div class="flex justify-start items-center gap-2 w-[240px]">
+                        <p class="text-lg md:text-xl leading-8">ក្រឡាផ្ទៃជាន់ឡៅតឿ S2 (m2)</p>
+                    </div>
+                    <div class="flex justify-start items-center gap-2">
+                        <p class="text-lg md:text-xl leading-8">៖</p>
+                        <div class="text-lg md:text-xl leading-8 pl-5 text-gray-600">
+                            <div class="flex items-center">
+                                <span>{{viewRenterInterface.s2}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-start items-center gap-2 p-1 w-full dark:bg-gray-800 h-[3rem]">
+                    <div class="flex justify-start items-center gap-2 w-[240px]">
+                        <p class="text-lg md:text-xl leading-8">ក្រឡាសរុប S (m2)</p>
+                    </div>
+                    <div class="flex justify-start items-center gap-2">
+                        <p class="text-lg md:text-xl leading-8">៖</p>
+                        <div class="text-lg md:text-xl leading-8 pl-5 text-gray-600">
+                            <div class="flex items-center">
+                                <span>{{viewRenterInterface.s}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+    
+   
+
+</div>
