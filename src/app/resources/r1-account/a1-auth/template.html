@@ -32,10 +32,10 @@
                             </div>
 
                             <!-- Sign in form -->
-                            <form class="mt-8 md-form-field-appearance-outline" [formGroup]="signInForm"
-                                #signInNgForm="ngForm">
-                                <!-- username field -->
-                                <mat-form-field class="w-full thick-border">
+                            <!-- <form class="mt-8 md-form-field-appearance-outline" [formGroup]="signInForm"
+                                #signInNgForm="ngForm"> -->
+                            <!-- username field -->
+                            <!-- <mat-form-field class="w-full thick-border">
                                     <mat-label>លេខទូរស័ព្ទ</mat-label>
                                     <input id="username" matInput [formControlName]="'username'" />
                                     @if (signInForm.get('username').hasError('required')) {
@@ -51,10 +51,10 @@
                                             [svgIcon]="'mat_outline:phone_android'"></mat-icon>
                                     </button>
 
-                                </mat-form-field>
+                                </mat-form-field> -->
 
-                                <!-- Submit button -->
-                                <button
+                            <!-- Submit button -->
+                            <!-- <button
                                     class="helper-mat-button-large mt-5 w-full bg-[#09235f] rounded-[10px] text-center"
                                     mat-flat-button [color]="'primary'" [disabled]="signInForm.disabled"
                                     (click)="checkExistUser()">
@@ -65,8 +65,8 @@
                                     <mat-progress-spinner [diameter]="24"
                                         [mode]="'indeterminate'"></mat-progress-spinner>
                                     }
-                                </button>
-                                <div class="flex items-center w-full">
+                                </button> -->
+                            <!-- <div class="flex items-center w-full">
                                     <hr class="flex-grow">
                                     <span class="px-2 text-center">ឬចុចចូលដោយស្វ័យប្រវត្តិ</span>
                                     <hr class="flex-grow">
@@ -83,13 +83,95 @@
                                         <span>អ្នកគិតប្រាក់</span>
                                     </button>
                                 </div>
-                            </form>
+                            </form> -->
+                            <!-- div information login -->
+                            <div class="h-auto ">
+                                <form class="md-form-field-appearance-outline" [formGroup]="signInForm"
+                                    #signInNgForm="ngForm">
+                                    <!-- phone field -->
+                                    <mat-form-field class="w-full thick-border">
+                                        <mat-label>លេខទូរស័ព្ទ</mat-label>
+                                        <input id="username" matInput [formControlName]="'username'" />
+                                        @if (signInForm.get('username').hasError('required')) {
+                                        <mat-error> សូមបញ្ចូលលេខទូរស័ព្ទ </mat-error>
+                                        }
+                                        @if (signInForm.get('username').hasError('username')) {
+                                        <mat-error>
+                                            Please enter a valid username
+                                        </mat-error>
+                                        }
+                                        <button mat-icon-button type="button" matSuffix>
+                                            <mat-icon class="icon-size-5 "
+                                                [svgIcon]="'mat_outline:phone_android'"></mat-icon>
+                                        </button>
+
+                                    </mat-form-field>
+                                    <mat-form-field class="w-full thick-border">
+                                        <mat-label>ពាក្យសម្ងាត់</mat-label>
+                                        <input id="password" matInput type="password" [formControlName]="'password'"
+                                            #passwordField [type]="passwordField.type" />
+                                        <button mat-icon-button (click)="passwordField.type === 'password'
+                                            ? (passwordField.type = 'text')
+                                            : (passwordField.type = 'password')
+                                        " matSuffix>
+                                            <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'password'"
+                                                [svgIcon]="'mat_outline:visibility'">
+                                            </mat-icon>
+                                            <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'text'"
+                                                [svgIcon]="'mat_outline:visibility_off'">
+                                            </mat-icon>
+                                        </button>
+
+                                        @if (signInForm.get('password').hasError('required')) {
+                                        <mat-error> សូមបញ្ចូលពាក្យសម្ងាត់ </mat-error>
+                                        }
+                                        @if (signInForm.get('password').hasError('password')) {
+                                        <mat-error>
+                                            Please enter a valid phone address
+                                        </mat-error>
+                                        }
+
+                                    </mat-form-field>
+
+
+                                </form>
+
+                            </div>
+
+
+                            <div>
+                                <button class="helper-mat-button-large w-full bg-[#09235f] rounded-[10px] text-center"
+                                    mat-flat-button [color]="'primary'" [disabled]="signInForm.disabled"
+                                    (click)="signIn()">
+                                    <span *ngIf="!signInForm.disabled" class="text-white text-center">បន្ទាប់</span>
+                                    <mat-progress-spinner *ngIf="signInForm.disabled" [diameter]="24"
+                                        [mode]="'indeterminate'"></mat-progress-spinner>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div *ngIf="isChangeToVerifyOtp === true">
                         <verify-otp-password></verify-otp-password>
                     </div>
                 </ng-container>
+
+                <div class="flex items-center w-full">
+                    <hr class="flex-grow">
+                    <span class="px-2 text-center">ឬចុចចូលដោយស្វ័យប្រវត្តិ</span>
+                    <hr class="flex-grow">
+                </div>
+                <div class="flex gap-2">
+                    <button
+                        class="helper-mat-button-large h-[40px] w-full border-[1.5px] cursor-not-allowed  rounded-[10px] text-center items-center flex justify-center gap-2">
+                        <mat-icon svgIcon="mdi:account-star-outline" />
+                        <span>អ្នកគ្រប់គ្រង</span>
+                    </button>
+                    <button
+                        class="helper-mat-button-large h-[40px] w-full border-[1.5px]  cursor-not-allowed rounded-[10px] text-center items-center flex justify-center gap-2">
+                        <mat-icon svgIcon="mdi:account-cash-outline" />
+                        <span>អ្នកគិតប្រាក់</span>
+                    </button>
+                </div>
             </div>
         </div>
     </div>

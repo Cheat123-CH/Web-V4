@@ -32,7 +32,6 @@ import { ErrorHandleService }           from 'app/shared/error-handle.service';
 import { Data }                         from './interface';
 import { FilterDialogComponent }        from './filter-dialog/component';
 import { SaleService }                  from './service';
-import { savePDFFromBlob } from 'helper/download-report/save-pdf';
 import FileSaver from 'file-saver';
 import GlobalConstants from 'helper/shared/constants';
 import { HttpErrorResponse } from '@angular/common/http';

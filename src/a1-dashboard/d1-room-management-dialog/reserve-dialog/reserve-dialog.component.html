@@ -1,0 +1,118 @@
+<div class="dialog-container w-full">
+    <!-- Header -->
+    <div class="dialog-header items-center flex flex-col">
+        <div mat-dialog-title class="w-full flex justify-between px-6 items-center border-b border-slate-300 h-15">
+            <span class="text-3xl font-medium text-slate-500 w-full">
+                កក់បន្ទប់
+            </span>
+            <button class="helpers-mat-button-sm" [mat-dialog-close]="false" mat-icon-button>
+                <mat-icon class="icon-size-6" svgIcon="heroicons_outline:x-mark" />
+            </button>
+        </div>
+    </div>
+
+    <div class="flex flex-col p-4 w-full gap-y-4">
+
+    <div>
+        <div class="flex justify-start items-center gap-2 p-1 w-full bg-[#1E293B0D] dark:bg-gray-800 h-[3rem]">
+            <div class="flex justify-start items-center gap-2 w-[150px]">
+                <p class="text-lg md:text-xl leading-8 pl-3">បន្ទប់</p>
+            </div>
+            <div class="flex justify-start items-center gap-2">
+                <p class="text-lg md:text-xl leading-8">៖</p>
+            </div>
+            <div>
+                {{ roomInfo?.code }}
+            </div>
+        </div>
+
+
+        <div class="flex justify-start items-center gap-2 p-1 w-full dark:bg-gray-800 h-[3rem]">
+            <div class="flex justify-start items-center gap-2 w-[150px]">
+                <p class="text-lg md:text-xl leading-8 pl-3">ប្រាក់កក់ ($)</p>
+            </div>
+            <div class="flex justify-start items-center gap-2">
+                <p class="text-lg md:text-xl leading-8">៖</p>
+                <div class="flex items-center">
+                    <span>{{roomInfo?.bookedPrice}}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-start items-center gap-2 p-1 w-full bg-[#1E293B0D] dark:bg-gray-800 h-[3rem]">
+            <div class="flex justify-start items-center gap-2 w-[150px]">
+                <p class="text-lg md:text-xl leading-8 pl-3">តំលៃ ($/ខែ)</p>
+            </div>
+            <div class="flex justify-start items-center gap-2">
+                <p class="text-lg md:text-xl leading-8">៖</p>
+                <div class="flex items-center">
+                    <span>{{roomInfo?.price}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- form fill info -->
+        <div>
+            <form class="flex flex-col md-form-field-appearance-outline" [formGroup]="reserveForm">
+                <!-- Username Field -->
+                <mat-form-field class="w-full thick-border">
+                    <mat-label>ឈ្មោះ</mat-label>
+                    <input matInput formControlName="username" />
+                    <mat-error *ngIf="reserveForm.get('username')?.hasError('required')">
+                        សូមបញ្ចូលឈ្មោះ
+                    </mat-error>
+                    <mat-error *ngIf="reserveForm.get('username')?.hasError('maxlength')">
+                        ឈ្មោះមិនអាចលើស​ ៣០តួអក្សរ
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- phoneNumber Field -->
+                <mat-form-field class="w-full thick-border">
+                    <mat-label>លេខទូរស៍ព្ទ</mat-label>
+                    <input matInput type="text" formControlName="phoneNumber"/>
+                    <mat-error *ngIf="reserveForm.get('phoneNumber')?.hasError('required')">
+                        សូមបញ្ចូលលេខទូរស័ព្ទ
+                    </mat-error>
+                    <mat-error *ngIf="reserveForm.get('phoneNumber')?.hasError('pattern')">
+                        លេខទូរស័ព្ទមិនត្រូវតាមទម្រង់
+                    </mat-error>
+                </mat-form-field>
+
+                <!-- date Field -->
+                <!-- <mat-form-field
+                    class="w-full flex justify-between cursor-pointer items-center dark:bg-slate-700 rounded-lg min-w-[100px]">
+                    <mat-label>ចុះឈ្មោះថ្ងៃ</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="date" />
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                    <mat-error *ngIf="reserveForm.get('date')?.hasError('required')">
+                        សូមជ្រើសរើសកាលបរិច្ឆេទ
+                      </mat-error>
+                </mat-form-field> -->
+
+                <mat-form-field class="w-full flex justify-between cursor-pointer items-center dark:bg-slate-700 rounded-lg min-w-[100px]">
+                    <mat-label>ចុះឈ្មោះថ្ងៃ</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="date" #dateField/>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker">
+                    </mat-datepicker-toggle>
+                    <mat-error *ngIf="reserveForm.get('date')?.hasError('required')">
+                        សូមជ្រើសរើសកាលបរិច្ឆេទ
+                    </mat-error>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+
+
+                <div class="ml-auto py-2 justify-end">
+                    <button class="bg-blue-600 text-white rounded-xl px-4 py-2 disabled:bg-slate-400 disabled:cursor-not-allowed" 
+                        (click)="submitForm()"
+                        [disabled]="!reserveForm.valid">
+                        រួចរាល់
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</div>
+

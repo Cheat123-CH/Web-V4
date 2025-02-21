@@ -1,0 +1,131 @@
+<div class="dialog-container">
+    <!-- Header -->
+    <div class="dialog-header items-center flex flex-col">
+        <div mat-dialog-title class="w-full flex justify-between px-6 items-center border-b border-slate-300 h-15">
+            <span class="text-3xl font-medium text-slate-500 w-full">
+                ចំណាយ
+            </span>
+            <button class="helpers-mat-button-sm" [mat-dialog-close]="false" mat-icon-button>
+                <mat-icon class="icon-size-6" svgIcon="heroicons_outline:x-mark" />
+            </button>
+        </div>
+    </div>
+
+    <div class="flex cursor-pointer items-center gap-y-3 text-base p-4 flex-col">
+        <div class="flex w-full h-14 gap-x-2 justify-evenly">
+
+            <div class="border border-b-[#CBD5E1] rounded-xl flex items-center w-full">
+                <button
+                    class="min-w-10 max-w-10 pl-1 h-10 flex items-center justify-center hover:opacity-[0.96] transition-all">
+                    <mat-icon class="icon-size-6 text-slate-500"
+                        svgIcon="heroicons_outline:magnifying-glass"></mat-icon>
+                </button>
+                <input placeholder="ស្វែងរក" class="w-full pr-3 h-10" (keyup.enter)="getExpenseInfo()" [(ngModel)]="key"/>
+            </div>
+
+            <!-- <div>
+                <mat-form-field
+                    class="flex justify-between cursor-pointer items-center dark:bg-slate-700 rounded-lg min-w-[100px]">
+                    <mat-label>តំបន់</mat-label>
+                    <mat-select (selectionChange)="onZoneChange($event.value)">
+                        <mat-option *ngFor="let type of zoneType" [value]="type.name">
+                            {{type.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div> -->
+        </div>
+
+
+        <div *ngIf="expenseInfo?.length === 0 && !isLoading">
+            <div
+                class="flex flex-col justify-center items-center h-full">
+                <mat-icon
+                    class="text-gray-400"
+                    svgIcon="toc">
+                </mat-icon>
+                <span class="text-2xl text-gray-500 mt-2">
+                    គ្មានទិន្នន័យ
+                </span>
+            </div>
+        </div>
+
+        <ng-container *ngIf="isLoading, else completed">
+            <div class="flex flex-col gap-8 justify-center items-center h-full">
+                <mat-spinner [diameter]="64" [mode]="'indeterminate'"></mat-spinner>
+                <span class="text-slate-500 text-3xl font-semibold">កំពុងទាញយកទិន្នន័យ...</span>
+            </div>
+        </ng-container>
+
+        <ng-template #completed>
+            <div class= "dark:bg-gray-900 flex w-full h-[96px] rounded-xl justify-between border border-[#CBD5E1] items-center bg-white pl-3"
+                    *ngFor="let item of expenseInfo, let i = index">
+            
+                <div class="flex flex-col w-[232.5px] gap-2 border-r border-[#CBD5E1] pr-4">
+                        <span class="">វិក្កយបត្រ {{item?.expNo}}</span>
+                    <div>
+                        <span class="w-auto font-normal flex gap-2 text-base">
+                            <!-- <img class="w-12 h-12 items-center rounded-full" 
+                                [src]="fileUrl+item.renterAvatar"
+                                alt="avatar"> -->
+                            <div class=" text-[#64748B] flex flex-col justfiy-between">
+                                <div class="flex">
+                                    <span class="">ស្ថានភាព  </span>
+                                    <span class=""> ៖ {{item?.expenseStatus}}</span>
+                                </div>
+                                <div class="flex">
+                                    <span>ប្រភេទ</span>
+                                    <span [ngClass]="{
+                                        'text-[#64748B]': item?.expenseType !== 'បានទូទាត់',
+                                        'text-green-600': item?.expenseType === 'បានទូទាត់'}">
+                                            ៖ {{ item?.expenseStatus }}
+                                    </span>
+                                </div>
+                            </div>
+                        </span>
+                    </div>
+                </div>
+            
+                <div class="items-center w-[232.5px] flex flex-col justify-between gap-1 pl-4">
+                    <div class="flex w-full justify-between">
+                        <span class="text-md">ចំនួន (៛)</span>
+                        <span class="text-md text-[#64748B]">{{  item?.totalPriceKHR | number:'1.0-0' : 0 }}
+                        </span>
+                    </div>
+                    <div class="flex w-full justify-between">
+                        <span class="text-md">ចំនួន ($)</span>
+                        <span class="text-md text-[#64748B]">{{ item?.totalPriceUSD | number:'1.0-0' : 0}}</span>
+                    </div>
+                    <div class="flex w-full justify-between">
+                        <span class="text-md">ថ្ងៃបង់</span>
+                        <span class="text-md text-[#64748B]"
+                            class="text-md"
+                            [ngClass]="{'text-[#64748B]': item?.paymentDate >= today, 'text-red-500': item?.paymentDate < today}"> 
+                            {{ item?.dueDate === 'N/A' ? 'មិនមាន' : item?.dueDate }}
+                        </span>
+                    </div>
+                </div>
+            
+                <div class="items-center pr-1 gap-1">
+                    <button mat-icon-button [matMenuTriggerFor]="menu">
+                        <mat-icon class="icon-size-6" svgIcon="mat_outline:more_vert"></mat-icon>
+                    </button>
+                    <mat-menu #menu="matMenu">
+                        <button mat-menu-item
+                            (click)="View(item?.id)">
+                            <mat-icon svgIcon="mat_outline:bookmark"></mat-icon>
+                            <span class="text-lg">ទូទាត់</span>
+                        </button>
+                        <button mat-menu-item
+                            (click)="generatePayment(item)">
+                            <mat-icon svgIcon="mat_outline:download"></mat-icon>
+                            <span class="text-lg">ទាញយក</span>
+                        </button>
+                    </mat-menu>
+                </div>
+            </div>
+        </ng-template>  
+
+    </div>
+
+</div>
