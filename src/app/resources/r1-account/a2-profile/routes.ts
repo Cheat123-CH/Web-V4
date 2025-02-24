@@ -1,9 +1,28 @@
 import { Routes } from '@angular/router';
-import { ProfileComponent } from './component';
+import { ProfileComponent } from './my-profile/component';
+import { ProfileLayoutComponent } from './component';
+import { ProfileSecurityComponent } from './security/component';
+import { ProfileLogComponent } from './log/component';
 
 export default [
     {
         path: '',
-        component: ProfileComponent,
+        component: ProfileLayoutComponent,
+        children: [
+            { path: '', pathMatch: 'full', redirectTo: 'my-profile' },
+            {
+                path: 'my-profile',
+                component: ProfileComponent
+            },
+            {
+                path: 'security',
+                component: ProfileSecurityComponent
+            },
+            {
+                path: 'log',
+                component: ProfileLogComponent
+            },
+        ]
+
     },
 ] as Routes;

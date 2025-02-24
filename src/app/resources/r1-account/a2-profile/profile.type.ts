@@ -1,9 +1,10 @@
-// interface for the profile module
+import Pagination from "helper/interfaces/pagination";
+
 export interface ResponseProfile {
     token: string;
     message: string;
 }
-// 
+
 export interface ProfileUpdate {
     name: string
     phone: string
@@ -15,14 +16,8 @@ export interface PasswordReq {
     password: string;
     confirm_password: string;
 }
-export interface List {
+export interface List extends Pagination {
     data: Data[],
-    pagination: {
-        currentPage: number,
-        perPage: number,
-        totalItems: number,
-        totalPages: number
-    }
 }
 
 export interface Data {

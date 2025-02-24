@@ -1,8 +1,8 @@
-import { HttpClient, HttpErrorResponse, HttpHeaders }   from '@angular/common/http';
-import { Injectable }                                   from '@angular/core';
-import { env }  from 'envs/env';
-import { BehaviorSubject, catchError, Observable, of, switchMap, throwError }   from 'rxjs';
-import { List, PasswordReq, ProfileUpdate, ResponseProfile }                    from './interface';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { env } from 'envs/env';
+import { BehaviorSubject, catchError, Observable, of, switchMap, throwError } from 'rxjs';
+import { List, PasswordReq, ProfileUpdate, ResponseProfile } from './profile.type';
 
 @Injectable({
     providedIn: 'root',
@@ -26,20 +26,7 @@ export class ProfileService {
         return this.http.put<{ message: string }>(`${this.baseUrl}/account/profile/update-password`, body, this.httpOptions);
     }
 
-    // Share variable
-    private _sharedVariable = new BehaviorSubject<string>('profile');
-
-    // Observable for the BehaviorSubject which components can subscribe to
-    sharedVariable$ = this._sharedVariable.asObservable();
-
-    // Method to update the variable's value
-    updateSharedVariable(newValue: string): void {
-        console.log('Updating shared variable with:', newValue);
-        this._sharedVariable.next(newValue);
-    }
-
-    // get data from the server
-    getData(params?: {
+    list(params?: {
         page: number;
         page_size: number;
     }): Observable<List> {

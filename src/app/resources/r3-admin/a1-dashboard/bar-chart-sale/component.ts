@@ -5,7 +5,7 @@ import { env }              from 'envs/env';
 import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
 import { DashbordService }  from '../service';
-import { CashierData }      from '../interface';
+import { CashierData, DashboardResponse }      from '../interface';
 @Component({
     selector: 'sup-bar-chart-sale',
     standalone: true,
@@ -16,7 +16,7 @@ import { CashierData }      from '../interface';
 export class SaleCashierBarChartComponent implements OnInit, OnChanges {
     @ViewChild("chartContainer1", { read: ElementRef }) chartContainer!: ElementRef;
     chartOptions: Partial<ApexOptions> = {};
-    @Input() dataSouce: CashierData[] = []; // Receive data source from parent
+    @Input() dataSouce: CashierData; // Receive data source from parent
     fileUrl = env.FILE_BASE_URL;
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -39,8 +39,8 @@ export class SaleCashierBarChartComponent implements OnInit, OnChanges {
     }
     // Process data and update the chart
     private processDataAndUpdateChart(): void {
-        const labels = this.dataSouce.map(item => item.name); // Extract names
-        const data = this.dataSouce.map(item => item.totalAmount); // Extract total amounts
+        const labels = this.dataSouce.data.map((e)=>e.name); // Extract names
+        const data = this.dataSouce.data.map((e)=>e.totalAmount); // Extract total amounts
         this.updateChart(labels, data); // Update chart with processed data
     }
 

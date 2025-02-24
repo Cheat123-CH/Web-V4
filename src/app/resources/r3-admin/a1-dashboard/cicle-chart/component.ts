@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { DashbordService } from '../service';
+import { DashboardResponse } from '../interface';
 
 @Component({
     selector: 'cicle-chart',
@@ -20,12 +21,15 @@ export class CicleChartComponent implements OnInit, OnChanges {
     @ViewChild("chartContainer2", { read: ElementRef, static: false }) chartContainer!: ElementRef<HTMLDivElement>;
 
     chartOptions: Partial<ApexOptions> = {};
-
+    
     constructor(
         private _cdr: ChangeDetectorRef,
         private _snackBarService: SnackbarService,
-        private _cashierService: DashbordService
+        private _productService: DashbordService,
+        
     ) { }
+
+    
 
 
     // Fetch data on initialization
@@ -69,10 +73,13 @@ export class CicleChartComponent implements OnInit, OnChanges {
             sixMonthAgo: sixMonthAgo || undefined,
         };
 
-        this._cashierService.getProductType(params).subscribe({
-            next: (response: any) => {
-                if (response && response.labels && response.data) {
-                    this._updateChart(response.labels, response.data);
+        this._productService.getDashboardData(params).subscribe({
+            next: (response: DashboardResponse) => {
+
+
+
+                if (response && response.dashboard.productTypeData.labels && response.dashboard.productTypeData.data) {
+                    this._updateChart(response.dashboard.productTypeData.labels, response.dashboard.productTypeData.data);
 
                 } else {
                     this._snackBarService.openSnackBar('No data available', 'Info');
@@ -86,7 +93,7 @@ export class CicleChartComponent implements OnInit, OnChanges {
     }
 
     // Update the chart with new data
-    private _updateChart(labels: string[], data: number[]): void {
+    private _updateChart(labels: string[], data: string[]): void {
         const totalSum = data.map(Number).reduce((a, b) => a + b, 0);
         this.chartOptions = {
             chart: {

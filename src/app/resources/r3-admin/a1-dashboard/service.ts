@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { DashboardResponse, DataCashierResponse, DataSaleResponse } from './interface';
+import { DashboardResponse, DataSaleResponse } from './interface';
 // Helper
 // ================================================================================>> Thrid Party Library
 // RxJS
@@ -14,62 +14,21 @@ export class DashbordService {
         headers: new HttpHeaders().set('Content-Type', 'application/json'),
     }
 
-
-    // Method to fetch a list of products from the POS system
-    getStaticData(
-        today?: string,
-        yesterday?: string,
-        thisWeek?: string,
-        thisMonth?: string
-    ): Observable<DashboardResponse> {
-        // Construct HttpParams
-        let params = new HttpParams();
-        if (today) params = params.set('today', today);
-        if (yesterday) params = params.set('yesterday', yesterday);
-        if (thisWeek) params = params.set('thisWeek', thisWeek);
-        if (thisMonth) params = params.set('thisMonth', thisMonth);
-
-        // Make the HTTP GET request with HttpParams
-        return this._httpClient.get<DashboardResponse>(`${env.API_BASE_URL}/admin/dashboard`, { params });
-    }
-
-    // Method to fetch a list of products from the POS system
-    getCashier(
-        today?: string,
-        yesterday?: string,
-        thisWeek?: string,
-        thisMonth?: string
-    ): Observable<DataCashierResponse> {
-        // Construct HttpParams
-        let params = new HttpParams();
-        if (today) params = params.set('today', today);
-        if (yesterday) params = params.set('yesterday', yesterday);
-        if (thisWeek) params = params.set('thisWeek', thisWeek);
-        if (thisMonth) params = params.set('thisMonth', thisMonth);
-
-        // Make the HTTP GET request with HttpParams
-        return this._httpClient.get<DataCashierResponse>(`${env.API_BASE_URL}/admin/dashboard/cashier`, { params });
-    }
-
-
-    // Method to fetch a list of products from the POS system
-    getProductType(params: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string }): Observable<any> {
-        // Filter out undefined or empty values
-        const filteredParams = Object.fromEntries(
-            Object.entries(params).filter(([_, value]) => value !== undefined && value !== '')
-        );
-
-        return this._httpClient.get<any>(`${env.API_BASE_URL}/admin/dashboard/product-type`, { params: filteredParams });
-    }
-
-    // Method to fetch a list of products from the POS system
-    getDataSale(params: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string }): Observable<DataSaleResponse> {
-        // Filter out undefined or empty values
-        const filteredParams = Object.fromEntries(
-            Object.entries(params).filter(([_, value]) => value !== undefined && value !== '')
-        );
-
-        return this._httpClient.get<DataSaleResponse>(`${env.API_BASE_URL}/admin/dashboard/data-sale`, { params: filteredParams });
+    // Method call to api to get data
+    getDashboardData(params?: { today?: string; yesterday?: string; thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string,type?:number }): Observable<DashboardResponse> {
+        let httpParams = new HttpParams();
+        if (params) {
+            if (params.today) httpParams = httpParams.set('today', params.today);
+            if (params.yesterday) httpParams = httpParams.set('yesterday', params.yesterday);
+            if (params.thisWeek) httpParams = httpParams.set('thisWeek', params.thisWeek);
+            if (params.thisMonth) httpParams = httpParams.set('thisMonth', params.thisMonth);
+            if (params.threeMonthAgo) httpParams = httpParams.set('threeMonthAgo', params.threeMonthAgo);
+            if (params.sixMonthAgo) httpParams = httpParams.set('sixMonthAgo', params.sixMonthAgo);
+            if (params.type) httpParams = httpParams.set('type', params.type.toString());
+            
+        }
+        // console.log('httpParams',params);
+        return this._httpClient.get<DashboardResponse>(`${env.API_BASE_URL}/admin/dashboard`, { params: httpParams });
     }
 
     // Method to fetch a list of products from the POS system
