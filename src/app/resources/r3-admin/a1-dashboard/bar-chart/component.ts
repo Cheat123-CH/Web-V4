@@ -8,7 +8,7 @@ import { MatIconModule }    from '@angular/material/icon';
 import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from "ng-apexcharts";
 import { DashbordService }  from '../service';
-import { DataSaleResponse } from '../interface';
+import { DashboardResponse } from '../interface';
 
 @Component({
     selector: 'sup-bar-chart',
@@ -22,7 +22,7 @@ export class BarChartComponent implements OnInit, OnChanges, AfterViewInit {
     @ViewChild("chartContainer", { read: ElementRef }) chartContainer!: ElementRef;
 
     chartOptions: Partial<ApexOptions> = {};
-    public data: DataSaleResponse | null = null;
+    public data: DashboardResponse | null = null;
 
     private dayMapping: { [key: string]: string } = {
         'Monday': 'ចន្ទ',
@@ -56,13 +56,20 @@ export class BarChartComponent implements OnInit, OnChanges, AfterViewInit {
     ngAfterViewInit(): void {
         this.modifyGridLines(); // Ensure the element is available
     }
-    // Fetch data from the server
-    private fetchData(filters: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string } = {}): void {
-        this._dashboardService.getDataSale(filters).subscribe({
-            next: (response: DataSaleResponse) => {
-                const labels = response?.labels.map(label => this.dayMapping[label] || label) || [];
-                const data = response?.data || [];
 
+    // get data 
+    private fetchData(filters: { thisWeek?: string; thisMonth?: string; threeMonthAgo?: string; sixMonthAgo?: string } = {}): void {
+        this._dashboardService.getDashboardData(filters).subscribe({
+            next: (response: DashboardResponse) => {
+                // console.log('Full API Response:', response);
+                // console.log('Sales Data:', response?.dashboard.salesData);
+    
+                const labels = response?.dashboard.salesData.labels.map(label => this.dayMapping[label] || label) || [];
+                const data = response?.dashboard.salesData.data || [];
+    
+                // console.log('Processed Labels:', labels);
+                // console.log('Processed Data:', data);
+    
                 if (labels.length && data.length) {
                     this.updateChart(labels, data);
                 } else {
@@ -75,6 +82,7 @@ export class BarChartComponent implements OnInit, OnChanges, AfterViewInit {
             }
         });
     }
+    
 
     // Update the chart with new data
     private updateChart(labels: string[], data: number[]): void {

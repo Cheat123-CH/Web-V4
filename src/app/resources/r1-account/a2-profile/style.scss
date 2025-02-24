@@ -1,37 +1,92 @@
-.list-profile-section {
+.section {
     width: 100%;
-    height: auto !important;
-    overflow: hidden;
-    z-index: 1;
+    height: calc(100dvh - 3.5rem) !important; // 56px is header of layout
+    @apply overflow-hidden p-4 #{'!important'};
 
-    .list-sale-body,
-    .no-data {
-        width: 100%;
-        height: calc(100dvh - 7.75rem);
-        overflow: hidden;
+    .container {
+        height: calc(100dvh - 5.5rem) !important; // 56px(layout) + 32px(padding-y) is 88px
+        @apply bg-white dark:bg-opacity-5 rounded-xl overflow-hidden #{'!important'};
 
-        .list-sale-content {
-            width: 100%;
-            margin-bottom: 0.25rem;
-            height: calc(100dvh - 11rem); //7.75rem + 1rem + 0.25rem
-            overflow: hidden;
-
-            .list-sale-data {
-                width: 100%;
-                max-height: calc(100dvh - 12rem);
-                overflow: auto;
-            }
+        // shared-header-section: have h-14 is 56px
+        .body {
+            height: calc(100dvh - 5.5rem) !important; // 56px(layout) + 32px(padding-y) + 56px is 144px
+            @apply overflow-hidden flex #{'!important'};
         }
     }
 }
 
-table {
-    padding: 1rem !important;
-    width: 100%;
+::ng-deep .shared-header-section {
+    @apply pl-2 md:pl-4 #{'!important'};
 }
 
-::ng-deep .mat-mdc-paginator-container {
-    .mdc-icon-button {
-        @apply dark:bg-gray-700 #{'!important'}
+::ng-deep .body{
+    helper-navigation {
+        .helper-navigation-wrapper {
+            background: white !important;
+        }
+
+        /* Navigation items common */
+        helper-navigation-basic-item,
+        helper-navigation-collapsable-item,
+        helper-navigation-group-item {
+            .helper-navigation-item-wrapper {
+                .helper-navigation-item {
+                    color: currentColor;
+
+                    .helper-navigation-item-icon {
+                        @apply text-current opacity-60;
+                    }
+
+                    .helper-navigation-item-title-wrapper {
+                        .helper-navigation-item-title {
+                            @apply text-current opacity-80;
+                        }
+                    }
+                }
+            }
+        }
+
+        /* Basic, Collapsable */
+        helper-navigation-basic-item,
+        helper-navigation-collapsable-item {
+            >.helper-navigation-item-wrapper {
+                .helper-navigation-item {
+
+                    /* Active state */
+                    &:not(.helper-navigation-item-disabled) {
+
+                        &.helper-navigation-item-active,
+                        &.helper-navigation-item-active-forced {
+                            @apply bg-gray-800 bg-opacity-5 dark:bg-white dark:bg-opacity-12;
+
+                            .helper-navigation-item-icon {
+                                @apply opacity-100 text-[#000]/85;
+                            }
+
+                            .helper-navigation-item-title {
+                                @apply opacity-100 text-[#000]/85;
+                            }
+                        }
+                    }
+
+                    /* Hover state */
+                    &:not(.helper-navigation-item-active-forced):not(.helper-navigation-item-active):not(.helper-navigation-item-disabled) {
+                        &:hover {
+                            @apply bg-gray-800 bg-opacity-5 dark:bg-white dark:bg-opacity-12;
+
+                            .helper-navigation-item-icon {
+                                @apply opacity-100 text-[#000]/85;
+                            }
+
+                            .helper-navigation-item-title,
+                            .helper-navigation-item-arrow {
+                                @apply opacity-100 text-[#000]/85;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
     }
-}
+} 

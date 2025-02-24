@@ -4,7 +4,7 @@ import { MatIconModule }    from '@angular/material/icon';
 import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
 import { ApexOptions, NgApexchartsModule } from 'ng-apexcharts';
 import { DashbordService }  from '../service';
-import { CashierData }      from '../interface';
+import {CashierData, DashboardResponse }      from '../interface';
 
 @Component({
     selector: 'cicle-chart-sale',
@@ -16,7 +16,7 @@ import { CashierData }      from '../interface';
 export class SaleCicleChartComponent implements OnInit, OnChanges {
     @ViewChild("chartContainer2", { read: ElementRef, static: false }) chartContainer!: ElementRef<HTMLDivElement>;
     chartOptions: Partial<ApexOptions> = {};
-    @Input() dataSouce: CashierData[] = []; // Receive data source from parent
+    @Input() dataSouce: CashierData; // Receive data source from parent
 
     constructor(
         private _cdr: ChangeDetectorRef,
@@ -26,7 +26,7 @@ export class SaleCicleChartComponent implements OnInit, OnChanges {
 
     // Fetch data on initialization
     ngOnInit(): void {
-        if (this.dataSouce.length) {
+        if (this.dataSouce) {
             this.processDataAndUpdateChart();
         }
     }
@@ -40,13 +40,12 @@ export class SaleCicleChartComponent implements OnInit, OnChanges {
     }
 
 
-    // Process data and update the chart
-    private processDataAndUpdateChart(): void {
-        const labels = this.dataSouce.map(item => item.name); // Extract names
-        const data = this.dataSouce.map(item => item.totalAmount); // Extract total amounts
-        this._updateChart(labels, data);
+      // Process data and update the chart
+      private processDataAndUpdateChart(): void {
+        const labels = this.dataSouce.data.map((e)=>e.name)// Extract names
+        const data = this.dataSouce.data.map((e)=>e.totalAmount); // Extract total amounts
+        this._updateChart(labels, data); // Update chart with processed data
     }
-
 
     // Update the chart with the processed data
     private _updateChart(labels: string[], data: number[]): void {

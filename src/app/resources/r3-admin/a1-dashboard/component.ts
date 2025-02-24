@@ -29,7 +29,7 @@ import { SaleCashierBarChartComponent } from './bar-chart-sale/component';
 import { CicleChartComponent }          from './cicle-chart/component';
 import { SaleCicleChartComponent }      from './cicle-chart-sale/component';
 import { DashbordService }              from './service';
-import { CashierData, StataticData }    from './interface';
+import {  CashierData, DashboardResponse, ProductTypeData, SalesData, StataticData }    from './interface'; //CashierData
 import { ReportComponent }              from './report/component';
 
 @Component({
@@ -74,6 +74,10 @@ export class DashboardComponent implements OnInit, OnDestroy {
     public selectedDateNameChasier = 'ថ្ងៃនេះ';
     public selectedDateNameSale = 'សប្តាហ៍នេះ';
     public selectedDateNameProduct = 'សប្តាហ៍នេះ';
+    public dashboardData : DashboardResponse;
+    public cashierData: CashierData;
+    public productType: ProductTypeData;
+    public saleData: SalesData;
     fileUrl = env.FILE_BASE_URL;
 
     today?: string;
@@ -90,11 +94,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
     form: FormGroup;
     stataticData: StataticData;
-    cashierData: CashierData[];
+   
     activeTab: string = 'all';
     displayedColumns: string[] = ['number_doc', 'title_doc', 'ministry_doc', 'action_doc'];
-    private cache: any = {};
-    private cacheCashier: any = {};
     isCart1Visible = false;
     intervalId: any;
 
@@ -121,9 +123,11 @@ export class DashboardComponent implements OnInit, OnDestroy {
         this.initializeForm();
         this.fetchUserData();
         this.startCarousel();
-        this.getStaticData();
-        this.getCashierData();
         this.setupDateTypeListeners();
+        this.getDashboardData(this.selectedDateName? { today: this.today } : undefined);
+        this.getCashierData(this.selectedDateNameChasier? { today: this.today } : undefined);
+        this.getProductType(this.selectedDateNameProduct? { today: this.today } : undefined);
+        this.getProductType(this.selectedDateNameSale? { thisWeek: this.thisWeek } : undefined);
     }
 
 
@@ -164,24 +168,183 @@ export class DashboardComponent implements OnInit, OnDestroy {
             });
     }
 
-    // Select date type
     selectDateType(type: { id: string; name: string }, typeNumber: number): void {
-        if (typeNumber === 1) {
-            this.selectedDateName = type.name;
-            this.dateTypeControl.setValue(type.id, { emitEvent: true });
-        } else if (typeNumber === 2) {
-            this.selectedDateNameChasier = type.name;
-            this.dateTypeControlChasier.setValue(type.id, { emitEvent: true });
-        } else if (typeNumber === 3) {
-            this.selectedDateNameProduct = type.name;
-            this.dateTypeControlProduct.setValue(type.id, { emitEvent: true });
-        } else if (typeNumber === 4) {
-            this.selectedDateNameSale = type.name;
-            this.dateTypeControlSale.setValue(type.id, { emitEvent: true });
+        let params: any = {};
+        
+        console.log('Selected Type:', type);
+    
+        switch (typeNumber) {
+            case 1:
+                this.selectedDateName = type.name;
+                this.dateTypeControl.setValue(type.id, { emitEvent: true });
+                break;
+            case 2:
+                this.selectedDateNameChasier = type.name;
+                this.dateTypeControlChasier.setValue(type.id, { emitEvent: true });
+                break;
+            case 3:
+                this.selectedDateNameProduct = type.name;
+                this.dateTypeControlProduct.setValue(type.id, { emitEvent: true });
+                break;
+            case 4:
+                this.selectedDateNameSale = type.name;
+                this.dateTypeControlSale.setValue(type.id, { emitEvent: true });
+                break;
         }
+    
+        // Set date filter params correctly
+        const today = new Date();
+        const formattedToday = today.toISOString().slice(0, 10); // YYYY-MM-DD
+        const yesterday = new Date(today.setDate(today.getDate() - 1)).toISOString().slice(0, 10);
+        const thisMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+        const thisWeek = '2025-W08'; // Adjust if backend expects another format
+    
+        if (type.id === 'today') params.today = formattedToday;
+        if (type.id === 'yesterday') params.yesterday = yesterday;
+        if (type.id === 'thisWeek') params.thisWeek = thisWeek;
+        if (type.id === 'thisMonth') params.thisMonth = thisMonth;
+    
+        // console.log('Params being sent:', params);
+    
+        // Call API based on typeNumber
+        switch (typeNumber) {
+            case 1:
+                this.getDashboardData(params);
+                break;
+            case 2:
+                this.getCashierData(params);
+                break;
+            case 3:
+                this.selectedDate3=params;
+                this.getProductType(params);
+                break;
+            case 4:
+                
+                this.selectedDate4 = params; // Ensure selectedDate4 updates
+                this.getSale(params);
+                break;
+        }
+    
         this._changeDetectorRef.markForCheck();
     }
 
+    getDashboardData(params?: { 
+        today?: string; 
+        yesterday?: string; 
+        thisWeek?: string; 
+        thisMonth?: string; 
+        threeMonthAgo?: string; 
+        sixMonthAgo?: string; 
+    }): void {
+        this._service.getDashboardData(params) // Pass parameters here
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe({
+                next: (response) => {
+                    if (response?.dashboard) {
+                        this.dashboardData = response;
+                        // this.cashierData = response.dashboard.cashierData.data;
+
+                        // console.log("Dashboard Data:", this.dashboardData);
+                        // console.log("cashierData:", this.cashierData);
+                    } else {
+                        // console.warn("Invalid API response format:", response);
+                        this._snackBarService.openSnackBar('គ្មានទិន្នន័យ',GlobalConstants.error)
+                    }
+                },
+                error: (error) => {
+                    // console.error("Error fetching dashboard data:", error);
+                    this._snackBarService.openSnackBar(error,GlobalConstants.error)
+                }
+            });
+    }
+
+   
+    getCashierData(params?: { 
+        today?: string; 
+        yesterday?: string; 
+        thisWeek?: string; 
+        thisMonth?: string; 
+        threeMonthAgo?: string; 
+        sixMonthAgo?: string; 
+    }): void {
+        this._service.getDashboardData(params)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe({
+                next: (response: DashboardResponse) => {
+                    if (response?.dashboard?.cashierData) {
+                        this.cashierData = response.dashboard.cashierData;
+                        // console.log("cashierData:", this.cashierData);
+                    } else {
+                        this._snackBarService.openSnackBar('គ្មានទិន្នន័យ',GlobalConstants.error)
+                        this.cashierData = null;
+                    }
+                },
+                error: (error) => {
+                    this._snackBarService.openSnackBar(error,GlobalConstants.error)
+                    this.cashierData = null;
+                }
+            });
+    }
+
+    getProductType(params?: { 
+        today?: string; 
+        yesterday?: string; 
+        thisWeek?: string; 
+        thisMonth?: string; 
+        threeMonthAgo?: string; 
+        sixMonthAgo?: string; 
+    }): void {
+        this._service.getDashboardData(params)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe({
+                next: (response: DashboardResponse) => {
+                    if (response?.dashboard?.productTypeData) {
+                        this.productType = response.dashboard.productTypeData
+                        // console.log("productType:", this.productType);
+                    } else {
+                        this._snackBarService.openSnackBar('គ្មានទិន្នន័យ',GlobalConstants.error)
+                        this.cashierData = null;
+                    }
+                },
+                error: (error) => {
+                    this._snackBarService.openSnackBar(error,GlobalConstants.error)
+                    this.cashierData = null;
+                }
+            });
+    }
+
+    getSale(params?: { 
+        today?: string; 
+        yesterday?: string; 
+        thisWeek?: string; 
+        thisMonth?: string; 
+        threeMonthAgo?: string; 
+        sixMonthAgo?: string; 
+    }): void {
+        // Ensure params is not undefined
+        params = params ?? {};
+    
+        // console.log("Fetching sales data with params:", params);
+    
+        this._service.getDashboardData(params)
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe({
+                next: (response: DashboardResponse) => {
+                    if (response?.dashboard?.salesData) {
+                        this.saleData = response.dashboard.salesData;
+                        console.log("Sale Data:", this.saleData);
+                    } else {
+                        this._snackBarService.openSnackBar('គ្មានទិន្នន័យ',GlobalConstants.error)
+                        this.saleData = null; // Fix incorrect assignment
+                    }
+                },
+                error: (error) => {
+                    this._snackBarService.openSnackBar(error,GlobalConstants.error)
+                    this.saleData = null;
+                }
+            });
+    }
+    
 
     // Handle date type changes
     dateTypeHandler(typeNumber: number): void {
@@ -227,7 +390,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
                 break;
         }
 
-        this.fetchData(typeNumber);
+        // this.fetchData(typeNumber);
     }
 
     // Apply today date
@@ -297,55 +460,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
         const cacheKey = `${prefix}_${datePart}`;
         return cacheKey;
     }
+    
 
-
-    // Get static data
-    getStaticData(): void {
-        const cacheKey = this.getCacheKey(true); // Generate cache key for main filter
-        if (this.cache[cacheKey]) {
-            this.stataticData = this.cache[cacheKey];
-            return;
-        }
-
-        this._service.getStaticData(this.today, this.yesterday, this.thisWeek, this.thisMonth)
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe({
-                next: (response) => {
-                    this.stataticData = response.statatics;
-                    this.cache[cacheKey] = response.statatics;
-                    this._changeDetectorRef.markForCheck();
-                },
-                error: (err) => {
-                    console.error('Error fetching static data:', err); // Log error
-                    this._snackBarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, 'Error');
-                },
-            });
-    }
-
-
-    // Get cashier data
-    getCashierData(): void {
-        const cacheKey = this.getCacheKey(false); // Cashier filter cache key
-        if (this.cacheCashier[cacheKey]) {
-            this.cashierData = this.cacheCashier[cacheKey];
-            return;
-        }
-
-        this._service.getCashier(this.today, this.yesterday, this.thisWeek, this.thisMonth)
-            .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe({
-                next: (response) => {
-                    this.cashierData = response.data;
-                    this.cacheCashier[cacheKey] = response.data;
-                    this._changeDetectorRef.markForCheck();
-                },
-                error: (err) => {
-                    console.error('Error fetching cashier data:', err);
-                    this._snackBarService.openSnackBar(err.error?.message ?? 'Error fetching cashier data.', 'Error');
-                },
-            });
-    }
-
+  
 
     // Start carousel
     startCarousel(): void {
@@ -375,62 +492,6 @@ export class DashboardComponent implements OnInit, OnDestroy {
     // Fetch data
     selectedDate3: { thisWeek: string; thisMonth: string, threeMonthAgo: string, sixMonthAgo: string } | null = null;
     selectedDate4: { thisWeek: string; thisMonth: string, threeMonthAgo: string, sixMonthAgo: string } | null = null;
-
-
-    // Get product data
-    getProductData(thisWeek: string, thisMonth: string, threeMonthAgo: string, sixMonthAgo: string,): void {
-        this.selectedDate3 = {
-            thisWeek,
-            thisMonth,
-            threeMonthAgo,
-            sixMonthAgo,
-        };
-        this._changeDetectorRef.markForCheck();
-    }
-
-
-    // Get sales data
-    getSalesData(thisWeek: string, thisMonth: string, threeMonthAgo: string, sixMonthAgo: string,): void {
-        this.selectedDate4 = {
-            thisWeek,
-            thisMonth,
-            threeMonthAgo,
-            sixMonthAgo,
-        };
-        console.log(this.selectedDate4)
-        this._changeDetectorRef.markForCheck();
-    }
-
-    // Fetch data
-    fetchData(typeNumber: number): void {
-        switch (typeNumber) {
-            case 1:
-                this.getStaticData();
-                break;
-            case 2:
-                this.getCashierData();
-                break;
-            case 3:
-                this.getProductData(
-                    this.thisWeek,
-                    this.thisMonth,
-                    this.threeMonthAgo,
-                    this.sixMonthAgo,
-                );
-                break;
-            case 4:
-                this.getSalesData(
-                    this.thisWeek,
-                    this.thisMonth,
-                    this.threeMonthAgo,
-                    this.sixMonthAgo,
-                );
-                break;
-            default:
-                console.warn('Invalid type number for fetching data:', typeNumber);
-                break;
-        }
-    }
 
 
     // Show cart

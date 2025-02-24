@@ -56,7 +56,7 @@
                             </div>
                             <!-- Centered Number -->
                             <div class="flex-grow flex items-center -mt-3">
-                                <div class="text-green-600 text-lg md:text-4xl font-semibold">{{stataticData?.total ??
+                                <div class="text-green-600 text-lg md:text-4xl font-semibold">{{dashboardData?.dashboard?.statistic.total ??
                                     0 | number}} ៛</div>
                             </div>
 
@@ -64,16 +64,16 @@
                             <div class="flex gap-1 flex-col md:flex-row">
                                 <span>កើនឡើង</span>
                                 <span [ngClass]="{
-                                  'text-green-500': stataticData?.totalPercentageIncrease >= 0,
-                                  'text-red-500': stataticData?.totalPercentageIncrease < 0
+                                  'text-green-500': dashboardData?.dashboard?.statistic.totalPercentageIncrease >= 0,
+                                  'text-red-500': dashboardData?.dashboard?.statistic.totalPercentageIncrease < 0
                                 }">
-                                    {{ stataticData?.totalPercentageIncrease ?? 0 }} %
+                                    {{ dashboardData?.dashboard?.statistic.totalPercentageIncrease ?? 0 }} %
                                 </span>
 
                                 <span [ngClass]="{
-                                    'text-green-500': stataticData?.totalPercentageIncrease >= 0,
-                                    'text-red-500': stataticData?.totalPercentageIncrease < 0
-                                  }">( {{stataticData?.saleIncreasePreviousDay ?? 0 | number }} )</span>
+                                    'text-green-500': dashboardData?.dashboard?.statistic.totalPercentageIncrease >= 0,
+                                    'text-red-500': dashboardData?.dashboard?.statistic.totalPercentageIncrease < 0
+                                  }">( {{dashboardData?.dashboard?.statistic.saleIncreasePreviousDay ?? 0 | number }} )</span>
                                 <span>ធៀបនិងម្សិលមិញ</span>
                             </div>
 
@@ -98,7 +98,7 @@
                                         <div class="flex flex-col gap-1 items-start">
                                             <div class="flex gap-1 items-center">
                                                 <span
-                                                    class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{stataticData?.totalProduct}}</span>
+                                                    class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{dashboardData?.dashboard?.statistic.totalProduct}}</span>
                                             </div>
                                             <span class="dark:text-gray-400 text-sm sm:text-lg md:text-xl">ផលិតផល</span>
                                         </div>
@@ -116,7 +116,7 @@
                                         <div class="flex flex-col gap-1 items-start">
                                             <div class="flex gap-1">
                                                 <span
-                                                    class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{stataticData?.totalProductType}}</span>
+                                                    class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{dashboardData?.dashboard?.statistic.totalProductType}}</span>
                                             </div>
                                             <span class="dark:text-gray-400 text-sm sm:text-lg md:text-xl">ប្រភេទ</span>
                                         </div>
@@ -134,7 +134,7 @@
                                         <div class="flex flex-col gap-1 items-start">
                                             <div class="flex gap-1">
                                                 <span
-                                                    class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{stataticData?.totalUser}}</span>
+                                                    class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{dashboardData?.dashboard?.statistic.totalUser}}</span>
                                             </div>
                                             <span
                                                 class="dark:text-gray-400 text-sm sm:text-lg md:text-xl">អ្នកប្រើប្រាស់</span>
@@ -153,7 +153,7 @@
                                         <div class="flex flex-col gap-1 items-start">
                                             <div class="flex gap-1">
                                                 <span
-                                                    class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{stataticData?.totalOrder}}</span>
+                                                    class="font-semibold dark:text-white text-sm sm:text-xl md:text-xl">{{dashboardData?.dashboard?.statistic.totalOrder}}</span>
                                             </div>
                                             <span class="dark:text-gray-400 text-sm sm:text-lg md:text-xl">ការលក់</span>
                                         </div>
@@ -179,101 +179,103 @@
 
         <!-- Second Section -->
         <div class="md:col-span-6 h-[335px] md:h-[335px] bg-white dark:bg-gray-900 rounded-xl col-span-5">
-            <div class="w-full h-full rounded-xl px-8 pb-4">
-                <div class="flex items-center justify-between h-16 ">
-                    <span class="text-gray-700 dark:text-slate-300 sm:text-lg md:text-xl text-sm font-semibold">
-                        អ្នកគិតប្រាក់
-                    </span>
-                    <div class="flex gat-2 cursor-pointer items-center ">
-                        <!-- Cashier Date Filter -->
-                        <div [matMenuTriggerFor]="cashierMenu"
-                            class="flex gap-2 justify-between cursor-pointer items-center bg-gray-100 dark:bg-slate-700 p-2 rounded-lg min-w-[100px] mr-3">
-                            <span>{{ selectedDateNameChasier }}</span>
-                            <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
+    <div class="w-full h-full rounded-xl px-8 pb-4">
+        <div class="flex items-center justify-between h-16">
+            <span class="text-gray-700 dark:text-slate-300 sm:text-lg md:text-xl text-sm font-semibold">
+                អ្នកគិតប្រាក់
+            </span>
+            <div class="flex gap-2 cursor-pointer items-center">
+                <!-- Cashier Date Filter -->
+                <div [matMenuTriggerFor]="cashierMenu"
+                    class="flex gap-2 justify-between cursor-pointer items-center bg-gray-100 dark:bg-slate-700 p-2 rounded-lg min-w-[100px] mr-3">
+                    <span>{{ selectedDateNameChasier }}</span>
+                    <mat-icon matSuffix svgIcon="heroicons_outline:calendar"></mat-icon>
 
-                            <mat-menu #cashierMenu="matMenu">
-                                <button *ngFor="let type of dateType.slice(0,4)" mat-menu-item
-                                    (click)="selectDateType(type, 2)">
-                                    <span class="text-lg">{{ type.name }}</span>
-                                </button>
-                            </mat-menu>
-                        </div>
-
-                        <div class="p-3 flex items-center rounded-full"
-                            [ngClass]="{'bg-gray-100 dark:bg-gray-700': listView, 'cursor-pointer': !listView}"
-                            (click)="showListView()">
-                            <mat-icon class="icon-size-6" svgIcon="mdi:format-list-bulleted"></mat-icon>
-                        </div>
-
-                        <div class="p-3 flex items-center rounded-full"
-                            [ngClass]="{'bg-gray-100 dark:bg-gray-700': chartView, 'cursor-pointer': !chartView}"
-                            (click)="showChartView()">
-                            <mat-icon class="icon-size-6" svgIcon="mdi:chart-pie-outline"></mat-icon>
-                        </div>
-
-                        <div class="p-3 flex items-center rounded-full"
-                            [ngClass]="{'bg-gray-100 dark:bg-gray-700': lineView, 'cursor-pointer': !lineView}"
-                            (click)="showLineView() ">
-                            <mat-icon class="icon-size-6" svgIcon="mdi:chart-bar"></mat-icon>
-                        </div>
-
-                    </div>
+                    <mat-menu #cashierMenu="matMenu">
+                        <button *ngFor="let type of dateType.slice(0,4)" mat-menu-item
+                            (click)="selectDateType(type, 2)">
+                            <span class="text-lg">{{ type.name }}</span>
+                        </button>
+                    </mat-menu>
                 </div>
 
-                <div>
-                    <!-- List View -->
-                    <ng-container *ngIf="listView">
-                        <ng-container *ngIf="cashierData?.length; else noDataTemplate">
-                            <div class="w-full ">
-                                <table class="w-full">
-                                    <tbody>
-                                        <!-- Use *ngFor with the slice pipe to display only 3 users -->
-                                        <tr *ngFor="let user of cashierData | slice:0:3; let i = index" [ngClass]="{
-                                            'bg-[#f1f5f9] dark:bg-[#1f2937]': i % 2 === 0,
-                                            'bg-white dark:bg-[#111827]': i % 2 !== 0
-                                        }">
-                                            <td class="p-2">
-                                                <div class="flex items-center">
-                                                    <div class="p-2 pl-0">
-                                                        <img class="rounded-full border border-blue-600 w-[45px] h-[45px] object-cover"
-                                                            [src]="fileUrl + user?.avatar" alt="">
-                                                    </div>
-                                                    <div class="flex flex-col justify-center pl-2">
-                                                        <p class="text-lg text-slate-600">{{ user?.name }}</p>
-                                                        <p class="text-sm text-slate-500">{{ user?.role[0]?.role.name }}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <!-- Action Column -->
-                                            <td class="text-right pr-4">
-                                                <div class="flex justify-end items-end gap-1">
-                                                    <span> {{ user?.totalAmount | number }} ៛</span>
-                                                    <span class="text-green-600"> ({{ user?.percentageChange }}%)</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </ng-container>
-                    </ng-container>
-                    <ng-container *ngIf="chartView">
-                        <cicle-chart-sale [dataSouce]="cashierData"></cicle-chart-sale>
-                    </ng-container>
-                    <ng-container *ngIf="lineView">
-                        <sup-bar-chart-sale [dataSouce]="cashierData"></sup-bar-chart-sale>
-                    </ng-container>
-                    <ng-template #noDataTemplate>
-                        <div class="flex flex-col justify-center items-center h-full">
-                            <mat-icon class="text-gray-400" svgIcon="toc"></mat-icon>
-                            <span class="text-2xl text-gray-500 mt-2">គ្មានទិន្នន័យ</span>
-                        </div>
-                    </ng-template>
+                <div class="p-3 flex items-center rounded-full"
+                    [ngClass]="{'bg-gray-100 dark:bg-gray-700': listView, 'cursor-pointer': !listView}"
+                    (click)="showListView()">
+                    <mat-icon class="icon-size-6" svgIcon="mdi:format-list-bulleted"></mat-icon>
                 </div>
 
+                <div class="p-3 flex items-center rounded-full"
+                    [ngClass]="{'bg-gray-100 dark:bg-gray-700': chartView, 'cursor-pointer': !chartView}"
+                    (click)="showChartView()">
+                    <mat-icon class="icon-size-6" svgIcon="mdi:chart-pie-outline"></mat-icon>
+                </div>
+
+                <div class="p-3 flex items-center rounded-full"
+                    [ngClass]="{'bg-gray-100 dark:bg-gray-700': lineView, 'cursor-pointer': !lineView}"
+                    (click)="showLineView()">
+                    <mat-icon class="icon-size-6" svgIcon="mdi:chart-bar"></mat-icon>
+                </div>
             </div>
         </div>
+
+        <div>
+            <!-- List View -->
+            <ng-container *ngIf="listView">
+                <ng-container *ngIf="cashierData?.data?.length > 0; else noDataTemplate">
+                    <table class="w-full">
+                        <tbody>
+                            <tr *ngFor="let user of cashierData.data | slice:0:3; let i = index" [ngClass]="{
+                                'bg-[#f1f5f9] dark:bg-[#1f2937]': i % 2 === 0,
+                                'bg-white dark:bg-[#111827]': i % 2 !== 0
+                            }">
+                                <td class="p-2">
+                                    <div class="flex items-center">
+                                        <div class="p-2 pl-0">
+                                            <img class="rounded-full border border-blue-600 w-[45px] h-[45px] object-cover"
+                                                [src]="fileUrl + user?.avatar" alt="">
+                                        </div>
+                                        <div class="flex flex-col justify-center pl-2">
+                                            <p class="text-lg text-slate-600">{{ user?.name }}</p>
+                                            <p class="text-sm text-slate-500">{{ user?.role[0]?.role.name }}</p>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-right pr-4">
+                                    <div class="flex justify-end items-end gap-1">
+                                        <span> {{ user?.totalAmount | number }} ៛</span>
+                                        <span class="text-green-600"> ({{ user?.percentageChange }}%)</span>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </ng-container>
+                
+            </ng-container>
+        
+            <!-- Chart View -->
+            <ng-container *ngIf="chartView">
+                <cicle-chart-sale *ngIf="cashierData?.data?.length" [dataSouce]="cashierData"></cicle-chart-sale>
+            </ng-container>
+        
+            <!-- Line Chart View -->
+            <ng-container *ngIf="lineView">
+                <sup-bar-chart-sale *ngIf="cashierData?.data?.length" [dataSouce]="cashierData"></sup-bar-chart-sale>
+            </ng-container>
+        
+            <!-- No Data Template -->
+            <ng-template #noDataTemplate>
+                <div class="flex flex-col justify-center items-center h-full">
+                    <mat-icon class="text-gray-400" svgIcon="toc"></mat-icon>
+                    <span class="text-2xl text-gray-500 mt-2">គ្មានទិន្នន័យ</span>
+                </div>
+            </ng-template>
+        </div>
+        
+    </div>
+</div>
+
     </div>
     <br>
 

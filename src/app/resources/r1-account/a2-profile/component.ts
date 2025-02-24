@@ -1,152 +1,136 @@
 // ================================================================================>> Core Library
-import { CommonModule } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
-// ================================================================================>> Thrid Party Library
+// ================================================================================>> Third Party Library
 // Material
-import { MatButtonModule }  from '@angular/material/button';
-import { MatIconModule }    from '@angular/material/icon';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 // RxJS
 import { Subject, takeUntil } from 'rxjs';
 
-// ===>> Custom Library
-import { env } from 'envs/env';
+// Translation
+import { translate, TranslocoModule } from '@ngneat/transloco';
 
-// Core
-import { HttpErrorResponse }                            from '@angular/common/http';
-import { MatDialog, MatDialogConfig, MatDialogModule }  from '@angular/material/dialog';
-import { MatPaginatorModule, PageEvent }                from '@angular/material/paginator';
-import { MatTableDataSource, MatTableModule }           from '@angular/material/table';
-import { UserService }      from 'app/core/user/service';
-import { User }             from 'app/core/user/interface';
-import { SnackbarService }  from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants      from 'helper/shared/constants';
-import { ChangePasswordComponent }  from './change-password/component';
-import { ProfileService }           from './service';
-import { Data, List }               from './interface';
-import { UpdateProfileDialogComponent } from './update-dialog/component';
+// ================================================================================>> Custom Library
+// Helper
+import { helperAnimations } from 'helper/animations';
+// import { HelperNavigationComponent } from "helper/components/navigation/navigation.component";
+import { HelperNavigationComponent, HelperNavigationItem, HelperNavigationService } from 'helper/components/navigation';
+
+// Service
+import { HelperMediaWatcherService } from 'helper/services/media-watcher';
+import { User } from 'app/core/user/interface';
+import { UserService } from 'app/core/user/service';
+// import { UserService } from 'app/core/user/user.service';
+
+// // Interface
+// import { User } from 'app/core/user/user.types';
 
 @Component({
-    selector: 'app-profile',
-    standalone: true,
-    templateUrl: './template.html',
-    styleUrls: ['./style.scss'],
-    imports: [
-        CommonModule,
-        MatButtonModule,
+    selector    : 'profile-layout',
+    standalone  : true,
+    templateUrl : './template.html',
+    styleUrl    : './style.scss',
+    animations  : helperAnimations,
+    imports     : [
         MatIconModule,
-        MatDialogModule,
-        MatTableModule,
-        MatPaginatorModule,
-    ]
+        HelperNavigationComponent,
+        RouterOutlet,
+        TranslocoModule,
+        MatButtonModule,
+    ],
 })
 
-export class ProfileComponent implements OnInit {
-    user: User;
-    fileUrl: string = env.FILE_BASE_URL;
+export class ProfileLayoutComponent implements OnInit {
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    displayedColumns: string[] = ['no', 'type', 'ip', 'date', 'time'];
-    dataSource: MatTableDataSource<Data> = new MatTableDataSource<Data>([]);
-    total: number = 10;
-    limit: number = 10;
-    page: number = 1;
-    key: string = '';
-    isLoading: boolean = false;
+
+    /**
+     * @set the navigation data from the core/navigation/navigation.data or we can write it here if you want.
+     * */
+    public subnavigation: HelperNavigationItem[] = [
+        {
+            id: 'my-profile',
+            // title: translate('Navigation.My-Profile'),
+            title:'គណនី',
+            type: 'basic',
+            icon: 'mdi:account-outline',
+            link: 'my-profile',
+        },
+        {
+            id: 'security',
+            // title: translate('Navigation.Security'),
+            title:'សុវត្ថិភាព' ,
+            type: 'basic',
+            icon: 'mdi:lock-outline',
+            link: 'security',
+        },
+        {
+            id: 'log',
+            // title: translate('Navigation.Log'),
+            title:'ចូលប្រព័ន្ធ',
+            type: 'basic',
+            icon: 'mdi:format-list-text',
+            link: 'log',
+        },
+    ];
+
+    public user          : User;
+
+    public isLoading     : boolean = false;
+    public isScreenSmall : boolean = false;
+
     constructor(
+        private _changeDetectorRef          : ChangeDetectorRef,
+        private _service                    : UserService,
+        private _helperNavigationService    : HelperNavigationService,
+        private _helperMediaWatcherService  : HelperMediaWatcherService,
+    ) {}
 
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _userService: UserService,
-        private profileService: ProfileService,
-        private snackBarService: SnackbarService,
-        private _dialog: MatDialog,
-    ) { }
-
-    // ===> onInit method to initialize the component
     ngOnInit(): void {
+
+        // Subscribe to media changes
+        this._helperMediaWatcherService.onMediaChange$.pipe(takeUntil(this._unsubscribeAll)).subscribe(({ matchingAliases }) => {
+            // Check if the screen is small
+            this.isScreenSmall = !matchingAliases.includes('md');
+        });
+
         // ===>> Get Data from Global User Service
-        this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: User) => {
+        this._service.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: User) => {
             // Data Maping
             this.user = user;
+
             // Mark for check
             this._changeDetectorRef.markForCheck();
         });
-        this.getData(this.page, this.limit)
     }
 
-    // ===> Method to get data
-    getData(_page: number = 1, _page_size: number = 10,): void {
-        const params: {
-            page: number;
-            page_size: number;
-        } = {
-            page: _page,
-            page_size: _page_size,
-        };
-        this.isLoading = true;
-        this.profileService.getData(params).subscribe({
-            next: (res: List) => {
-                this.dataSource.data = res.data;
-                this.total = res.pagination.totalItems;
-                this.limit = res.pagination.perPage;
-                this.page = res.pagination.currentPage;
-                this.isLoading = false; // Set loading state to false once data is loaded
-            },
-            error: (err: HttpErrorResponse) => {
-                this.isLoading = false; // Ensure loading state is false even on error
-                this.snackBarService.openSnackBar(
-                    err?.error?.message ?? GlobalConstants.genericError,
-                    GlobalConstants.error
-                );
-            }
-        });
+    /**
+     * On destroy
+     */
+    ngOnDestroy(): void {
+        // Unsubscribe from all subscriptions
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
     }
 
-    // ===> Method to handle page change event
-    onPageChanged(event: PageEvent): void {
-        if (event && event.pageSize) {
-            this.limit = event.pageSize;
-            this.page = event.pageIndex + 1;
-            this.getData(this.page, this.limit);
+    /**
+     * Toggle navigation
+     *
+     * @param name
+     */
+    toggleNavigation(name: string): void {
+        // Get the navigation
+        const navigation =
+            this._helperNavigationService.getComponent<HelperNavigationComponent>(
+                name
+            );
+
+        if (navigation) {
+            // Toggle the opened status
+            navigation.toggle();
         }
     }
-
-    // ===> Method to handle search event
-    openUpdateProfileDialog(): void {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.data = this.user;
-        dialogConfig.autoFocus = false;
-        dialogConfig.position = { right: '0px' };
-        dialogConfig.height = '100dvh';
-        dialogConfig.width = '100dvw';
-        dialogConfig.maxWidth = '550px';
-        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-        dialogConfig.enterAnimationDuration = '0s';
-        const dialogRef = this._dialog.open(UpdateProfileDialogComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe(result => {
-        });
-    }
-    
-    // ===> Method to handle search event
-    updatePassword(): void {
-        const dialogConfig = new MatDialogConfig();
-        dialogConfig.data = this.user;
-        dialogConfig.autoFocus = false;
-        dialogConfig.position = { right: '0px' };
-        dialogConfig.height = '100dvh';
-        dialogConfig.width = '100dvw';
-        dialogConfig.maxWidth = '550px';
-        dialogConfig.panelClass = 'custom-mat-dialog-as-mat-drawer';
-        dialogConfig.enterAnimationDuration = '0s';
-        const dialogRef = this._dialog.open(ChangePasswordComponent, dialogConfig);
-
-        dialogRef.afterClosed().subscribe(result => {
-            if (result) {
-                this.user = result;
-            }
-        });
-    }
-
 }
