@@ -1,37 +1,34 @@
-// core library
-import { NgIf } from '@angular/common';
-import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import {
-    FormsModule,
-    NgForm,
-    ReactiveFormsModule,
-    UntypedFormBuilder,
-    UntypedFormGroup,
-    Validators,
-} from '@angular/forms';
-import { MatButtonModule }      from '@angular/material/button';
-import { MatCheckboxModule }    from '@angular/material/checkbox';
-import { MatFormFieldModule }   from '@angular/material/form-field';
-import { MatIconModule }        from '@angular/material/icon';
-import { MatInputModule }       from '@angular/material/input';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { Router, RouterLink }       from '@angular/router';
-import { helperAnimations }         from 'helper/animations';
+//==================================================================================================>> Core library
+import { NgIf }                                                                                           from '@angular/common';
+import { Component, OnInit, ViewChild, ViewEncapsulation }                                                from '@angular/core';
+import {  FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators,}    from '@angular/forms';
 
-// custom library
-import { AuthService }          from 'app/core/auth/service';
-import { LanguagesComponent }   from 'app/layout/common/languages/component';
-import { HelperAlertComponent, HelperAlertType } from 'helper/components/alert';
-import { SnackbarService }      from 'helper/services/snack-bar/snack-bar.service';
-import GlobalConstants          from 'helper/shared/constants';
-import { VerifyOTPAndPasswordComponent } from './verify-otp-password/component';
+//==================================================================================================>> Third Party library
+import { MatButtonModule }            from '@angular/material/button';
+import { MatCheckboxModule }          from '@angular/material/checkbox';
+import { MatFormFieldModule }         from '@angular/material/form-field';
+import { MatIconModule }              from '@angular/material/icon';
+import { MatInputModule }             from '@angular/material/input';
+import { MatProgressSpinnerModule }   from '@angular/material/progress-spinner';
+import { Router, RouterLink }         from '@angular/router';
+
+//==================================================================================================>> Custom library
+// Helper
+import { helperAnimations }                       from 'helper/animations';
+import { HelperAlertComponent, HelperAlertType }  from 'helper/components/alert';
+import { SnackbarService }                        from 'helper/services/snack-bar/snack-bar.service';
+import GlobalConstants                            from 'helper/shared/constants';
+
+// Local
+import { AuthService }                            from 'app/core/auth/service';
+import { LanguagesComponent }                     from 'app/layout/common/languages/component';
 
 @Component({
-    selector: 'auth-login',
-    templateUrl: './template.html',
-    encapsulation: ViewEncapsulation.None,
-    animations: helperAnimations,
-    standalone: true,
+    selector        : 'auth-login',
+    templateUrl     : './template.html',
+    encapsulation   : ViewEncapsulation.None,
+    animations      : helperAnimations,
+    standalone      : true,
     imports: [
         RouterLink,
         HelperAlertComponent,
@@ -45,16 +42,18 @@ import { VerifyOTPAndPasswordComponent } from './verify-otp-password/component';
         MatProgressSpinnerModule,
         LanguagesComponent,
         NgIf,
-        VerifyOTPAndPasswordComponent
     ],
 })
+
+/// ==================================================>> Stat code here
 export class AuthSignInComponent implements OnInit {
+
     @ViewChild('signInNgForm') signInNgForm: NgForm;
 
     // alert message
     alert: { type: HelperAlertType; message: string } = {
-        type: 'success',
-        message: '',
+        type                                    : 'success',
+        message                                 : '',
     };
 
     // Images for the slider
@@ -63,22 +62,21 @@ export class AuthSignInComponent implements OnInit {
         'images/apps/pos1.png',
         'images/apps/pos1.png',
     ];
-    // variables for the image slider
-    currentImage: string = this.images[0];
-    imageIndex: number = 0;
-    interval: any;
-    signInForm: UntypedFormGroup;
-    showAlert: boolean = false;
-    isLoading: boolean = false
 
-    /**
-     * Constructor
-     */
+    // Public Variable
+    public currentImage                                : string = this.images[0];
+    public imageIndex                                  : number = 0;
+    public interval                                    : any;
+    public signInForm                                  : UntypedFormGroup;
+    public showAlert                                   : boolean = false;
+    public isLoading                                   : boolean = false
+
+
     constructor(
-        private _authService: AuthService,
-        private _formBuilder: UntypedFormBuilder,
-        private _router: Router,
-        private _snackbarService: SnackbarService,
+        private _authService                    : AuthService,
+        private _formBuilder                    : UntypedFormBuilder,
+        private _router                         : Router,
+        private _snackbarService                : SnackbarService,
     ) { }
 
     // -----------------------------------------------------------------------------------------------------
@@ -91,8 +89,8 @@ export class AuthSignInComponent implements OnInit {
     ngOnInit(): void {
         // Create the form
         this.signInForm = this._formBuilder.group({
-            username: ['0889566929', [Validators.required, Validators.pattern('^0[0-9]{8,9}$')]],
-            password: ['123456', Validators.required]
+            username                            : ['0889566929', [Validators.required, Validators.pattern('^0[0-9]{8,9}$')]],
+            password                            : ['123456', Validators.required]
         });
         this.startImageSlider();
     }
@@ -101,9 +99,10 @@ export class AuthSignInComponent implements OnInit {
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
     toPhone() {
-        this.isChangeToVerifyOtp = false
+        this.isChangeToVerifyOtp                = false
     }
-    isChangeToVerifyOtp: boolean = false;
+
+    isChangeToVerifyOtp                         : boolean = false;
     checkExistUser() {
         // Return if the form is invalid
         if (this.signInForm.invalid) {
@@ -118,7 +117,7 @@ export class AuthSignInComponent implements OnInit {
             next: (res) => {
                 if (res.data) {
                     console.log("User exists, sending OTP");
-                    this.isChangeToVerifyOtp = true;
+                    this.isChangeToVerifyOtp    = true;
 
                     // Store phone number in local storage
                     localStorage.setItem('phone', this.signInForm.value.username);
@@ -134,7 +133,7 @@ export class AuthSignInComponent implements OnInit {
                     });
 
                 } else {
-                    this.isChangeToVerifyOtp = false;
+                    this.isChangeToVerifyOtp    = false;
                     localStorage.removeItem('phone');
                     this._snackbarService.openSnackBar('អ្នកប្រើប្រាស់មិនមាននៅក្នុងប្រព័ន្ធទេ', GlobalConstants.error);
                 }
@@ -146,7 +145,7 @@ export class AuthSignInComponent implements OnInit {
                 this.signInForm.enable(); // Re-enable the form
                 this.signInNgForm.resetForm(); // Reset the form
                 this._snackbarService.openSnackBar(err.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
-                this.showAlert = true;
+                this.showAlert                  = true;
             }
         });
     }
@@ -165,7 +164,7 @@ export class AuthSignInComponent implements OnInit {
         this.signInForm.disable();
 
         // Hide the alert
-        this.showAlert = false;
+        this.showAlert                          = false;
 
         // Sign in
         this._authService.signIn(this.signInForm.value).subscribe({
@@ -182,12 +181,12 @@ export class AuthSignInComponent implements OnInit {
 
                 // Set the alert
                 this.alert = {
-                    type: 'error',
-                    message: err.error?.message || 'Wrong Phone numeber or password',
+                    type                        : 'error',
+                    message                     : err.error?.message || 'Wrong Phone numeber or password',
                 };
 
                 // Show the alert
-                this.showAlert = true;
+                this.showAlert                  = true;
             }
         });
     }
@@ -195,8 +194,8 @@ export class AuthSignInComponent implements OnInit {
     // image slider function
     startImageSlider() {
         this.interval = setInterval(() => {
-            this.imageIndex = (this.imageIndex + 1) % this.images.length;
-            this.currentImage = this.images[this.imageIndex];
+            this.imageIndex                     = (this.imageIndex + 1) % this.images.length;
+            this.currentImage                   = this.images[this.imageIndex];
         }, 100000); // 100000 milliseconds = 100 seconds
     }
 
