@@ -25,7 +25,7 @@ import { DialogConfigService }                                  from 'app/shared
 import { ErrorHandleService }                                   from 'app/shared/error-handle.service';
 import { MatBadgeModule }                                       from '@angular/material/badge';
 import { ProductService } from './service';
-import { Data, List } from '../interface';
+import { Data, List } from './interface';
 import { FilterDialogComponent } from './filter-dialog/component';
 import { ViewDialogComponent } from './view-dialog/component';
 import { ProductsDialogComponent } from './create-dialog/component';
@@ -87,7 +87,7 @@ export class ProductComponent implements OnInit {
 
     // Search,sort and filter
     public key                     :   string         = '';
-    public type_id                 :   number         = 0; 
+    public type_id                 :   number         = 0;
     public name                    :   string         = '';
     public users                   :   number         = 0;
     public productTypes            :   number         = 0;
@@ -102,7 +102,7 @@ export class ProductComponent implements OnInit {
 
     public selectedShortedItem     :  any             = this.shortedItems[0];
     public shortedOrder            :  string          = 'desc';
-    
+
 
     badgeValue: any;
       // ===>> Download Report Type
@@ -164,9 +164,9 @@ export class ProductComponent implements OnInit {
                 );
             }
         });
-        
+
     }
-    
+
     prepareSearchSortFilterParam(): any {
         const params: any = {
             limit: this.limit,
@@ -174,15 +174,15 @@ export class ProductComponent implements OnInit {
             sort_by: this.selectedShortedItem.value,
             order: this.shortedOrder,
         };
-    
+
         if (this.key != '') {
             params.key = this.key; // Search keyword
         }
-    
+
         if (this.productTypes) {
             params.type = this.productTypes; // Product type filter
         }
-    
+
         if (this.users) {
             params.creator = this.users; // Use only creator
         }
@@ -190,16 +190,16 @@ export class ProductComponent implements OnInit {
         if(this.report_type != ''){
             params.report_type = this.report_type
         }
-        
-    
+
+
         // Sort options
         params.sort_by = this.selectedShortedItem.value;
         params.order = this.shortedOrder;
-    
+
         return params;
     }
-    
-    
+
+
     // ===>> Select Short Item
     selectShortedItem(item = {}){
         this.selectedShortedItem = item;
@@ -216,7 +216,7 @@ export class ProductComponent implements OnInit {
         this.getData();
 
     }
-    
+
 
      // ===>> Clear Short Filter
      clearFilter(): void{
@@ -233,7 +233,7 @@ export class ProductComponent implements OnInit {
     // ===>> Open Filter Dialog
 
     openFilterDialog(): void {
-        
+
         const dialogConfig = this._dialogConfigService.getDialogConfig({
             setup: this.setupData,
             filter: {
@@ -258,7 +258,7 @@ export class ProductComponent implements OnInit {
             this.getData();
         });
     }
-    
+
 
      // ===>> Pagination chagne for Next or Prevous
     onPageChanged(event: PageEvent): void {

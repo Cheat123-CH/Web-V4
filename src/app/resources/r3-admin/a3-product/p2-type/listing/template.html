@@ -1,4 +1,5 @@
 <div class="list-sale-section bg-white dark:bg-gray-800 mt-4 mx-4 rounded-tl-lg rounded-tr-lg">
+
     <div class="bg-white min-h-14 max-h-14 flex gap-2 justify-between items-center py-2 pl-5 pr-2.5 dark:bg-gray-800">
         <div class="flex flex-1 items-center font-medium">
             <div class="flex items-center">
@@ -14,8 +15,9 @@
                 <span class="text-lg text-gray-600 dark:text-white -mb-0.5">ប្រភេទ</span>
             </div>
         </div>
+
         <div class="flex items-center gap-2">
-            <button class="helpers-mat-button-sm w-6 " (click)="create()" mat-stroked-button>
+            <button class="helpers-mat-button-sm w-6 " (click)=" openCreateDialog() " mat-stroked-button>
                 <mat-icon class="icon-size-6 text-slate-500" svgIcon="heroicons_outline:plus"></mat-icon>
             </button>
         </div>
@@ -32,8 +34,7 @@
         </div>
 
         <!-- Show data table if there is data -->
-        <div *ngIf="dataSource.data.length > 0"
-            class="list-sale-content px-4 pb-4 bg-white rounded-bl-xl rounded-br-xl dark:bg-gray-800">
+        <div *ngIf="dataSource.data.length > 0"  class="list-sale-content px-4 pb-4 bg-white rounded-bl-xl rounded-br-xl dark:bg-gray-800">
             <div class="list-sale-data border-t">
 
                 <table mat-table [dataSource]=" dataSource ">
@@ -80,7 +81,7 @@
                                 <mat-icon class="icon-size-6" svgIcon="mat_outline:more_vert"></mat-icon>
                             </button>
                             <mat-menu #menu="matMenu">
-                                <button mat-menu-item (click)="update(element)">
+                                <button mat-menu-item (click)=" openUpdateDialog(element) ">
                                     <mat-icon class="icon-size-6 " svgIcon="mdi:square-edit-outline"></mat-icon>
                                     <span class="text-lg ">កែប្រែ</span>
                                 </button>
@@ -102,4 +103,5 @@
             </div>
         </div>
     </div>
+
 </div>

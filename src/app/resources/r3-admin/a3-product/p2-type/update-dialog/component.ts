@@ -28,7 +28,7 @@ import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { Subject } from 'rxjs';
 import { ProductTypeService } from '../service';
-import { Data } from '../interface';
+import { Item } from '../interface';
 @Component({
     selector: 'create-car-type-component-seletor',
     templateUrl: './template.html',
@@ -57,10 +57,10 @@ import { Data } from '../interface';
         PortraitComponent
     ]
 })
-export class ProductTypeDialogComponent implements OnInit, OnDestroy {
+export class UpdateDialogComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     // EventEmitter to emit response data after create or update operations
-    ResponseData = new EventEmitter<Data>();
+    ResponseData = new EventEmitter<Item>();
 
     // Form related properties
     typeForm: UntypedFormGroup;
@@ -68,9 +68,9 @@ export class ProductTypeDialogComponent implements OnInit, OnDestroy {
     src: string = 'icons/image.jpg';
     // Constructor with dependency injection
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: { title: string, type: Data },
+        @Inject(MAT_DIALOG_DATA) public data: { title: string, type: Item },
 
-        private dialogRef: MatDialogRef<ProductTypeDialogComponent>,
+        private dialogRef: MatDialogRef<UpdateDialogComponent>,
         private formBuilder: UntypedFormBuilder,
         private snackBarService: SnackbarService,
         private _service: ProductTypeService,

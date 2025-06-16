@@ -28,7 +28,7 @@ import { PortraitComponent } from 'helper/components/portrait/component';
 import { SnackbarService } from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants from 'helper/shared/constants';
 import { Subject } from 'rxjs';
-import { Data } from '../../interface';
+import { Data } from '../interface';
 import { ProductService } from '../service';
 @Component({
     selector: 'car-product-dialog-create-and-update',

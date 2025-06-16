@@ -10,7 +10,7 @@ import { env } from 'envs/env';
 
 
 import { DataSaleResponse }          from '../../a1-dashboard/interface';
-import { Data, List, SetupResponse } from '../interface';
+import { Data, List, SetupResponse } from './interface';
 
 @core.Injectable({
     providedIn: 'root',

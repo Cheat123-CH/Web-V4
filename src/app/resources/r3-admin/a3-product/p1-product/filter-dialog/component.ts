@@ -12,7 +12,7 @@ import { MatFormFieldModule }                                                   
 import { MatInputModule }                                                         from '@angular/material/input';
 import { MatSelectModule }                                                        from '@angular/material/select';
 import { MatProgressSpinnerModule }                                               from '@angular/material/progress-spinner';
-import { SetupResponse }                                                          from '../../interface';
+import { SetupResponse }                                                          from '../interface';
 @Component({
     selector: 'admin-product-filter-dialog',
     standalone: true,
@@ -38,7 +38,7 @@ export class FilterDialogComponent {
     public form: UntypedFormGroup;
     public setup: SetupResponse | null = null;
 
-    
+
     constructor(
         public dialogRef: MatDialogRef<FilterDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data : any,
@@ -69,7 +69,7 @@ export class FilterDialogComponent {
 
     reset(): void {
         this.form.reset();
-        
+
     }
 
     closeDialog(): void {
