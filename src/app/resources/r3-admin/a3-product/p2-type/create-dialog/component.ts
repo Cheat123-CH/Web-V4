@@ -58,81 +58,56 @@ import { Item } from '../interface';
     ]
 })
 export class CreateDialogComponent implements OnInit, OnDestroy {
+
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     // EventEmitter to emit response data after create or update operations
     ResponseData = new EventEmitter<Item>();
 
     // Form related properties
-    typeForm: UntypedFormGroup;
-    saving: boolean = false;
-    src: string = 'icons/image.jpg';
+    public form   : UntypedFormGroup;
+    public saving : boolean = false;
+    public src    : string = 'icons/image.jpg';
+
     // Constructor with dependency injection
     constructor(
-        @Inject(MAT_DIALOG_DATA) public data: { title: string, type: Item },
 
-        private dialogRef: MatDialogRef<CreateDialogComponent>,
-        private formBuilder: UntypedFormBuilder,
-        private snackBarService: SnackbarService,
-        private _service: ProductTypeService,
+        @Inject(MAT_DIALOG_DATA) public data,
+
+        private _dialogRef         : MatDialogRef<CreateDialogComponent>,
+        private _formBuilder       : UntypedFormBuilder,
+        private _snackBarService   : SnackbarService,
+        private _service          : ProductTypeService,
     ) { }
 
     // Lifecycle hook: ngOnInit
     ngOnInit(): void {
-        this.data.type != null ? this.src = `${env.FILE_BASE_URL}${this.data.type.image}` : '';
+
         // Initialize the form on component initialization
         this.ngBuilderForm();
+
     }
 
     // Method to build the form using the form builder
     ngBuilderForm(): void {
 
         // Create the form group with initial values
-        this.typeForm = this.formBuilder.group({
-            name: [this.data?.type?.name || null, [Validators.required]],
-            image: [null, this.data?.type?.image == null ? Validators.required : []],
+        this.form = this._formBuilder.group({
+            name    : [null, [Validators.required]],
+            image   : [null, [Validators.required]],
         });
     }
 
     // Method to handle form submission
     submit() {
 
-        // Check whether to perform create or update based on data.type
-        this.data.type == null ? this.create() : this.update();
-    }
-
-    // srcChange method
-    srcChange(base64: string): void {
-        // Set the 'image' form control value with the provided base64 image data
-        this.typeForm.get('image').setValue(base64);
-    }
-
-    onFileChange(event: any): void {
-        const file = event.target.files[0];
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = (e: any) => {
-                this.src = e.target.result; // Preview image
-                this.typeForm.get('image')?.setValue(e.target.result);
-            };
-            reader.readAsDataURL(file);
-        } else {
-            this.snackBarService.openSnackBar('Please select an image file.', GlobalConstants.error);
-        }
-    }
-
-    // Method to handle create operation
-    create(): void {
-        if (this.typeForm.valid && !this.saving) {
-
-        }
         // Disable dialog close while the operation is in progress
-        this.dialogRef.disableClose = true;
+        this._dialogRef.disableClose = true;
 
         // Set the saving flag to true to indicate that the operation is in progress
         this.saving = true;
 
         // Call the typeService to create a new type
-        this._service.create(this.typeForm.value).subscribe({
+        this._service.create(this.form.value).subscribe({
 
             next: response => {
 
@@ -143,19 +118,19 @@ export class CreateDialogComponent implements OnInit, OnDestroy {
                 this.ResponseData.emit(response.data);
 
                 // Close the dialog
-                this.dialogRef.close();
+                this._dialogRef.close();
 
                 // Reset the saving flag
                 this.saving = false;
 
                 // Display a success snackbar
-                this.snackBarService.openSnackBar(response.message, GlobalConstants.success);
+                this._snackBarService.openSnackBar(response.message, GlobalConstants.success);
             },
 
             error: (err: HttpErrorResponse) => {
 
                 // Re-enable dialog close
-                this.dialogRef.disableClose = false;
+                this._dialogRef.disableClose = false;
 
                 // Reset the saving flag
                 this.saving = false;
@@ -166,44 +141,24 @@ export class CreateDialogComponent implements OnInit, OnDestroy {
         });
     }
 
-    // Method to handle update operation
-    update(): void {
+    // srcChange method
+    srcChange(base64: string): void {
+        // Set the 'image' form control value with the provided base64 image data
+        this.form.get('image').setValue(base64);
+    }
 
-        // Disable dialog close while the operation is in progress
-        this.dialogRef.disableClose = true;
-
-        // Set the saving flag to true to indicate that the operation is in progress
-        this.saving = true;
-
-        // Call the typeService to update an existing type
-        this._service.update(this.data.type.id, this.typeForm.value).subscribe({
-
-            next: response => {
-                // Emit the response data using the EventEmitter
-                this.ResponseData.emit(response.data);
-
-                // Close the dialog
-                this.dialogRef.close();
-
-                // Reset the saving flag
-                this.saving = false;
-
-                // Display a success snackbar
-                this.snackBarService.openSnackBar('Product types have been updated', GlobalConstants.success);
-            },
-
-            error: (err: HttpErrorResponse) => {
-
-                // Re-enable dialog close
-                this.dialogRef.disableClose = false;
-
-                // Reset the saving flag
-                this.saving = false;
-
-                // Handle and display errors
-                this.handleErrors(err);
-            }
-        });
+    onFileChange(event: any): void {
+        const file = event.target.files[0];
+        if (file && file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = (e: any) => {
+                this.src = e.target.result; // Preview image
+                this.form.get('image')?.setValue(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            this._snackBarService.openSnackBar('Please select an image file.', GlobalConstants.error);
+        }
     }
 
     // Helper method to handle and display errors
@@ -217,7 +172,7 @@ export class CreateDialogComponent implements OnInit, OnDestroy {
         }
 
         // Display error snackbar
-        this.snackBarService.openSnackBar(message, GlobalConstants.error);
+        this._snackBarService.openSnackBar(message, GlobalConstants.error);
     }
 
     ngOnDestroy(): void {
@@ -227,6 +182,6 @@ export class CreateDialogComponent implements OnInit, OnDestroy {
     }
 
     closeDialog() {
-        this.dialogRef.close();
+        this._dialogRef.close();
     }
 }

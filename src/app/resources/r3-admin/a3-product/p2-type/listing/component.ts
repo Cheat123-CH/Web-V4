@@ -15,12 +15,14 @@ import { env }                                                  from 'envs/env';
 import { HelperConfirmationConfig, HelperConfirmationService }  from 'helper/services/confirmation';
 import { SnackbarService }                                      from 'helper/services/snack-bar/snack-bar.service';
 import GlobalConstants                                          from 'helper/shared/constants';
-import { UpdateDialogComponent }                           from '../update-dialog/component';
+
+import { CreateDialogComponent }                                from '../create-dialog/component';
+import { UpdateDialogComponent }                                from '../update-dialog/component';
 import { ProductTypeService }                                   from '../service';
 import { Data, Item }                                           from '../interface';
 
 @Component({
-    selector                                                    : 'products-type',
+    selector                                                    : 'product-type',
     standalone                                                  : true,
     templateUrl                                                 : './template.html',
     styleUrl                                                    : './style.scss',
@@ -59,6 +61,7 @@ export class ProductTypeComponent implements OnInit {
 
     ngOnInit(): void {
         this.getData();
+        // this.openCreateDialog();
     }
 
     getData(){
@@ -88,15 +91,6 @@ export class ProductTypeComponent implements OnInit {
 
         // Create a new MatDialogConfig to configure the appearance and behavior of the dialog
         const dialogConfig                                      = new MatDialogConfig();
-
-        // Set the initial data to be passed to the ProductTypeDialogComponent
-        dialogConfig.data = {
-
-            title                                               : 'បង្កើតប្រភេទ',
-            type                                                : null
-        };
-
-        // Configure the width, minimum height, and autofocus settings for the dialog
         dialogConfig.autoFocus                                  = false;
         dialogConfig.position                                   = { right: '0px' };
         dialogConfig.height                                     = '100dvh';
@@ -106,25 +100,19 @@ export class ProductTypeComponent implements OnInit {
         dialogConfig.enterAnimationDuration                     = '0s';
 
         // Open the dialog with ProductTypeDialogComponent as the content component and apply the configuration
-        const dialogRef                                         = this._matDialog.open(UpdateDialogComponent, dialogConfig);
+        const dialogRef                                         = this._matDialog.open(CreateDialogComponent, dialogConfig);
 
         // Subscribe to the ResponseData observable in the ProductTypeDialogComponent
-        dialogRef.componentInstance.ResponseData.subscribe((type: Item) => {
+        dialogRef.componentInstance.ResponseData.subscribe((res: Item) => {
 
             // Get the current data from the data source
             const data                                          = this.dataSource.data;
 
             // Push the new type data to the data array
-            data.push({
-                id                                              : type.id,
-                name                                            : type.name,
-                image                                           : type.image,
-                n_of_products                                   : type.n_of_products,
-                created_at                                      : type.created_at
-            });
+            data.push(res);
 
             // Sort the data array alphabetically based on the 'name' property
-            data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
+            // data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
             // Update the data source with the modified data
             this.dataSource.data                                = data;

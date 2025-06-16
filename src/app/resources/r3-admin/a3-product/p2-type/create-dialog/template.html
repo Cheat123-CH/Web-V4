@@ -8,7 +8,7 @@
         </div>
     </div>
     <div class="out-create-body px-4 pb-2">
-        <form [formGroup]="typeForm" class="out-create-content border-t pt-4">
+        <form [formGroup]="form" class="out-create-content border-t pt-4">
 
             <div class="rounded-none h-fit lg:h-auto">
                 <div class="p-5">
@@ -36,9 +36,9 @@
     <mat-dialog-actions>
         <div class="w-full flex justify-end px-1">
             <button class="helpers-mat-button-md​ text-white bg-[#102d71]" mat-flat-button (click)="submit()"
-                [disabled]="typeForm.invalid || saving">
-                <span *ngIf="!typeForm.disabled">រួចរាល់</span>
-                <mat-progress-spinner *ngIf="typeForm.disabled" [diameter]="24"
+                [disabled]="form.invalid || saving">
+                <span *ngIf="!form.disabled">រួចរាល់</span>
+                <mat-progress-spinner *ngIf="form.disabled" [diameter]="24"
                     [mode]="'indeterminate'"></mat-progress-spinner>
             </button>
         </div>

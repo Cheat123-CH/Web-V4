@@ -34,20 +34,6 @@ export class ProductTypeService {
         return this._httpClient.post<{ data: Item, message: string }>(`${env.API_BASE_URL}/admin/product/types`, req, this._httpOptions);
     }
 
-    // Method to create a new product type
-    // create(body: { name: string, image: string }): Observable<{ data: Data, message: string }> {
-    //     return this._httpClient.post<{ data: Data, message: string }>(`${env.API_BASE_URL}/admin/products/types`, body, {
-    //         headers: new HttpHeaders().set('Content-Type', 'application/json')
-    //     });
-    // }
-
-    // Method to update an existing product type
-    // update(id: number, body: { name: string, image: string }): Observable<{ data: Data, message: string }> {
-    //     return this._httpClient.put<{ data: Data, message: string }>(`${env.API_BASE_URL}/admin/products/types/${id}`, body, {
-    //         headers: new HttpHeaders().set('Content-Type', 'application/json')
-    //     });
-    // }
-
     // Method to delete an existing product type
     delete(id: number = 0): Observable<{ status_code: number, message: string }> {
         return this._httpClient.delete<{ status_code: number, message: string }>(`${env.API_BASE_URL}/admin/products/types/${id}`, {
