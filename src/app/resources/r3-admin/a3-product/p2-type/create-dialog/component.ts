@@ -1,7 +1,7 @@
 
 // ==========================================================================================================>> Core Library
 import { CommonModule }                                                                         from '@angular/common';
-import { Component, EventEmitter, OnDestroy, OnInit }                                           from '@angular/core';
+import { Component, EventEmitter, OnInit }                                                      from '@angular/core';
 import { FormsModule, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators }   from '@angular/forms';
 import { RouterModule }                                                                         from '@angular/router';
 
@@ -71,9 +71,9 @@ export class CreateDialogComponent implements OnInit {
     constructor(
 
         private _dialogRef          : MatDialogRef<CreateDialogComponent>,
-        private _formBuilder        : UntypedFormBuilder,
-        private _snackBarService    : SnackbarService,
-        private _service            : ProductTypeService
+        private _formBuilder        : UntypedFormBuilder, // Build form for getting data from teplate
+        private _snackBarService    : SnackbarService, // Display quick message
+        private _service            : ProductTypeService // for calling API
 
     ) { }
 
@@ -115,14 +115,16 @@ export class CreateDialogComponent implements OnInit {
                 // Emit the response data using the EventEmitter
                 this.resData.emit(response.data);
 
-                // Close the dialog
-                this._dialogRef.close();
-
                 // Reset the saving flag
                 this.isSaving = false;
 
                 // Display a success snackbar
                 this._snackBarService.openSnackBar(response.message, GlobalConstants.success);
+
+                // Close the dialog
+                this._dialogRef.close();
+
+
             },
 
             error: (err: HttpErrorResponse) => {

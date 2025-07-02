@@ -51,16 +51,16 @@ export class ProductTypeComponent implements OnInit {
     public dataSource                                           : MatTableDataSource<Item> = new MatTableDataSource<Item>([]);
 
     public fileUrl                                              : string = env.FILE_BASE_URL; // Assuming this is the base URL for file-related operations
-    public isLoading                                            : boolean  = true;
+    public isLoading                                            : boolean  = false;
 
     // ===>> First Fuction to call
     ngOnInit(): void {
+
         this.getData();
         // this.openCreateDialog();
     }
 
     getData(){
-
 
         this.isLoading                                          = true;
         this._service.getData().subscribe({
@@ -78,7 +78,10 @@ export class ProductTypeComponent implements OnInit {
 
                 // Display a snackbar notification with an error message, falling back to a generic error message if not available
                 this._snackBarService.openSnackBar(err?.error?.message ?? GlobalConstants.genericError, GlobalConstants.error);
+
+                // Set isLoading to false to indicate that data loading is complete
                 this.isLoading                                  = false;
+
             }
         });
     }
@@ -153,8 +156,8 @@ export class ProductTypeComponent implements OnInit {
         // Build the configuration for the confirmation dialog
         const configAction: HelperConfirmationConfig = {
 
-            title                                               : `Remove <strong> ${type.name} </strong>`,
-            message                                             : 'Are you sure you want to remove this receipt number permanently? <span class="font-medium">This action cannot be undone!</span>', // Confirmation message
+            title                                               : `លុប <strong> ${type.name} </strong>`,
+            message                                             : 'តើអ្នកប្រាកដថាចង់លុបលេខបង្កាន់ដៃនេះចេញជាអចិន្ត្រៃយ៍ទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ!</span>', // Confirmation message
 
             icon: {
 
@@ -168,14 +171,14 @@ export class ProductTypeComponent implements OnInit {
                 confirm: {
 
                     show                                        : true,
-                    label                                       : 'Remove',
+                    label                                       : 'លុប',
                     color                                       : 'warn',
                 },
 
                 cancel: {
 
                     show                                        : true,
-                    label                                       : 'Cancel',
+                    label                                       : 'បោះបង',
                 },
             },
             dismissible                                         : true,
