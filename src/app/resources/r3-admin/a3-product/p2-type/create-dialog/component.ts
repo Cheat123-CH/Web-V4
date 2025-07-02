@@ -32,7 +32,7 @@ import { ProductTypeService }                               from '../service';
 import { Item }                                             from '../interface';
 
 @Component({
-    selector    : 'create-car-type-component-seletor',
+    selector    : 'create-product-type',
     templateUrl : './template.html',
     styleUrls   : ['./style.scss'],
     standalone  : true,
@@ -59,7 +59,6 @@ import { Item }                                             from '../interface';
     ]
 })
 export class CreateDialogComponent implements OnInit {
-
 
     // Response back to parent component.
     public resData          = new EventEmitter<Item>();

@@ -115,19 +115,10 @@ export class ProductTypeComponent implements OnInit {
         });
     }
 
-    openUpdateDialog(row: Item): void {
+    openUpdateDialog(item: Item, index: number = 0): void {
 
         // Create a new MatDialogConfig to configure the appearance and behavior of the dialog
         const dialogConfig                                      = new MatDialogConfig();
-
-        // Set the initial data to be passed to the ProductTypeDialogComponent
-        dialogConfig.data = {
-
-            title                                               : 'កែប្រែប្រភេទ',
-            type                                                : row
-        };
-
-        // Configure the width, minimum height, and autofocus settings for the dialog
         dialogConfig.autoFocus                                  = false;
         dialogConfig.position                                   = { right: '0px' };
         dialogConfig.height                                     = '100dvh';
@@ -136,19 +127,25 @@ export class ProductTypeComponent implements OnInit {
         dialogConfig.panelClass                                 = 'custom-mat-dialog-as-mat-drawer';
         dialogConfig.enterAnimationDuration                     = '0s';
 
+        dialogConfig.data = item; // send current data to dialog;
+
         // Open the dialog with ProductTypeDialogComponent as the content component and apply the configuration
         const dialogRef                                         = this._matDialog.open(UpdateDialogComponent, dialogConfig);
 
-        // Subscribe to the ResponseData observable in the ProductTypeDialogComponent
-        dialogRef.componentInstance.ResponseData.subscribe((type: Item) => {
+        // Subscribe to the resData observable in the ProductTypeDialogComponent
+        dialogRef.componentInstance.resData.subscribe((res: Item) => {
 
-            // Find the index of the updated row in the data source
-            const index                                         = this.dataSource.data.indexOf(row);
+            // Get the current data from the data source
+            const data                                          = this.dataSource.data;
 
-            // Update the 'name' property of the corresponding row with the edited name from the dialog
-            this.dataSource.data[index].name                    = type.name;
-            this.dataSource.data[index].image                   = type.image;
+            // Replace the current index
+            data[index] = res;
+
+            // Update the data source with the modified data
+            this.dataSource.data                                = data;
+
         });
+
     }
 
     onDelete(type: Item): void {

@@ -31,7 +31,7 @@ export class ProductTypeService {
     }
 
     update(id: number, req: UpdatePayload): Observable<{ data: Item, message: string }> {
-        return this._httpClient.post<{ data: Item, message: string }>(`${env.API_BASE_URL}/admin/product/types`, req, this._httpOptions);
+        return this._httpClient.put<{ data: Item, message: string }>(`${env.API_BASE_URL}/admin/product/types/${id}`, req, this._httpOptions);
     }
 
     // Method to delete an existing product type
