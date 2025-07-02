@@ -36,7 +36,7 @@ export class ProductTypeService {
 
     // Method to delete an existing product type
     delete(id: number = 0): Observable<{ status_code: number, message: string }> {
-        return this._httpClient.delete<{ status_code: number, message: string }>(`${env.API_BASE_URL}/admin/products/types/${id}`, {
+        return this._httpClient.delete<{ status_code: number, message: string }>(`${env.API_BASE_URL}/admin/product/types/${id}`, {
             headers: new HttpHeaders().set('Content-Type', 'application/json')
         });
     }

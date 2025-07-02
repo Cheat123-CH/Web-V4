@@ -10,7 +10,7 @@ import { MatIconModule }                                        from '@angular/m
 import { MatMenuModule }                                        from '@angular/material/menu';
 import { MatTableDataSource, MatTableModule }                   from '@angular/material/table';
 
-// ================================================================>> Custom Library (Application-specific)
+// ================================================================>> Custom Library
 import { env }                                                  from 'envs/env';
 import { HelperConfirmationConfig, HelperConfirmationService }  from 'helper/services/confirmation';
 import { SnackbarService }                                      from 'helper/services/snack-bar/snack-bar.service';
@@ -40,31 +40,27 @@ import { Data, Item }                                           from '../interfa
 
 export class ProductTypeComponent implements OnInit {
 
+
+    // ===>> Variable Declaration
     private _service                                            = inject(ProductTypeService); // for calling to API
-    private _snackBarService                                    = inject(SnackbarService);
-    private _helpersConfirmationService                         = inject(HelperConfirmationService);
-    private _matDialog                                          = inject(MatDialog);
+    private _snackBarService                                    = inject(SnackbarService); // for display quick message
+    private _helpersConfirmationService                         = inject(HelperConfirmationService); // for Confirmation
+    private _matDialog                                          = inject(MatDialog); // Dialog
 
     public displayedColumns                                     : string[] = ['no', 'name', 'n_of_products', 'created_at', 'action'];
     public dataSource                                           : MatTableDataSource<Item> = new MatTableDataSource<Item>([]);
 
     public fileUrl                                              : string = env.FILE_BASE_URL; // Assuming this is the base URL for file-related operations
-    public total                                                : number = 10;
-    public limit                                                : number = 10;
-    public page                                                 : number = 1;
-    public                                                      from : Date;
-    public to                                                   : Date;
-    public receipt_number                                       : string = '';
-
     public isLoading                                            : boolean  = true;
 
-
+    // ===>> First Fuction to call
     ngOnInit(): void {
         this.getData();
         // this.openCreateDialog();
     }
 
     getData(){
+
 
         this.isLoading                                          = true;
         this._service.getData().subscribe({
@@ -102,17 +98,14 @@ export class ProductTypeComponent implements OnInit {
         // Open the dialog with ProductTypeDialogComponent as the content component and apply the configuration
         const dialogRef                                         = this._matDialog.open(CreateDialogComponent, dialogConfig);
 
-        // Subscribe to the ResponseData observable in the ProductTypeDialogComponent
-        dialogRef.componentInstance.ResponseData.subscribe((res: Item) => {
+        // Subscribe to the resData observable in the ProductTypeDialogComponent
+        dialogRef.componentInstance.resData.subscribe((res: Item) => {
 
             // Get the current data from the data source
             const data                                          = this.dataSource.data;
 
             // Push the new type data to the data array
             data.push(res);
-
-            // Sort the data array alphabetically based on the 'name' property
-            // data.sort((a, b) => a.name.toLowerCase().localeCompare(b.name.toLowerCase()));
 
             // Update the data source with the modified data
             this.dataSource.data                                = data;
