@@ -14,8 +14,10 @@ COPY ./package-lock.json /usr/app/package-lock.json
 # Install Dependencies
 RUN npm install --legacy-peer-deps
 
-
 COPY ./ /usr/app
+
+# Increase Node heap memory limit before build
+ENV NODE_OPTIONS=--max_old_space_size=2048
 
 # Build
 RUN npm run build --prod
