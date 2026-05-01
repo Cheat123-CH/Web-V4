@@ -2,9 +2,7 @@
 {
     "compileOnSave": false,
     "compilerOptions": {
-        "ignoreDeprecations": "6.0",
         "skipLibCheck": true,
-        "baseUrl": "./src",
         "outDir": "./dist/out-tsc",
         "esModuleInterop": true,
         "sourceMap": true,
