@@ -38,7 +38,7 @@ export class ViewDetailSaleComponent implements OnInit, OnDestroy {
     displayedColumns: string[] = ['number', 'name', 'unit_price', 'qty', 'total'];
     dataSource: MatTableDataSource<any> = new MatTableDataSource<any>([]);
     fileUrl = env.FILE_BASE_URL;
-    public isLoading: boolean;
+    public isLoading: boo
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public row: any,
