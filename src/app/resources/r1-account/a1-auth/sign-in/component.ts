@@ -48,7 +48,7 @@ import { LanguagesComponent }                     from 'app/layout/common/langua
 /// ==================================================>> Stat code here
 export class AuthSignInComponent implements OnInit {
 
-    @ViewChild('signInNgForm') signInNgForm!: NgForm;
+    @ViewChild('signInNgForm') signInNgForm: NgForm;
 
     // alert message
     alert: { type: HelperAlertType; message: string } = {
@@ -67,7 +67,7 @@ export class AuthSignInComponent implements OnInit {
     public currentImage                                : string = this.images[0];
     public imageIndex                                  : number = 0;
     public interval                                    : any;
-    public signInForm!                                  : UntypedFormGroup;
+    public signInForm                                  : UntypedFormGroup;
     public showAlert                                   : boolean = false;
     public isLoading                                   : boolean = false
 

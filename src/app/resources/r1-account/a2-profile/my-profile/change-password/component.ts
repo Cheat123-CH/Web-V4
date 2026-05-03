@@ -40,7 +40,7 @@ import { PasswordReq } from '../../profile.type';
 
 export class ChangePasswordComponent implements OnInit {
 
-    public form!      : UntypedFormGroup;
+    public form      : UntypedFormGroup;
     public isLoading : boolean = false;
 
     constructor(
