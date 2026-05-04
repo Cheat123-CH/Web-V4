@@ -78,12 +78,15 @@
                             "outputHashing": "all",
                             "optimization": true,
                             "extractLicenses": true,
-                            "sourceMap": false
+                            "sourceMap": false,
+                            "serviceWorker": true,        
+                            "ngswConfigPath": "ngsw-config.json" 
                         },
                         "development": {
                             "optimization": false,
                             "extractLicenses": false,
-                            "sourceMap": true
+                            "sourceMap": true,
+                            "serviceWorker": false
                         }
                     },
                     "defaultConfiguration": "production"
