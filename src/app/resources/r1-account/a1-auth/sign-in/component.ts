@@ -90,7 +90,8 @@ export class AuthSignInComponent implements OnInit {
         // Create the form
         this.signInForm = this._formBuilder.group({
             username                            : ['0889566929', [Validators.required, Validators.pattern('^0[0-9]{8,9}$')]],
-            password                            : ['123456', Validators.required]
+            password                            : ['123456', Validators.required],
+            
         });
         this.startImageSlider();
     }
@@ -167,7 +168,10 @@ export class AuthSignInComponent implements OnInit {
         this.showAlert                          = false;
 
         // Sign in
-        this._authService.signIn(this.signInForm.value).subscribe({
+        this._authService.signIn({
+            ...this.signInForm.value,
+            platform: 'Web'  // ← ADD THIS
+        }).subscribe({
             next: res => {
                 // Navigate to the redirect url
                 this._router.navigateByUrl('');
